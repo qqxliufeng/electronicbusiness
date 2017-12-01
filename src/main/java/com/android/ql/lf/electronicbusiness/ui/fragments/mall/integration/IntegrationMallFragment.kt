@@ -16,6 +16,7 @@ import com.android.ql.lf.electronicbusiness.data.TabItemBean
 import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchAndClassifyFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.IntegrationExchangeListFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
@@ -38,6 +39,9 @@ class IntegrationMallFragment : BaseNetWorkingFragment() {
 
     override fun initView(view: View?) {
         mTvMallIntegrationCount.text = UserInfo.getInstance().memberIntegral
+        mTvClassMore.setOnClickListener {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "积分商品分类", true, false, SearchAndClassifyFragment::class.java)
+        }
         mIntegrationExchangeContainer.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "积分兑换列表", true, false, IntegrationExchangeListFragment::class.java)
         }
