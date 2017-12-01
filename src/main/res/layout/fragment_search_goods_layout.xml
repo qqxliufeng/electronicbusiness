@@ -67,6 +67,7 @@
                 app:layout_scrollFlags="scroll|enterAlways">
 
                 <LinearLayout
+                    android:id="@+id/mLlSearchGoodsZHContainer"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -74,6 +75,7 @@
                     android:orientation="vertical">
 
                     <CheckedTextView
+                        android:id="@+id/mCTvSearchGoodsZH"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
@@ -84,6 +86,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/mLlSearchGoodsPriceContainer"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -91,11 +94,12 @@
                     android:orientation="vertical">
 
                     <CheckedTextView
+                        android:id="@+id/mCTvSearchGoodsPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:drawablePadding="5dp"
-                        android:drawableRight="@drawable/selector_tv_search_menu"
+                        android:drawableRight="@drawable/img_icon_price_n2"
                         android:gravity="center"
                         android:text="价格"
                         android:textColor="@color/select_tv_color"
@@ -103,6 +107,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/mLlSearchGoodsSellContainer"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -110,28 +115,13 @@
                     android:orientation="vertical">
 
                     <CheckedTextView
+                        android:id="@+id/mCTvSearchGoodsSell"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
+                        android:drawableRight="@drawable/img_icon_price_n2"
                         android:gravity="center"
                         android:text="销量"
-                        android:textColor="@color/select_tv_color"
-                        android:textSize="@dimen/sp_14" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/selector_press_bg"
-                    android:orientation="vertical">
-
-                    <CheckedTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:text="筛选"
                         android:textColor="@color/select_tv_color"
                         android:textSize="@dimen/sp_14" />
                 </LinearLayout>

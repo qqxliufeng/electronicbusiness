@@ -1,10 +1,9 @@
-package com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal
+package com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration
 
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.widget.CheckedTextView
 import android.widget.ImageView
@@ -19,7 +18,6 @@ import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseSectionQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import com.chad.library.adapter.base.entity.SectionEntity
 import com.chad.library.adapter.base.listener.OnItemClickListener
 import kotlinx.android.synthetic.main.fragment_normal_mall_search_and_classify_layout.*
 import org.jetbrains.anko.support.v4.toast
@@ -28,7 +26,7 @@ import org.jetbrains.anko.support.v4.toast
  * Created by lf on 2017/11/7 0007.
  * @author lf on 2017/11/7 0007
  */
-class SearchAndClassifyFragment : BaseNetWorkingFragment() {
+class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
 
     private val mMenuArrayList = arrayListOf<IClassifyBean>()
     private val mItemArrayList = arrayListOf<IClassifyItemEntity>()

@@ -299,6 +299,30 @@ class RequestParamsHelper {
         }
 
 
+        //砍价 会员专享
+        val ACT_PRODUCT_TYPE = "product_type"
+
+        //砍价商品分类查询
+        val ACT_PRODUCT_TYPE_SEARCH = "product_type_search"
+
+        fun getProductTypeSearchParams(stype_id: String, type_id: String, ktype: String, page: Int, pagesize: Int = 0): ApiParams {
+            val params = getWithPageParams(page, pagesize)
+            params.addParam("stype_id", stype_id)
+            params.addParam("type_id", type_id)
+            params.addParam("ktype", ktype)
+            return params
+        }
+
+        //砍价商品查询
+        val ACT_PRODUCT = "product"
+
+        fun getProductParams(ktype: String, sort: String, page: Int, pagesize: Int = 0): ApiParams {
+            val param = getWithPageParams(page, pagesize)
+            param.addParam("ktype", ktype)
+            param.addParam("sort", sort)
+            return param
+        }
+
         /**              product model  end           **/
 
     }

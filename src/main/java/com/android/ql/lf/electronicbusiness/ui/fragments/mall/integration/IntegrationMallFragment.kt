@@ -40,7 +40,7 @@ class IntegrationMallFragment : BaseNetWorkingFragment() {
     override fun initView(view: View?) {
         mTvMallIntegrationCount.text = UserInfo.getInstance().memberIntegral
         mTvClassMore.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "积分商品分类", true, false, SearchAndClassifyFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "积分商品分类", true, false, ISearchAndClassifyFragment::class.java)
         }
         mIntegrationExchangeContainer.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "积分兑换列表", true, false, IntegrationExchangeListFragment::class.java)
