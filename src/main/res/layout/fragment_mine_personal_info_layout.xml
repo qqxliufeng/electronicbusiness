@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingRight="10dp">
+
+    <RelativeLayout
+        android:id="@+id/mFaceContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/selector_press_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="个人头像"
+            android:textColor="#343434"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/icon_inter" />
+
+        <ImageView
+            android:id="@+id/mTvPersonalInfoFace"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="30dp"
+            android:src="@drawable/pic_headportrait" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/mNickNameContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mFaceContainer"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/selector_press_bg"
+        android:paddingBottom="@dimen/dp_10"
+        android:paddingTop="@dimen/dp_10">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="昵称"
+            android:textColor="#343434"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/mTvPersonalInfoNickName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:drawableRight="@drawable/icon_inter"
+            android:gravity="center"
+            android:text="Designer"
+            android:textColor="#919191" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/mPhoneContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mNickNameContainer"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/selector_press_bg"
+        android:paddingBottom="@dimen/dp_10"
+        android:paddingTop="@dimen/dp_10">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="手机号"
+            android:textColor="#343434"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/mTvPersonalInfoPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:text="18666666666"
+            android:textColor="#919191" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/mTvPersonalInfoResetPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mPhoneContainer"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/selector_press_bg"
+        android:drawableRight="@drawable/icon_inter"
+        android:paddingBottom="@dimen/dp_10"
+        android:paddingTop="@dimen/dp_10"
+        android:text="修改密码"
+        android:textColor="#343434"
+        android:textSize="16sp" />
+
+
+    <Button
+        android:id="@+id/mBtLogout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@drawable/shape_bt_bg1"
+        android:text="退出登录"
+        android:textColor="#fff"
+        android:textSize="16sp" />
+
+
+</RelativeLayout>

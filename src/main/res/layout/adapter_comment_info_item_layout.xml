@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff"
+    android:orientation="horizontal"
+    android:padding="@dimen/dp_10">
+
+    <ImageView
+        android:id="@+id/mIvReplyInfoItemFace"
+        android:layout_width="40dp"
+        android:layout_height="40dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/mTvReplyInfoItemNickName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/sp_14" />
+
+
+            <com.android.ql.lf.electronicbusiness.ui.views.PraiseView
+                android:id="@+id/mPraiseView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal">
+
+                    <android.support.design.widget.CheckableImageButton
+                        android:id="@+id/mIvPraiseIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@null"
+                        android:src="@drawable/selector_praise_bg" />
+
+                    <TextView
+                        android:id="@+id/mTvPraiseText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="5dp"
+                        android:text="赞" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/mTvPraiseFly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:text="+1"
+                    android:textColor="@color/red_tv_color"
+                    android:textSize="@dimen/sp_12"
+                    android:visibility="invisible" />
+
+            </com.android.ql.lf.electronicbusiness.ui.views.PraiseView>
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/mTvReplyInfoItemContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black_tv_color"
+            android:textSize="@dimen/sp_14" />
+
+        <!--<TextView
+            android:id="@+id/mTvReplyInfoItemExpand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="展开"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/sp_14" />-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/mTvReplyInfoItemTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#a4a4a4"
+                android:textSize="@dimen/sp_12" />
+
+            <TextView
+                android:id="@+id/mTvReplyInfoItemReply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="回复"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textColor="#a4a4a4"
+                android:textSize="@dimen/sp_12" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
