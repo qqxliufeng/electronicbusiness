@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/mTvMyAskItemTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_10"
+        android:textColor="@color/black_tv_color"
+        android:textSize="@dimen/sp_16" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/dp_10"
+        android:paddingLeft="10dp"
+        android:paddingRight="@dimen/dp_10">
+
+        <TextView
+            android:id="@+id/mTvMyAskItemContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textColor="#a4a4a4"
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:id="@+id/mTvAnswerItemExpand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/mTvMyAskItemContent"
+            android:paddingBottom="5dp"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:paddingTop="5dp"
+            android:text="展开"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/sp_14" />
+    </RelativeLayout>
+</LinearLayout>

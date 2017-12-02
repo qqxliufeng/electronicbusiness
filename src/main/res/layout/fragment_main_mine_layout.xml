@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/mMineScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:background="@drawable/bg_login"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"
+                android:paddingTop="25dp">
+
+
+                <LinearLayout
+                    android:id="@+id/mLlMainMineUserInfoContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="40dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/mIvMainMineFace"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/pic_headportrait" />
+
+                    <TextView
+                        android:id="@+id/mTvMainMineNickName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:drawablePadding="@dimen/dp_10"
+                        android:drawableRight="@drawable/img_icon_vip_s"
+                        android:text="王大宝"
+                        android:textColor="#fff" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="horizontal"
+                    android:paddingBottom="10dp">
+
+                    <LinearLayout
+                        android:id="@+id/mIntegrationCountContainer"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/mTvMainMineIntegration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#fff"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="积分总额"
+                            android:textColor="#fff" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginTop="15dp"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/mIntegrationMall"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:drawableTop="@drawable/img_mine_integratedmall_icon"
+                        android:gravity="center"
+                        android:text="积分商城"
+                        android:textColor="#fff"
+                        android:textSize="@dimen/sp_14" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginTop="15dp"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/mMainMineMessage"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:drawableTop="@drawable/img_mine_news_icon"
+                        android:gravity="center"
+                        android:text="消息"
+                        android:textColor="#fff" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dp_10">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/img_mine_icon_order"
+                        android:drawablePadding="@dimen/dp_10"
+                        android:gravity="center_vertical"
+                        android:text="我的订单"
+                        android:textColor="#333"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/mAllOrder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/selector_press_bg"
+                        android:drawableRight="@drawable/icon_inter"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:text="查看全部"
+                        android:textColor="#888"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="40dp"
+                    android:background="#EDEDED" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/mDFKOrder"
+                        style="@style/style_tv_mine_statue"
+                        android:layout_marginLeft="20dp"
+                        android:drawableTop="@drawable/img_mine_icon_payment"
+                        android:text="待付款" />
+
+                    <TextView
+                        android:id="@+id/mDFHOrder"
+                        style="@style/style_tv_mine_statue"
+                        android:drawableTop="@drawable/img_mine_icon_shipping"
+                        android:text="待发货" />
+
+                    <TextView
+                        android:id="@+id/mWaitingGoods"
+                        style="@style/style_tv_mine_statue"
+                        android:drawableTop="@drawable/img_mine_icon_transport"
+                        android:text="待收货" />
+
+                    <TextView
+                        android:id="@+id/mSuccessOrder"
+                        style="@style/style_tv_mine_statue"
+                        android:layout_marginRight="20dp"
+                        android:drawableTop="@drawable/img_mine_icon_comment"
+                        android:text="待评价" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_10"
+                android:background="#F5F5F5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/mPersonalInfo"
+                    style="@style/style_tv_mine_list"
+                    android:drawableLeft="@drawable/img_mine_icon_individual"
+                    android:text="个人信息" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="40dp"
+                    android:background="#EDEDED" />
+
+                <TextView
+                    android:id="@+id/mIntegrationDetailContainer"
+                    style="@style/style_tv_mine_list"
+                    android:drawableLeft="@drawable/img_mine_icon_integral"
+                    android:text="积分明细" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="40dp"
+                    android:background="#EDEDED" />
+
+                <TextView
+                    android:id="@+id/mAskAnswer"
+                    style="@style/style_tv_mine_list"
+                    android:drawableLeft="@drawable/img_mine_icon_answer"
+                    android:text="我的问答" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="40dp"
+                    android:background="#EDEDED" />
+
+                <TextView
+                    android:id="@+id/mShoppingCar"
+                    style="@style/style_tv_mine_list"
+                    android:drawableLeft="@drawable/img_mine_icon_shoppingcart"
+                    android:text="我的购物车" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_10"
+                    android:background="#F5F5F5" />
+
+                <TextView
+                    android:id="@+id/mVipContainer"
+                    style="@style/style_tv_mine_list"
+                    android:drawableLeft="@drawable/img_mine_icon_shoppingcart"
+                    android:text="会员中心" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="40dp"
+                    android:background="#EDEDED" />
+
+                <TextView
+                    android:id="@+id/mCutPrice"
+                    style="@style/style_tv_mine_list"
+                    android:drawableLeft="@drawable/img_mine_icon_bargain"
+                    android:text="我的砍价" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="40dp"
+                    android:background="#EDEDED" />
+
+                <TextView
+                    android:id="@+id/mFeedBack"
+                    style="@style/style_tv_mine_list"
+                    android:drawableLeft="@drawable/img_mine_icon_feedback"
+                    android:text="意见反馈" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="40dp"
+                    android:background="#EDEDED" />
+
+                <TextView
+                    android:id="@+id/mSetting"
+                    style="@style/style_tv_mine_list"
+                    android:drawableLeft="@drawable/img_mine_icon_set"
+                    android:text="设置" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_10"
+                    android:background="#F5F5F5" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <View
+        android:id="@+id/mMineTopView"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/mTvMainMineSign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/shape_tv_main_mine_qiandao_bg"
+        android:text="签到"
+        android:textColor="#fff"
+        android:textSize="14sp" />
+</FrameLayout>
