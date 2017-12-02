@@ -46,17 +46,20 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 1 -> { //点击个人信息返回的结果
                     mPersonalInfo.performClick()
                 }
-                2 -> {
+                2 -> {//我的消息
                     mMainMineMessage.performClick()
                 }
-                3 -> {
-                    mPresent.getDataByPost(0x1, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_SIGNIN, RequestParamsHelper.getSigninParams())
+                3 -> {//签到
+                    mTvMainMineSign.performClick()
                 }
-                4 -> {
-                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "积分明细", true, false, IntegrationDetailFragment::class.java)
+                4 -> {//我的积分
+                    mIntegrationDetailContainer.performClick()
                 }
-                5 -> {
-                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "我的问答", true, false, AskAndAnswerFragment::class.java)
+                5 -> {//我的问答
+                    mAskAnswer.performClick()
+                }
+                6 -> {//我的订单
+                    mAllOrder.performClick()
                 }
             }
         }
@@ -115,7 +118,12 @@ class MainMineFragment : BaseNetWorkingFragment() {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "购物车", true, false, ShoppingCarFragment::class.java)
         }
         mAllOrder.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "所有订单", true, false, OrderListFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "所有订单", true, false, OrderListFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 6
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
+            }
         }
         mDFKOrder.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "待付款", true, false, OrderListFragment::class.java)

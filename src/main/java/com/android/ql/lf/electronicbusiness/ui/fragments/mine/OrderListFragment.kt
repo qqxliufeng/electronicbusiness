@@ -12,10 +12,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.MyOrderBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.OrderListItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.ExpressInfoFragment
+import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import org.jetbrains.anko.hintTextColor
@@ -25,14 +27,14 @@ import org.jetbrains.anko.support.v4.toast
  * Created by lf on 2017/11/8 0008.
  * @author lf on 2017/11/8 0008
  */
-class OrderListFragment : BaseRecyclerViewFragment<String>() {
+class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         setHasOptionsMenu(true)
     }
 
-    override fun createAdapter(): BaseQuickAdapter<String, BaseViewHolder> =
+    override fun createAdapter(): BaseQuickAdapter<MyOrderBean, BaseViewHolder> =
             OrderListItemAdapter(R.layout.adapter_order_list_item_layout, mArrayList)
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -64,12 +66,15 @@ class OrderListFragment : BaseRecyclerViewFragment<String>() {
     }
 
     override fun onRefresh() {
-        (0..10).forEach { mArrayList.add("") }
-        mBaseAdapter.notifyDataSetChanged()
         super.onRefresh()
-        setLoadEnable(false)
-        setRefreshEnable(false)
-        onRequestEnd(-1)
+        mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_MYORDER,
+                RequestParamsHelper.getMyOrderParams(currentPage))
+    }
+
+    override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
+        super.onRequestSuccess(requestID, result)
+        val json = checkResultCode(result)
+        processList(json, MyOrderBean::class.java)
     }
 
     override fun onMyItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {

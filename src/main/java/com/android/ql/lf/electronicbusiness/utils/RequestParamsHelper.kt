@@ -163,6 +163,10 @@ class RequestParamsHelper {
             return param
         }
 
+        //获取用户所有的订单
+        val ACT_MYORDER = "myorder"
+        fun getMyOrderParams(page: Int,pageSize: Int = 10) = getWithPageParams(page,pageSize)
+
 
         /**              member model  end           **/
 
