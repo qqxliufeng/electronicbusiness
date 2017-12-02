@@ -1,7 +1,9 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration
 
 import android.os.Bundle
+import android.text.Html
 import android.text.TextPaint
+import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.IMallGoodsItemBean
@@ -65,7 +67,7 @@ class IntegrationMallGoodsInfoFragment : BaseNetWorkingFragment() {
                 mIvIntegrationMallDetailOldPrice.paint.flags = TextPaint.ANTI_ALIAS_FLAG
                 mIvIntegrationMallDetailOldPrice.paint.flags = TextPaint.STRIKE_THRU_TEXT_FLAG
                 mIvIntegrationMallDetailOldPrice.text = "￥ ${itemBean!!.jproduct_yprice}"
-                mIvIntegrationMallDetailContent.text = itemBean!!.jproduct_content
+                mIvIntegrationMallDetailContent.text = Html.fromHtml(itemBean!!.jproduct_content)
             }
         } else {
             mIvIntegrationMallDetailExchange.isEnabled = false
