@@ -14,20 +14,16 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import com.a.VipPrivilegeItemInfoFragment
 import com.android.ql.lf.electronicbusiness.R
-import com.android.ql.lf.electronicbusiness.ui.activities.ChatActivity
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import com.hyphenate.helpdesk.easeui.util.IntentBuilder
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlinx.android.synthetic.main.fragment_personal_cut_item_info_layout.*
 import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.toast
 
 

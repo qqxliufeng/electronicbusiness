@@ -14,7 +14,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import com.a.VipPrivilegeItemInfoFragment
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
@@ -110,7 +109,7 @@ class TeamCutItemInfoFragment : BaseNetWorkingFragment() {
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
-        progressDialog = MyProgressDialog(mContext,"正在加载商品详情……")
+        progressDialog = MyProgressDialog(mContext, "正在加载商品详情……")
         progressDialog.show()
     }
 
