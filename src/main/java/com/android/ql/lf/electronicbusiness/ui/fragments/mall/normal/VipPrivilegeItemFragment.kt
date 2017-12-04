@@ -4,15 +4,12 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.View
-import com.a.VipPrivilegeItemInfoFragment
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.VipGoodsBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.VipPrivilegeItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.AbstractLazyLoadFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.IntegrationMallItemFragment
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -21,7 +18,7 @@ import com.chad.library.adapter.base.BaseViewHolder
  * Created by lf on 2017/11/11 0011.
  * @author lf on 2017/11/11 0011
  */
-class VipPrivilegeItemFragment : AbstractLazyLoadFragment<String>() {
+class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
 
     companion object {
 
@@ -34,7 +31,7 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<String>() {
         }
     }
 
-    override fun createAdapter(): BaseQuickAdapter<String, BaseViewHolder> =
+    override fun createAdapter(): BaseQuickAdapter<VipGoodsBean, BaseViewHolder> =
             VipPrivilegeItemAdapter(R.layout.adapter_vip_privilege_item_layout, mArrayList)
 
     override fun getItemDecoration(): RecyclerView.ItemDecoration {
@@ -66,13 +63,22 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<String>() {
     private fun loadData() {
         mPresent.getDataByPost(0x0,
                 RequestParamsHelper.PRODUCT_MODEL,
-                RequestParamsHelper.ACT_PRODUCT_TYPE_SEARCH,
-                RequestParamsHelper.getProductTypeSearchParams(arguments.getString(ITEM_ID_FLAG, ""), "", "3", currentPage))
+                RequestParamsHelper.ACT_PRODUCT,
+                RequestParamsHelper.getProductParams("3", "", currentPage))
     }
+
+    override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
+        super.onRequestSuccess(requestID, result)
+        val json = checkResultCode(result)
+        processList(json, VipGoodsBean::class.java)
+    }
+
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onMyItemClick(adapter, view, position)
-        FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, VipPrivilegeItemInfoFragment::class.java)
+        val bundle = Bundle()
+        bundle.putString(VipPrivilegeItemInfoFragment.GOODS_ID_FLAG, mArrayList[position].product_id)
+        FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, VipPrivilegeItemInfoFragment::class.java)
     }
 
 }

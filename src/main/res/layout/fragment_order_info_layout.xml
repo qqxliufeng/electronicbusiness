@@ -14,7 +14,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#58B6FF"
-            android:drawableRight="@drawable/img_pic_goods_info_dfh"
             android:gravity="center_vertical"
             android:paddingBottom="@dimen/dp_10"
             android:paddingLeft="30dp"
@@ -43,27 +42,26 @@
                 android:layout_marginLeft="@dimen/dp_10">
 
                 <TextView
-                    android:id="@+id/mReceiverPerson"
+                    android:id="@+id/mTvOrderInfoDetailPersonName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="收货人：王大宝"
                     android:textColor="@color/black_tv_color"
                     android:textSize="@dimen/sp_14" />
 
                 <TextView
+                    android:id="@+id/mTvOrderInfoDetailPersonPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="18812345678"
                     android:textColor="@color/black_tv_color"
                     android:textSize="@dimen/sp_14" />
 
                 <TextView
+                    android:id="@+id/mTvOrderInfoDetailPersonDetail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/mReceiverPerson"
+                    android:layout_below="@+id/mTvOrderInfoDetailPersonName"
                     android:layout_marginTop="10dp"
-                    android:text="收货地址：山东省 泰安市 XX区 建国大门内大街 榆次花园小区15号2单元1111室"
                     android:textColor="@color/black_tv_color"
                     android:textSize="@dimen/sp_14" />
 
@@ -77,11 +75,10 @@
             android:padding="@dimen/dp_10">
 
             <TextView
+                android:id="@+id/mTvOrderInfoDetailKtype"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/img_icon_group"
                 android:drawablePadding="@dimen/dp_10"
-                android:text="拇指斗价团体砍"
                 android:textColor="@color/black_tv_color" />
 
             <TextView
@@ -91,11 +88,11 @@
                 android:layout_alignParentRight="true"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
-                android:text="待评价"
                 android:textColor="@color/red_tv_color" />
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/mLlOrderInfoDetailGoodsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#F5F5F5"
@@ -103,9 +100,9 @@
             android:padding="@dimen/dp_10">
 
             <ImageView
+                android:id="@+id/mIvOrderInfoDetailGoodsPic"
                 android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/img_test_pic_03" />
+                android:layout_height="100dp"/>
 
             <RelativeLayout
                 android:layout_width="0dp"
@@ -116,19 +113,19 @@
                 android:paddingTop="@dimen/dp_10">
 
                 <TextView
+                    android:id="@+id/mTvOrderInfoDetailGoodsTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="【宝娜正斯品】秋冬换季全棉皿四件套100%斜纹纯棉亲肤四件套"
                     android:textColor="@color/black_tv_color"
                     android:textSize="@dimen/sp_14" />
 
                 <TextView
+                    android:id="@+id/mTvOrderInfoDetailGoodsSpecification"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:text="白色，XXL"
                     android:textColor="#949494"
                     android:textSize="14sp" />
 
@@ -143,23 +140,23 @@
                 android:paddingTop="@dimen/dp_10">
 
                 <TextView
-                    android:id="@+id/mMoneyCount"
+                    android:id="@+id/mTvOrderInfoDetailGoodsPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="￥288.00"
                     android:textColor="#E10F0F"
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@+id/mTvOrderInfoDetailGoodsNum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_below="@+id/mMoneyCount"
-                    android:layout_marginTop="5dp"
-                    android:text="X1" />
+                    android:layout_below="@+id/mTvOrderInfoDetailGoodsPrice"
+                    android:layout_marginTop="5dp"/>
 
             </RelativeLayout>
 
@@ -214,10 +211,10 @@
                     android:textSize="@dimen/sp_14" />
 
                 <TextView
+                    android:id="@+id/mTvOrderInfoDetailGoodsAllPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="￥71.60"
                     android:textColor="#969696"
                     android:textSize="@dimen/sp_14" />
 
@@ -239,10 +236,10 @@
                     android:textSize="@dimen/sp_14" />
 
                 <TextView
+                    android:id="@+id/mTvOrderInfoDetailGoodsExpressPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="￥10.00"
                     android:textColor="#969696"
                     android:textSize="@dimen/sp_14" />
 
@@ -266,10 +263,10 @@
                     android:textSize="@dimen/sp_16" />
 
                 <TextView
+                    android:id="@+id/mTvOrderInfoDetailOrderAllPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="￥81.60"
                     android:textColor="@color/black_tv_color"
                     android:textSize="@dimen/sp_16" />
 
@@ -293,13 +290,14 @@
             android:paddingTop="5dp">
 
             <TextView
+                android:id="@+id/mTvOrderInfoDetailOrderSN"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="订单编号：15565465789"
                 android:textColor="@color/black_tv_color"
                 android:textSize="@dimen/sp_14" />
 
             <TextView
+                android:id="@+id/mTvOrderInfoDetailOrderCopySN"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -315,28 +313,34 @@
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/mTvOrderInfoDetailOrderCTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/dp_10"
-            android:text="创建时间：2017-10-11 10:30"
             android:textColor="@color/black_tv_color"
             android:textSize="@dimen/sp_14" />
 
         <TextView
+            android:id="@+id/mTvOrderInfoDetailOrderFTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/dp_10"
-            android:text="付款时间：2017-10-11 10:30"
             android:textColor="@color/black_tv_color"
             android:textSize="@dimen/sp_14" />
 
         <TextView
+            android:id="@+id/mTvOrderInfoDetailOrderHTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/dp_10"
-            android:text="发货时间：2017-10-11 10:30"
+            android:textColor="@color/black_tv_color"
+            android:textSize="@dimen/sp_14" />
+        <TextView
+            android:id="@+id/mTvOrderInfoDetailOrderFinTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/dp_10"
             android:textColor="@color/black_tv_color"
             android:textSize="@dimen/sp_14" />
     </LinearLayout>
-
 </android.support.v4.widget.NestedScrollView>

@@ -12,6 +12,33 @@ public class MyOrderBean {
     private String order_oprice;
     private String order_fc;
     private String order_token;
+    private String product_ktype;
+    private String order_sn;
+    private String order_specification;
+
+    public String getProduct_ktype() {
+        return product_ktype;
+    }
+
+    public void setProduct_ktype(String product_ktype) {
+        this.product_ktype = product_ktype;
+    }
+
+    public String getOrder_sn() {
+        return order_sn;
+    }
+
+    public void setOrder_sn(String order_sn) {
+        this.order_sn = order_sn;
+    }
+
+    public String getOrder_specification() {
+        return order_specification;
+    }
+
+    public void setOrder_specification(String order_specification) {
+        this.order_specification = order_specification;
+    }
 
     public String getProduct_name() {
         return product_name;

@@ -39,9 +39,9 @@
                         android:paddingTop="5dp">
 
                         <TextView
+                            android:id="@+id/mTvBottomParamPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="￥298"
                             android:textColor="@color/red_tv_color"
                             android:textSize="20sp" />
 
@@ -55,18 +55,18 @@
                     </RelativeLayout>
 
                     <TextView
+                        android:id="@+id/mTvBottomParamReleaseCount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="库存236件"
                         android:textColor="@color/black_tv_color"
                         android:textSize="@dimen/sp_14" />
 
                     <TextView
+                        android:id="@+id/mTvBottomParamName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="拉菲传奇波尔多干红6瓶装红酒"
                         android:textColor="@color/black_tv_color"
                         android:textSize="@dimen/sp_14" />
                 </LinearLayout>
@@ -81,7 +81,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <LinearLayout
+                        android:id="@+id/mLlBottomParamRuleContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+                    <!--<TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/dp_10"
@@ -177,7 +183,7 @@
                             android:layout_margin="@dimen/dp_10"
                             android:background="@drawable/selector_tv_bg1"
                             android:text="XXL" />
-                    </com.google.android.flexbox.FlexboxLayout>
+                    </com.google.android.flexbox.FlexboxLayout>-->
 
                     <View
                         android:layout_width="match_parent"
@@ -217,7 +223,6 @@
                             android:layout_centerVertical="true"
                             android:layout_toLeftOf="@+id/mTvBottomParamAdd"
                             android:gravity="center"
-                            android:text="12"
                             android:textColor="@color/black_tv_color" />
 
                         <TextView
