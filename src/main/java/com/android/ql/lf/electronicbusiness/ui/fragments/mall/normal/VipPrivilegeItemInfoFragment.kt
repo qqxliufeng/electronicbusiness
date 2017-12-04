@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.SpecificationBean
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyFlexboxLayout
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
@@ -192,9 +193,4 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
     }
 
 
-    class SpecificationBean {
-        lateinit var name: String
-        lateinit var item: ArrayList<String>
-        lateinit var pic: ArrayList<String>
-    }
 }
