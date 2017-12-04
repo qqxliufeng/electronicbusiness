@@ -24,7 +24,6 @@
             android:layout_alignParentRight="true"
             android:paddingLeft="@dimen/dp_10"
             android:paddingRight="@dimen/dp_10"
-            android:text="待评价"
             android:textColor="@color/red_tv_color" />
     </RelativeLayout>
 
@@ -36,9 +35,9 @@
         android:padding="@dimen/dp_10">
 
         <ImageView
+            android:id="@+id/mIvOrderListItemPic"
             android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/img_test_pic_03" />
+            android:layout_height="100dp" />
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -49,19 +48,19 @@
             android:paddingTop="@dimen/dp_10">
 
             <TextView
+                android:id="@+id/mTvOrderListItemTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="3"
-                android:text="【宝娜正斯品】秋冬换季全棉皿四件套100%斜纹纯棉亲肤四件套"
                 android:textColor="@color/black_tv_color"
                 android:textSize="@dimen/sp_14" />
 
             <TextView
+                android:id="@+id/mTvOrderListItemSpecification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:text="白色，XXL"
                 android:textColor="#949494"
                 android:textSize="14sp" />
 
@@ -76,35 +75,32 @@
             android:paddingTop="@dimen/dp_10">
 
             <TextView
-                android:id="@+id/mMoneyCount"
+                android:id="@+id/mTvOrderListItemPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="￥288.00"
                 android:textColor="#E10F0F"
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/mIvOrderListItemNum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/mMoneyCount"
-                android:layout_marginTop="5dp"
-                android:text="X1" />
-
+                android:layout_below="@+id/mTvOrderListItemPrice"
+                android:layout_marginTop="5dp"/>
         </RelativeLayout>
-
     </LinearLayout>
 
     <TextView
+        android:id="@+id/mTvOrderListItemInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#fff"
         android:gravity="right"
         android:padding="@dimen/dp_10"
-        android:text="共1件商品 合计￥88.60（含运费￥0.00"
         android:textColor="@color/black_tv_color"
         android:textSize="@dimen/sp_14" />
 

@@ -2,6 +2,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
@@ -55,7 +56,6 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 return false
             }
-
         })
     }
 
@@ -67,6 +67,12 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
 
     override fun onRefresh() {
         super.onRefresh()
+        mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_MYORDER,
+                RequestParamsHelper.getMyOrderParams(currentPage))
+    }
+
+    override fun onLoadMore() {
+        super.onLoadMore()
         mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_MYORDER,
                 RequestParamsHelper.getMyOrderParams(currentPage))
     }
@@ -87,8 +93,8 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
     }
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
-        FragmentContainerActivity.startFragmentContainerActivity(mContext, "订单详情", true, false, OrderInfoFragment::class.java)
+        val bundle = Bundle()
+        bundle.putString(OrderInfoFragment.ORDER_INFO_ID_FLAG,mArrayList[position].order_id)
+        FragmentContainerActivity.startFragmentContainerActivity(mContext, "订单详情", true, false,bundle, OrderInfoFragment::class.java)
     }
-
-
 }

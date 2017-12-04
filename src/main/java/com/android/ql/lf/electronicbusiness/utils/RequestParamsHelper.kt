@@ -165,8 +165,17 @@ class RequestParamsHelper {
 
         //获取用户所有的订单
         val ACT_MYORDER = "myorder"
-        fun getMyOrderParams(page: Int,pageSize: Int = 10) = getWithPageParams(page,pageSize)
 
+        fun getMyOrderParams(page: Int, pageSize: Int = 10) = getWithPageParams(page, pageSize)
+
+        //订单详情
+        val ACT_ORDER_DETAIL = "order_detail"
+
+        fun getOrderDetailParam(oid: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("oid", oid)
+            return param
+        }
 
         /**              member model  end           **/
 
@@ -324,6 +333,15 @@ class RequestParamsHelper {
             val param = getWithPageParams(page, pagesize)
             param.addParam("ktype", ktype)
             param.addParam("sort", sort)
+            return param
+        }
+
+        //砍价商品详情
+        val ACT_PRODUCT_DETAIL = "product_detail"
+
+        fun getProductDetailParam(gid: String): ApiParams {
+            val param = getBaseParams()
+            param.addParam("gid", gid)
             return param
         }
 

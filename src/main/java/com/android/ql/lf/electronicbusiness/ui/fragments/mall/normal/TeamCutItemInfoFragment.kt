@@ -2,6 +2,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -17,6 +18,8 @@ import com.a.VipPrivilegeItemInfoFragment
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
+import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
+import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
@@ -28,6 +31,10 @@ import org.jetbrains.anko.backgroundColor
  * @author lf on 2017/11/13 0013
  */
 class TeamCutItemInfoFragment : BaseNetWorkingFragment() {
+
+    companion object {
+        val GOODS_ID_FLAG = "goods_id_flag"
+    }
 
     private var shareDialog: BottomSheetDialog? = null
 
@@ -94,6 +101,21 @@ class TeamCutItemInfoFragment : BaseNetWorkingFragment() {
             shareDialog!!.show()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL, RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
+    }
+
+    override fun onRequestStart(requestID: Int) {
+        super.onRequestStart(requestID)
+        progressDialog = MyProgressDialog(mContext,"正在加载商品详情……")
+        progressDialog.show()
+    }
+
+    override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
+        super.onRequestSuccess(requestID, result)
     }
 
     override fun onDestroyView() {

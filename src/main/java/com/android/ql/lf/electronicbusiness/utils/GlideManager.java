@@ -54,4 +54,9 @@ public class GlideManager {
                     .into(imageView);
         }
     }
+
+    public static void downImage(Context context,String src){
+//        Glide.with(context).load(src).downloadOnly(500,500)
+    }
+
 }
