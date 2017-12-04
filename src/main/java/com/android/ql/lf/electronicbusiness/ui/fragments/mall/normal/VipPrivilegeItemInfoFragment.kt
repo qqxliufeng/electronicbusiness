@@ -1,34 +1,26 @@
-package com.a
+package com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.webkit.WebViewClient
-
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Html
 import android.text.TextPaint
-import android.text.method.ScrollingMovementMethod
-import android.util.Log
 import android.view.View
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.TeamCutItemInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.Constants
-import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.xiao.nicevideoplayer.NiceVideoPlayer
-import kotlinx.android.synthetic.main.vip_privilege_item_info_layout.*
-import com.xiao.nicevideoplayer.TxVideoPlayerController
 import com.xiao.nicevideoplayer.NiceVideoPlayerManager
+import com.xiao.nicevideoplayer.TxVideoPlayerController
+import kotlinx.android.synthetic.main.vip_privilege_item_info_layout.*
 import org.jetbrains.anko.backgroundColor
-import java.net.URL
 
 
 /**
@@ -82,10 +74,14 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         val bottomView = View.inflate(mContext, R.layout.layout_vip_privilege_item_goods_info_bottom_layout, null)
         wb_detail = bottomView.findViewById(R.id.mTvVipPrivilegeGoodsInfoBottomDetail)
         wb_detail.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                return super.shouldOverrideUrlLoading(view, url)
+
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                super.shouldOverrideUrlLoading(view, url)
+                view.loadUrl(url)
+                return true
             }
         }
+        wb_detail.settings.javaScriptEnabled = true
         adapter.addFooterView(bottomView)
     }
 
@@ -117,6 +113,7 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
             tv_goods_name.text = detailJson.optString("product_name")
             tv_goods_content.text = Html.fromHtml(detailJson.optString("product_ms"))
             val detailHtml = detailJson.optString("product_content")
+            wb_detail.loadData(detailHtml.replace("src=\"","src=\"${Constants.BASE_IP}"), "text/html; charset=UTF-8", null)
             mNiceVideoPlayer.setUp(detailJson.optString("product_video"), null)
         }
     }
