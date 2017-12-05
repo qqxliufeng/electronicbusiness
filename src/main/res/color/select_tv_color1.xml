@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:color="@color/black_tv_color" android:state_checked="false"/>
-    <item android:color="#fff" android:state_checked="true"/>
+    <item android:color="#ffffff" android:state_checked="true" />
+    <item android:color="@color/black_tv_color" android:state_checked="false" />
 
 </selector>

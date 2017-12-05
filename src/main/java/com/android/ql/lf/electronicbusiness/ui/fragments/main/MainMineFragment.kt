@@ -61,6 +61,9 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 6 -> {//我的订单
                     mAllOrder.performClick()
                 }
+                7 -> { //购物车
+                    mShoppingCar.performClick()
+                }
             }
         }
         mMineTopView.alpha = 0.0f
@@ -115,7 +118,12 @@ class MainMineFragment : BaseNetWorkingFragment() {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "意见反馈", true, false, FeedBackFragment::class.java)
         }
         mShoppingCar.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "购物车", true, false, ShoppingCarFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "购物车", true, false, ShoppingCarFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 7
+                LoginFragment.startLogin(context)
+            }
         }
         mAllOrder.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {

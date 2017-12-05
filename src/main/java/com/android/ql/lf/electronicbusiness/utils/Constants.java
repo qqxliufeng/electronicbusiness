@@ -2,8 +2,12 @@ package com.android.ql.lf.electronicbusiness.utils;
 
 import android.os.Environment;
 
+import com.hyphenate.helpdesk.easeui.Constant;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/10/20 0020.
@@ -44,4 +48,52 @@ public class Constants {
         }
         return "";
     }
+
+    /**
+     * 生成签名
+     */
+    public static String genAppSign(List<WXModel> list) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            sb.append(list.get(i).key);
+            sb.append('=');
+            sb.append(list.get(i).value);
+            sb.append('&');
+        }
+        sb.append("key=");
+        sb.append("1437d150bbb198f577583ddbe667b52f");
+        String appSign = md5(sb.toString()).toUpperCase();
+        return appSign;
+    }
+
+    public static String md5(String src) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("md5");
+            byte[] bs = digest.digest(src.getBytes());
+            String hexString = "";
+            for (byte b : bs) {
+                int temp = b & 255;
+                if (temp < 16 && temp >= 0) {
+                    hexString = hexString + "0" + Integer.toHexString(temp);
+                } else {
+                    hexString = hexString + Integer.toHexString(temp);
+                }
+            }
+            return hexString;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static class WXModel {
+        String key;
+        String value;
+
+        public WXModel(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
 }

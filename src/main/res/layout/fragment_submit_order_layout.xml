@@ -40,26 +40,26 @@
                         android:layout_height="wrap_content">
 
                         <TextView
+                            android:id="@+id/mIvSubmitOrderAddressName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="收货人：王大宝"
                             android:textColor="@color/black_tv_color"
                             android:textSize="@dimen/sp_14" />
 
                         <TextView
+                            android:id="@+id/mIvSubmitOrderAddressPhone"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
-                            android:text="188888888885"
                             android:textColor="@color/black_tv_color"
                             android:textSize="@dimen/sp_14" />
                     </RelativeLayout>
 
                     <TextView
+                        android:id="@+id/mIvSubmitOrderAddressDetail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_10"
-                        android:text="收货地址：山东省 泰安市 XX区  建国大门内大街 榆次花园小区15号楼2单元1111室"
                         android:textSize="@dimen/sp_12" />
                 </LinearLayout>
 
@@ -87,15 +87,13 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/mIvSubmitOrderGoodsKType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#fff"
-                    android:drawableLeft="@drawable/img_icon_group"
                     android:drawablePadding="@dimen/dp_10"
                     android:padding="@dimen/dp_10"
-                    android:text="拇指斗价团体砍"
                     android:textColor="@color/black_tv_color" />
-
 
                 <View
                     android:layout_width="match_parent"
@@ -109,58 +107,63 @@
                     android:orientation="horizontal"
                     android:padding="@dimen/dp_10">
 
-
                     <ImageView
+                        android:id="@+id/mIvSubmitOrderGoodsPic"
                         android:layout_width="100dp"
-                        android:layout_height="100dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/img_icon_test_pic_05" />
+                        android:layout_height="100dp" />
 
-
-                    <LinearLayout
-                        android:id="@+id/mLlShoppingCarItemInfoContainer"
-                        android:layout_width="match_parent"
+                    <RelativeLayout
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:orientation="vertical"
+                        android:layout_weight="2"
                         android:paddingLeft="@dimen/dp_10">
 
                         <TextView
+                            android:id="@+id/mIvSubmitOrderGoodsName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
-                            android:maxLines="2"
-                            android:text="秋冬换季全棉四件套100%斜纹纯棉亲肤四件套"
-                            android:textColor="@color/black_tv_color" />
+                            android:maxLines="3"
+                            android:textColor="@color/black_tv_color"
+                            android:textSize="@dimen/sp_14" />
 
                         <TextView
+                            android:id="@+id/mIvSubmitOrderGoodsSpe"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:textColor="#949494"
+                            android:textSize="14sp" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingRight="@dimen/dp_10">
+
+                        <TextView
+                            android:id="@+id/mIvSubmitOrderGoodsPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dp_10"
-                            android:text="白色，XXL"
-                            android:textColor="#9C9C9C" />
+                            android:layout_alignParentRight="true"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="#E10F0F"
+                            android:textSize="16sp" />
 
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:text="￥188.00"
-                                android:textColor="@color/red_tv_color"
-                                android:textSize="@dimen/sp_16" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:layout_alignParentRight="true"
-                                android:text="X1"
-                                android:textColor="#9c9c9c" />
-                        </RelativeLayout>
-                    </LinearLayout>
+                        <TextView
+                            android:id="@+id/mIvSubmitOrderGoodsNum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_below="@+id/mIvSubmitOrderGoodsPrice"
+                            android:layout_marginTop="5dp"/>
+                    </RelativeLayout>
                 </LinearLayout>
+
             </LinearLayout>
 
             <RelativeLayout

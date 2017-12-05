@@ -37,7 +37,7 @@ public abstract class BaseNetWorkingFragment extends BaseFragment implements INe
                 if (present != null) {
                     this.mPresent = present;
                 }
-            }else {
+            } else {
                 DaggerApiServerComponent.builder().appComponent(EBApplication.getInstance().getAppComponent()).build().inject(this);
             }
         } else {
@@ -65,6 +65,7 @@ public abstract class BaseNetWorkingFragment extends BaseFragment implements INe
     public void onRequestEnd(int requestID) {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
+            progressDialog = null;
         }
     }
 

@@ -16,27 +16,28 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/dp_10">
 
+
             <TextView
+                android:id="@+id/mTvAddressSelectName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="王小宝"
                 android:textColor="@color/black_tv_color"
                 android:textSize="@dimen/sp_16" />
 
             <TextView
+                android:id="@+id/mTvAddressSelectPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:text="188123456789"
                 android:textColor="@color/black_tv_color"
                 android:textSize="@dimen/sp_16" />
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/mTvAddressSelectDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/dp_10"
-            android:text="山东省 泰安市 XX区 建国大门内大街 榆次花园小区15号楼2单元111室"
             android:textColor="@color/black_tv_color"
             android:textSize="@dimen/sp_14" />
 
@@ -48,8 +49,5 @@
         android:layout_gravity="center"
         android:layout_margin="@dimen/dp_10"
         android:src="@drawable/img_icon_pitchon_pay_success_u" />
-
-
-
 
 </LinearLayout>

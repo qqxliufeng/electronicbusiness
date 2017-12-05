@@ -158,6 +158,11 @@ public class FragmentContainerActivity extends BaseActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onDestroy() {
         if (present != null) {
             present = null;

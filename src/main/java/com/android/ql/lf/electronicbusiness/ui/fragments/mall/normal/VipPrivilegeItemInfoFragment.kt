@@ -2,38 +2,36 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Html
 import android.text.TextPaint
-import android.util.Log
-import android.util.TypedValue
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.ImageView
-import android.widget.LinearLayout
+import android.widget.FrameLayout
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.SpecificationBean
+import com.android.ql.lf.electronicbusiness.data.UserInfo
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
-import com.android.ql.lf.electronicbusiness.ui.views.MyFlexboxLayout
+import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
+import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.Constants
-import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.google.gson.Gson
 import com.xiao.nicevideoplayer.NiceVideoPlayer
 import com.xiao.nicevideoplayer.NiceVideoPlayerManager
 import com.xiao.nicevideoplayer.TxVideoPlayerController
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlinx.android.synthetic.main.vip_privilege_item_info_layout.*
 import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.support.v4.toast
+import org.json.JSONArray
+import rx.Subscription
 
 
 /**
@@ -59,12 +57,35 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
 
     private lateinit var controller: TxVideoPlayerController
 
+    private var bottomParamDialog: BottomGoodsParamDialog? = null
+
+    private lateinit var subscription: Subscription
+
+    private var picJsonArray: JSONArray? = null
+    private var specifications: ArrayList<SpecificationBean>? = null
+
+    private var goodsId: String? = null
+
     override fun getLayoutId() = R.layout.vip_privilege_item_info_layout
 
     override fun initView(view: View?) {
+        subscription = RxBus.getDefault().toObservable(UserInfo::class.java).subscribe {
+            when (UserInfo.getInstance().loginTag) {
+                0x50 -> {
+                    if (picJsonArray != null && specifications != null) {
+                        showBottomParamDialog(picJsonArray!!, specifications!!)
+                    }
+                }
+                0x51 -> {
+                    if (picJsonArray != null && specifications != null) {
+                        showBottomParamDialog(picJsonArray!!, specifications!!)
+                    }
+                }
+            }
+        }
         controller = TxVideoPlayerController(mContext)
         controller.setTitle("")
-        mNiceVideoPlayer.setPlayerType(NiceVideoPlayer.TYPE_IJK)
+        mNiceVideoPlayer.setPlayerType(NiceVideoPlayer.TYPE_NATIVE)
         mNiceVideoPlayer.setController(controller)
         mNiceVideoPlayer.backgroundColor = Color.WHITE
 
@@ -98,7 +119,6 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         }
         wb_detail.settings.javaScriptEnabled = true
         adapter.addFooterView(bottomView)
-
     }
 
     override fun onStop() {
@@ -113,84 +133,88 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
-        progressDialog = MyProgressDialog(mContext, "正在加载商品详情……")
+        progressDialog = MyProgressDialog(mContext, "正在加载……")
         progressDialog.show()
     }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
-        if (json != null) {
-            val detailJson = json.optJSONObject("result").optJSONObject("detail")
-            tv_sell.text = "${detailJson.optString("product_sv")}人购买"
-            tv_release_count.text = "库存${detailJson.optString("product_entrepot")}"
-            tv_price.text = "￥ ${detailJson.optString("product_price")}"
-            tv_old_price.text = "￥ ${detailJson.optString("product_yprice")}"
-            tv_goods_name.text = detailJson.optString("product_name")
-            tv_goods_content.text = Html.fromHtml(detailJson.optString("product_ms"))
+        if (requestID == 0x0) {
+            if (json != null) {
+                val detailJson = json.optJSONObject("result").optJSONObject("detail")
+                goodsId = detailJson.optString("product_id")
+                tv_sell.text = "${detailJson.optString("product_sv")}人购买"
+                tv_release_count.text = "库存${detailJson.optString("product_entrepot")}"
+                tv_price.text = "￥ ${detailJson.optString("product_price")}"
+                tv_old_price.text = "￥ ${detailJson.optString("product_yprice")}"
+                tv_goods_name.text = detailJson.optString("product_name")
+                tv_goods_content.text = Html.fromHtml(detailJson.optString("product_ms"))
 
-            val picJsonArray = detailJson.optJSONArray("product_pic")
-
-            val specificationJsonArray = detailJson.optJSONArray("product_specification")
-            val specifications = arrayListOf<SpecificationBean>()
-            (0 until specificationJsonArray.length()).forEach {
-                val specification = Gson().fromJson(specificationJsonArray.optJSONObject(it).toString(), SpecificationBean::class.java)
-                specifications.add(specification)
-            }
-            mTvVipPrivilegeGoodsInfoCollection.setOnClickListener {
-                val bottomDialog = BottomSheetDialog(mContext)
-                val contentView = View.inflate(mContext, R.layout.layout_personal_cut_item_goods_info_bootom_params_layout, null)
-                val tvPrice = contentView.findViewById<TextView>(R.id.mTvBottomParamPrice)
-                val tvReleaseCount = contentView.findViewById<TextView>(R.id.mTvBottomParamReleaseCount)
-                val tvName = contentView.findViewById<TextView>(R.id.mTvBottomParamName)
-                tvPrice.text = tv_price.text
-                tvReleaseCount.text = tv_release_count.text
-                tvName.text = tv_goods_name.text
-
-                val llContainer = contentView.findViewById<LinearLayout>(R.id.mLlBottomParamRuleContainer)
-                val pic = contentView.findViewById<ImageView>(R.id.mIvGoodsPic)
-                if (!specifications.isEmpty()) {
-                    for (specification in specifications) {
-                        val myFlexboxLayout = MyFlexboxLayout(context)
-                        myFlexboxLayout.setTitle(specification.name)
-                        myFlexboxLayout.addItems(specification.item)
-                        myFlexboxLayout.setOnItemClickListener {
-                            GlideManager.loadRoundImage(context, specification.pic[it], pic, 15)
-                        }
-                        llContainer.addView(myFlexboxLayout)
+                picJsonArray = detailJson.optJSONArray("product_pic")
+                val specificationJsonArray = detailJson.optJSONArray("product_specification")
+                specifications = arrayListOf()
+                (0 until specificationJsonArray.length()).forEach {
+                    val specification = Gson().fromJson(specificationJsonArray.optJSONObject(it).toString(), SpecificationBean::class.java)
+                    specifications!!.add(specification)
+                }
+                mTvVipPrivilegeGoodsInfoCollection.setOnClickListener {
+                    if (UserInfo.getInstance().isLogin) {
+                        showBottomParamDialog(picJsonArray!!, specifications!!)
+                    } else {
+                        UserInfo.getInstance().loginTag = 0x50 //加入购物车
+                        LoginFragment.startLogin(context)
                     }
                 }
-                val ivClose = contentView.findViewById<ImageView>(R.id.mTvBottomParamClose)
-                ivClose.setOnClickListener {
-                    bottomDialog.dismiss()
+                mTvVipPrivilegeGoodsInfoBuy.setOnClickListener {
+                    if (UserInfo.getInstance().isLogin) {
+                        showBottomParamDialog(picJsonArray!!, specifications!!)
+                    } else {
+                        UserInfo.getInstance().loginTag = 0x51 //立即购买
+                        LoginFragment.startLogin(context)
+                    }
                 }
-
-                if (picJsonArray != null && picJsonArray.length() > 0) {
-                    GlideManager.loadRoundImage(context, picJsonArray.optString(0), pic, 15)
-                }
-
-                bottomDialog.setContentView(contentView)
-                bottomDialog.window.findViewById<View>(R.id.design_bottom_sheet).backgroundColor = Color.TRANSPARENT
-                val height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400.0f, mContext.resources.displayMetrics).toInt()
-                contentView.layoutParams.height = height
-                val behavior = BottomSheetBehavior.from(contentView.parent as View)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                behavior.peekHeight = height
-                bottomDialog.show()
+                mNiceVideoPlayer.setUp(detailJson.optString("product_video"), null)
+                val detailHtml = detailJson.optString("product_content")
+                wb_detail.loadData(detailHtml.replace("src=\"", "src=\"${Constants.BASE_IP}"), "text/html; charset=UTF-8", null)
             }
-
-
-            mNiceVideoPlayer.setUp(detailJson.optString("product_video"), null)
-            val detailHtml = detailJson.optString("product_content")
-            wb_detail.loadData(detailHtml.replace("src=\"", "src=\"${Constants.BASE_IP}"), "text/html; charset=UTF-8", null)
+        } else if (requestID == 0x1) {
+            if (json != null) {
+                toast("加入购物车成功")
+            }
         }
     }
 
+    override fun onRequestEnd(requestID: Int) {
+        super.onRequestEnd(requestID)
+    }
+
+    private fun showBottomParamDialog(picJsonArray: JSONArray, specifications: ArrayList<SpecificationBean>) {
+        if (bottomParamDialog == null) {
+            val defaultPicPath = if (picJsonArray != null && picJsonArray.length() > 0) {
+                picJsonArray.optString(0)
+            } else {""}
+            bottomParamDialog = BottomGoodsParamDialog(context)
+            bottomParamDialog!!.bindDataToView(tv_price.text.toString(),
+                    tv_release_count.text.toString(),
+                    tv_goods_name.text.toString(),
+                    defaultPicPath, specifications)
+            bottomParamDialog!!.setOnGoodsConfirmClickListener { specification, num ->
+                mPresent.getDataByPost(0x1, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_ADD_SHOPCART, RequestParamsHelper.getAddShopCartParam(goodsId!!, specification, num))
+            }
+        }
+        bottomParamDialog!!.show()
+    }
+
+    override fun onDestroyView() {
+        if (!subscription.isUnsubscribed) {
+            subscription.unsubscribe()
+        }
+        super.onDestroyView()
+    }
 
     class VipPrivilegeItemGoodsInfoAdapter(layoutId: Int, list: ArrayList<String>) : BaseQuickAdapter<String, BaseViewHolder>(layoutId, list) {
         override fun convert(helper: BaseViewHolder?, item: String?) {
         }
     }
-
-
 }

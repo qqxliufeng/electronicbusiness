@@ -51,8 +51,20 @@
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoDisplay" />
-        <activity android:name=".ui.activities.SelectAddressActivity"
-            android:theme="@style/SelectAddressTheme"/>
+        <activity
+            android:name=".ui.activities.SelectAddressActivity"
+            android:theme="@style/SelectAddressTheme" />
+
+        <activity
+            android:name=".wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="wx6d1db840e54fcafc"/>
+            </intent-filter>
+        </activity>
 
     </application>
 

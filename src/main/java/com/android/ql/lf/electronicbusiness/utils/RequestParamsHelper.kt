@@ -96,6 +96,8 @@ class RequestParamsHelper {
         val ACT_CITY = "city"
         val ACT_PROVINCE_CITY_AREA = "province_city_area"
 
+        fun getDefaultAddress() = getWithIdParams()
+
         fun getProvinceParam() = getBaseParams()
 
         fun getCityParam(pid: String): ApiParams {
@@ -174,6 +176,40 @@ class RequestParamsHelper {
         fun getOrderDetailParam(oid: String): ApiParams {
             val param = getWithIdParams()
             param.addParam("oid", oid)
+            return param
+        }
+
+        //加入购物车
+        val ACT_ADD_SHOPCART = "add_shopcart"
+
+        fun getAddShopCartParam(gid: String, specification: String, num: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("gid", gid)
+            param.addParam("specification", specification)
+            param.addParam("num", num)
+            return param
+        }
+
+        //购物车
+        val ACT_SHOPCART = "shopcart"
+
+        fun getShopcartParam(page: Int, pageSize: Int = 10) = getWithPageParams(page, pageSize)
+
+        //删除购物车商品
+        val ACT_DEL_SHOPCART = "del_shopcart"
+
+        fun getDelShopcartParam(cid: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("cid", cid)
+            return param
+        }
+
+        //修改商品数量
+        val ACT_UPDATE_SHOPCART = "update_shopcart"
+        fun getUpdateShopcart(cid: String,num:String):ApiParams{
+            val param = getWithIdParams()
+            param.addParam("cid",cid)
+            param.addParam("num",num)
             return param
         }
 
@@ -273,6 +309,17 @@ class RequestParamsHelper {
             return param
         }
 
+        //会员中心
+        val ACT_BBS = "bbs"
+
+        fun getBBSParam(payType: String, money: String, numtime: String = "6"): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("paytype", payType)
+            param.addParam("price", money)
+            param.addParam("numtime", numtime)
+            return param
+        }
+
         /**              qaa model  end           **/
 
         /**              product model  end           **/
@@ -346,6 +393,18 @@ class RequestParamsHelper {
         }
 
         /**              product model  end           **/
+
+        /**              order model  end           **/
+
+        val ORDER_MODEL = "order"
+
+
+
+
+
+        /**              order model  end           **/
+
+
 
     }
 

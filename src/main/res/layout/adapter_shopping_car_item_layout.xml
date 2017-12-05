@@ -11,11 +11,10 @@
         android:padding="@dimen/dp_10">
 
         <TextView
+            android:id="@+id/mTvShoppingCarItemKType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/img_icon_group"
             android:drawablePadding="@dimen/dp_10"
-            android:text="拇指斗价团体砍"
             android:textColor="@color/black_tv_color" />
 
         <TextView
@@ -47,11 +46,11 @@
             android:src="@drawable/img_shopping_car_selector_icon" />
 
         <ImageView
+            android:id="@+id/mTvShoppingCarItemPic"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginLeft="20dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/img_icon_test_pic_05" />
+            android:scaleType="centerCrop"/>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -62,22 +61,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="gone"
                 android:paddingLeft="@dimen/dp_10">
 
                 <TextView
+                    android:id="@+id/mTvShoppingCarItemName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:text="秋冬换季全棉四件套100%斜纹纯棉亲肤四件套"
                     android:textColor="@color/black_tv_color" />
 
                 <TextView
+                    android:id="@+id/mTvShoppingCarItemSpe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_10"
-                    android:text="白色，XXL"
                     android:textColor="#9C9C9C" />
 
                 <RelativeLayout
@@ -85,22 +83,21 @@
                     android:layout_height="match_parent">
 
                     <TextView
+                        android:id="@+id/mTvShoppingCarItemPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:text="￥188.00"
                         android:textColor="@color/red_tv_color"
                         android:textSize="@dimen/sp_16" />
 
                     <TextView
+                        android:id="@+id/mTvShoppingCarItemNum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentRight="true"
-                        android:text="X1"
                         android:textColor="#9c9c9c" />
                 </RelativeLayout>
-
 
             </LinearLayout>
 
@@ -109,7 +106,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:focusable="true"
-                android:focusableInTouchMode="true">
+                android:focusableInTouchMode="true"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -119,6 +117,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/mTvShoppingCarItemDelCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/shape_tv_shopping_car_change_bg"
@@ -137,9 +136,11 @@
                         android:gravity="center"
                         android:maxLength="9"
                         android:maxLines="1"
-                        android:textSize="@dimen/sp_14"
-                        android:textColor="@color/black_tv_color" />
+                        android:textColor="@color/black_tv_color"
+                        android:textSize="@dimen/sp_14" />
+
                     <TextView
+                        android:id="@+id/mTvShoppingCarItemAddCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -154,6 +155,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/mTvShoppingCarItemEditDel"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"

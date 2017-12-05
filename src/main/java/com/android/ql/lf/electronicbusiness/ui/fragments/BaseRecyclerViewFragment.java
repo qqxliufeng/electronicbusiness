@@ -156,11 +156,10 @@ public abstract class BaseRecyclerViewFragment<T> extends BaseNetWorkingFragment
         });
     }
 
-
     @Override
     public void onRequestFail(int requestID, @NotNull Throwable e) {
         super.onRequestFail(requestID, e);
-        mBaseAdapter.setEmptyView(getEmptyLayoutId());
+        setEmptyView();
     }
 
     @CallSuper

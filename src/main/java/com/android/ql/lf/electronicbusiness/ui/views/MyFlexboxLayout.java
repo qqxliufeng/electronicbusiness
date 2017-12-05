@@ -31,6 +31,8 @@ public class MyFlexboxLayout extends LinearLayout {
 
     private OnItemClickListener onItemClickListener;
 
+    private String selectName = "";
+
     public MyFlexboxLayout(Context context) {
         this(context, null);
     }
@@ -74,17 +76,18 @@ public class MyFlexboxLayout extends LinearLayout {
             int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
             for (final String item : items) {
                 final CheckedTextView tv = new CheckedTextView(flexboxLayout.getContext());
-                tv.setText(item);
                 FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(FlexboxLayout.LayoutParams.WRAP_CONTENT, FlexboxLayout.LayoutParams.WRAP_CONTENT);
                 params.setMargins(margin, margin, margin, margin);
+                tv.setText(item);
                 tv.setLayoutParams(params);
                 tv.setBackgroundResource(R.drawable.selector_tv_bg1);
-                tv.setTextColor(ContextCompat.getColor(getContext(),R.color.select_tv_color1));
+                tv.setTextColor(ContextCompat.getColorStateList(getContext(), R.color.select_tv_color1));
                 tv.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (tv.isChecked()) {
                             tv.setChecked(false);
+                            selectName = "";
                         } else {
                             if (onItemClickListener != null) {
                                 for (int i = 0; i < flexboxLayout.getChildCount(); i++) {
@@ -92,6 +95,7 @@ public class MyFlexboxLayout extends LinearLayout {
                                     childAt.setChecked(childAt == tv);
                                 }
                                 tv.setChecked(true);
+                                selectName = tv.getText().toString();
                                 onItemClickListener.onItemClick(items.indexOf(item));
                             }
                         }
@@ -103,10 +107,14 @@ public class MyFlexboxLayout extends LinearLayout {
         }
     }
 
-    public TextView getTitleView() {
-        return tvTitle;
+
+    public String getTitle() {
+        return tvTitle.getText().toString();
     }
 
+    public String getSelectName() {
+        return selectName;
+    }
 
     public interface OnItemClickListener {
         public void onItemClick(int index);

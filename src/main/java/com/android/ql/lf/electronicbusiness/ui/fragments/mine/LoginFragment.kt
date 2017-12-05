@@ -1,5 +1,6 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
+import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -30,6 +31,11 @@ import java.util.regex.Pattern
  */
 class LoginFragment : BaseNetWorkingFragment() {
 
+    companion object {
+        fun startLogin(context:Context) {
+            FragmentContainerActivity.startFragmentContainerActivity(context, "", true, true, LoginFragment::class.java)
+        }
+    }
 
     override fun getLayoutId(): Int = R.layout.fragment_login_layout
 

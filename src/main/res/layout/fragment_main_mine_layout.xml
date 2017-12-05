@@ -256,7 +256,7 @@
                 <TextView
                     android:id="@+id/mVipContainer"
                     style="@style/style_tv_mine_list"
-                    android:drawableLeft="@drawable/img_mine_icon_shoppingcart"
+                    android:drawableLeft="@drawable/img_mine_icon_vip"
                     android:text="会员中心" />
 
                 <View
