@@ -20,6 +20,7 @@ import rx.Subscription
  * Created by lf on 2017/11/13 0013.
  * @author lf on 2017/11/13 0013
  */
+@Deprecated("已经过期了，请使用新的类")
 class SubmitOrderFragment : BaseNetWorkingFragment() {
 
     companion object {
@@ -35,58 +36,58 @@ class SubmitOrderFragment : BaseNetWorkingFragment() {
     override fun getLayoutId() = R.layout.fragment_submit_order_layout
 
     override fun initView(view: View?) {
-        arguments.classLoader = this.javaClass.classLoader
-        goodsItem = arguments.getParcelable(GOODS_ID_FLAG)
-
-        subscription = RxBus.getDefault().toObservable(AddressBean::class.java).subscribe {
-            addressBean = it
-            if (addressBean != null) {
-                setAddress()
-            }
-        }
-
-        //填充数据
-        GlideManager.loadImage(mContext, goodsItem.shopcart_pic[0], mIvSubmitOrderGoodsPic)
-        mIvSubmitOrderGoodsName.text = goodsItem.shopcart_name
-        mIvSubmitOrderGoodsSpe.text = goodsItem.shopcart_specification
-        mIvSubmitOrderGoodsPrice.text = "￥ ${goodsItem.shopcart_price}"
-        mIvSubmitOrderGoodsNum.text = "X ${goodsItem.shopcart_num}"
-        mIvSubmitOrderGoodsKType.text = when (goodsItem.shopcart_ktype) {
-            "1" -> {
-                mIvSubmitOrderGoodsKType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_group, 0, 0, 0)
-                "拇指斗价团体砍"
-            }
-            "2" -> {
-                mIvSubmitOrderGoodsKType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_presonal, 0, 0, 0)
-                "拇指斗价个人砍"
-            }
-            "3" -> {
-                mIvSubmitOrderGoodsKType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_vip_s, 0, 0, 0)
-                "拇指斗价会员专享"
-            }
-            else -> {
-                ""
-            }
-        }
-
-        mCbALiPay.setOnCheckedChangeListener { _, isChecked ->
-            mCbWX.isChecked = !isChecked
-        }
-        mCbWX.setOnCheckedChangeListener { _, isChecked ->
-            mCbALiPay.isChecked = !isChecked
-        }
-        mRlSubmitOrderWXContainer.setOnClickListener {
-            mCbWX.isChecked = true
-        }
-        mRlSubmitOrderAliPayContainer.setOnClickListener {
-            mCbALiPay.isChecked = true
-        }
-        mTvSubmitOrder.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "支付完成", true, false, PayResultFragment::class.java)
-        }
-        mLlSubmitOrderAddress.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "选择地址", true, false, AddressSelectFragment::class.java)
-        }
+//        arguments.classLoader = this.javaClass.classLoader
+//        goodsItem = arguments.getParcelable(GOODS_ID_FLAG)
+//
+//        subscription = RxBus.getDefault().toObservable(AddressBean::class.java).subscribe {
+//            addressBean = it
+//            if (addressBean != null) {
+//                setAddress()
+//            }
+//        }
+//
+//        //填充数据
+//        GlideManager.loadImage(mContext, goodsItem.shopcart_pic[0], mIvSubmitOrderGoodsPic)
+//        mIvSubmitOrderGoodsName.text = goodsItem.shopcart_name
+//        mIvSubmitOrderGoodsSpe.text = goodsItem.shopcart_specification
+//        mIvSubmitOrderGoodsPrice.text = "￥ ${goodsItem.shopcart_price}"
+//        mIvSubmitOrderGoodsNum.text = "X ${goodsItem.shopcart_num}"
+//        mIvSubmitOrderGoodsKType.text = when (goodsItem.shopcart_ktype) {
+//            "1" -> {
+//                mIvSubmitOrderGoodsKType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_group, 0, 0, 0)
+//                "拇指斗价团体砍"
+//            }
+//            "2" -> {
+//                mIvSubmitOrderGoodsKType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_presonal, 0, 0, 0)
+//                "拇指斗价个人砍"
+//            }
+//            "3" -> {
+//                mIvSubmitOrderGoodsKType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_vip_s, 0, 0, 0)
+//                "拇指斗价会员专享"
+//            }
+//            else -> {
+//                ""
+//            }
+//        }
+//
+//        mCbALiPay.setOnCheckedChangeListener { _, isChecked ->
+//            mCbWX.isChecked = !isChecked
+//        }
+//        mCbWX.setOnCheckedChangeListener { _, isChecked ->
+//            mCbALiPay.isChecked = !isChecked
+//        }
+//        mRlSubmitOrderWXContainer.setOnClickListener {
+//            mCbWX.isChecked = true
+//        }
+//        mRlSubmitOrderAliPayContainer.setOnClickListener {
+//            mCbALiPay.isChecked = true
+//        }
+//        mTvSubmitOrder.setOnClickListener {
+//            FragmentContainerActivity.startFragmentContainerActivity(mContext, "支付完成", true, false, PayResultFragment::class.java)
+//        }
+//        mLlSubmitOrderAddress.setOnClickListener {
+//            FragmentContainerActivity.startFragmentContainerActivity(mContext, "选择地址", true, false, AddressSelectFragment::class.java)
+//        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -114,9 +115,9 @@ class SubmitOrderFragment : BaseNetWorkingFragment() {
     }
 
     private fun setAddress() {
-        mIvSubmitOrderAddressName.text = "收货人：${addressBean!!.address_name}"
-        mIvSubmitOrderAddressPhone.text = addressBean!!.address_phone
-        mIvSubmitOrderAddressDetail.text = "${addressBean!!.address_addres}  ${addressBean!!.address_detail}"
+//        mIvSubmitOrderAddressName.text = "收货人：${addressBean!!.address_name}"
+//        mIvSubmitOrderAddressPhone.text = addressBean!!.address_phone
+//        mIvSubmitOrderAddressDetail.text = "${addressBean!!.address_addres}  ${addressBean!!.address_detail}"
     }
 
 

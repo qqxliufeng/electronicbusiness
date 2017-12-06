@@ -2,6 +2,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseFragment
 import com.android.ql.lf.electronicbusiness.utils.CacheDataManager
 import kotlinx.android.synthetic.main.fragment_setting_layout.*
@@ -23,6 +24,9 @@ class SettingFragment : BaseFragment() {
         mCacheSizeContainer.setOnClickListener {
             CacheDataManager.clearAllCache(mContext)
             mCacheSize.text = "暂无缓存"
+        }
+        mTvSettingAddressManager.setOnClickListener {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "地址管理", true, false, AddressManagerFragment::class.java)
         }
     }
 }

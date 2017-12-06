@@ -81,8 +81,6 @@ class MainCutPrivilegeFragment : BaseFragment() {
         override fun getCount(): Int = TITLES.size
 
         override fun getPageTitle(position: Int): CharSequence = TITLES[position]
-
     }
-
 
 }

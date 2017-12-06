@@ -26,6 +26,16 @@ public class ShoppingCarItemBean implements Parcelable {
     private String shopcart_uid;
     private String shopcart_ktype;
 
+    private String bbs;
+
+    public String getBbs() {
+        return bbs;
+    }
+
+    public void setBbs(String bbs) {
+        this.bbs = bbs;
+    }
+
     public boolean isSelector() {
         return isSelector;
     }
@@ -122,6 +132,9 @@ public class ShoppingCarItemBean implements Parcelable {
         this.shopcart_ktype = shopcart_ktype;
     }
 
+    public ShoppingCarItemBean() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -141,9 +154,7 @@ public class ShoppingCarItemBean implements Parcelable {
         dest.writeString(this.shopcart_time);
         dest.writeString(this.shopcart_uid);
         dest.writeString(this.shopcart_ktype);
-    }
-
-    public ShoppingCarItemBean() {
+        dest.writeString(this.bbs);
     }
 
     protected ShoppingCarItemBean(Parcel in) {
@@ -159,9 +170,10 @@ public class ShoppingCarItemBean implements Parcelable {
         this.shopcart_time = in.readString();
         this.shopcart_uid = in.readString();
         this.shopcart_ktype = in.readString();
+        this.bbs = in.readString();
     }
 
-    public static final Parcelable.Creator<ShoppingCarItemBean> CREATOR = new Parcelable.Creator<ShoppingCarItemBean>() {
+    public static final Creator<ShoppingCarItemBean> CREATOR = new Creator<ShoppingCarItemBean>() {
         @Override
         public ShoppingCarItemBean createFromParcel(Parcel source) {
             return new ShoppingCarItemBean(source);

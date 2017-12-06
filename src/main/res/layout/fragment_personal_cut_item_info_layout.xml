@@ -48,19 +48,19 @@
                             android:layout_height="wrap_content">
 
                             <TextView
+                                android:id="@+id/mTvPersonalCutItemInfoEveryOneCut"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:drawableLeft="@drawable/img_icon_mark_personal_cut"
                                 android:drawablePadding="@dimen/dp_10"
-                                android:text="每个人砍价减1元"
                                 android:textColor="#fff"
                                 android:textSize="@dimen/sp_12" />
 
                             <TextView
+                                android:id="@+id/mTvPersonalCutItemInfoHasCutNum"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:text="已参砍人数15人"
                                 android:textColor="#fff"
                                 android:textSize="@dimen/sp_12" />
                         </RelativeLayout>
@@ -74,7 +74,6 @@
                                 android:id="@+id/mTvPersonalCutItemInfoPrice"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="￥199"
                                 android:textColor="#fff"
                                 android:textSize="@dimen/sp_16" />
 
@@ -85,7 +84,6 @@
                                 android:layout_alignParentBottom="true"
                                 android:layout_marginLeft="@dimen/dp_10"
                                 android:layout_toRightOf="@+id/mTvPersonalCutItemInfoPrice"
-                                android:text="￥199"
                                 android:textColor="#fff"
                                 android:textSize="@dimen/sp_14" />
 
@@ -109,6 +107,7 @@
                                     android:textSize="10sp" />
 
                                 <TextView
+                                    android:id="@+id/mTvPersonalCutItemInfoReleaseCount"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="-2dp"
@@ -117,7 +116,7 @@
                                     android:paddingLeft="5dp"
                                     android:paddingRight="5dp"
                                     android:paddingTop="2dp"
-                                    android:text="145"
+                                    android:text="0"
                                     android:textColor="#fff"
                                     android:textSize="10sp" />
                             </LinearLayout>
@@ -151,9 +150,9 @@
                             android:textSize="16sp"
                             app:easyCountBackgroundColor="#E70B09"
                             app:easyCountColonColor="#E70B09"
-                            app:easyCountHour="6"
-                            app:easyCountMinute="6"
-                            app:easyCountSecond="26"
+                            app:easyCountHour="0"
+                            app:easyCountMinute="0"
+                            app:easyCountSecond="0"
                             app:easyCountTimeColor="#fff" />
                     </LinearLayout>
                 </LinearLayout>

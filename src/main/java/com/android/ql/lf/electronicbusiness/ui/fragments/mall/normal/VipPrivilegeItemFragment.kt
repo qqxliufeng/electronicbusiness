@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.VipGoodsBean
@@ -40,32 +41,20 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
         return itemDecoration
     }
 
-    override fun initView(view: View?) {
-        isFirstRefresh = false
-        super.initView(view)
-    }
-
-    override fun lazyLoad() {
-        onRefresh()
-    }
-
-    override fun onRefresh() {
-        if (!isVisible || !isPrepared || isLoad) {
-            return
+    override fun loadData() {
+        if (TextUtils.isEmpty(arguments.getString(ITEM_ID_FLAG))) {
+            mPresent.getDataByPost(0x0,
+                    RequestParamsHelper.PRODUCT_MODEL,
+                    RequestParamsHelper.ACT_PRODUCT,
+                    RequestParamsHelper.getProductParams("3", "", currentPage))
+        }else{
+            mPresent.getDataByPost(0x0,
+                    RequestParamsHelper.PRODUCT_MODEL,
+                    RequestParamsHelper.ACT_PRODUCT_TYPE_SEARCH,
+                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString(ITEM_ID_FLAG), "", "3",currentPage))
         }
-        mSwipeRefreshLayout.post {
-            mSwipeRefreshLayout.isRefreshing = true
-        }
-        super.onRefresh()
-        loadData()
     }
 
-    private fun loadData() {
-        mPresent.getDataByPost(0x0,
-                RequestParamsHelper.PRODUCT_MODEL,
-                RequestParamsHelper.ACT_PRODUCT,
-                RequestParamsHelper.getProductParams("3", "", currentPage))
-    }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)

@@ -12,6 +12,7 @@ import com.android.ql.lf.electronicbusiness.data.ShoppingCarItemBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.ShoppingCarItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SubmitNewOrderFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SubmitOrderFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
@@ -31,6 +32,8 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
 
     private var currentEditMode = 1// 1 减  0  加
 
+    private val selectedList = ArrayList<ShoppingCarItemBean>()
+
     override fun getLayoutId(): Int = R.layout.fragment_shopping_car_layout
 
     override fun createAdapter(): BaseQuickAdapter<ShoppingCarItemBean, BaseViewHolder> =
@@ -46,21 +49,29 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
         mLlShoppingCarAllSelectContainer.setOnClickListener {
             mCivShoppingCarAllSelect.isChecked = !mCivShoppingCarAllSelect.isChecked
             var money = 0.00F
-            mArrayList.forEach {
-                it.isSelector = mCivShoppingCarAllSelect.isChecked
-                if (it.isSelector) {
-                    money += (it.shopcart_price.toFloat() * it.shopcart_num.toInt())
-                }
-            }
+            mArrayList.forEach { it.isSelector = mCivShoppingCarAllSelect.isChecked }
+            money = calculatePrice(money)
             mTvShoppingCarAllSelectMoney.text = "￥${DecimalFormat("0.00").format(money)}"
             mCalculate.isEnabled = money != 0.00f
             mBaseAdapter.notifyDataSetChanged()
         }
         mCalculate.setOnClickListener {
+            selectedList.clear()
+            selectedList.addAll(mArrayList.filter { it.isSelector } as ArrayList<ShoppingCarItemBean>)
             val bundle = Bundle()
-            bundle.putParcelable(SubmitOrderFragment.GOODS_ID_FLAG, currentItem)
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "确认订单", true, false, bundle, SubmitOrderFragment::class.java)
+            bundle.putParcelableArrayList(SubmitNewOrderFragment.GOODS_ID_FLAG, selectedList)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "确认订单", true, false, bundle, SubmitNewOrderFragment::class.java)
         }
+    }
+
+    private fun calculatePrice(money: Float): Float {
+        var money1 = money
+        mArrayList.forEach {
+            if (it.isSelector) {
+                money1 += (it.shopcart_price.toFloat() * it.shopcart_num.toInt())
+            }
+        }
+        return money1
     }
 
     override fun getItemDecoration(): RecyclerView.ItemDecoration {
@@ -118,6 +129,9 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                 } else {
                     currentItem.shopcart_num = (currentItem.shopcart_num.toInt() - 1).toString()
                 }
+                var money = 0.00f
+                money = calculatePrice(money)
+                mTvShoppingCarAllSelectMoney.text = "￥${DecimalFormat("0.00").format(money)}"
                 mBaseAdapter.notifyItemChanged(mArrayList.indexOf(currentItem))
             }
         }
@@ -145,11 +159,8 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                 currentItem.isSelector = !currentItem.isSelector
                 var money = 0.00f
                 val isAllSelected = mArrayList.filter { it.isSelector }.size == mArrayList.size
-                mArrayList.forEach {
-                    if (it.isSelector) {
-                        money += (it.shopcart_price.toFloat() * it.shopcart_num.toInt())
-                    }
-                }
+                money = calculatePrice(money)
+                mTvShoppingCarAllSelectMoney.text = "￥${DecimalFormat("0.00").format(money)}"
                 if (isAllSelected) {
                     mCivShoppingCarAllSelect.isChecked = true
                     mBaseAdapter.notifyDataSetChanged()
@@ -157,7 +168,6 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                 } else {
                     mCivShoppingCarAllSelect.isChecked = false
                 }
-                mTvShoppingCarAllSelectMoney.text = "￥${DecimalFormat("0.00").format(money)}"
                 mCalculate.isEnabled = money != 0.00f
                 mBaseAdapter.notifyItemChanged(position)
             }

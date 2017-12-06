@@ -206,10 +206,11 @@ class RequestParamsHelper {
 
         //修改商品数量
         val ACT_UPDATE_SHOPCART = "update_shopcart"
-        fun getUpdateShopcart(cid: String,num:String):ApiParams{
+
+        fun getUpdateShopcart(cid: String, num: String): ApiParams {
             val param = getWithIdParams()
-            param.addParam("cid",cid)
-            param.addParam("num",num)
+            param.addParam("cid", cid)
+            param.addParam("num", num)
             return param
         }
 
@@ -328,7 +329,7 @@ class RequestParamsHelper {
         //条目
         val ACT_JPRODUCT_TYPE = "jproduct_type"
 
-        fun getProductTypeParams(pid: Int = 0): ApiParams {
+        fun getJProductTypeParams(pid: Int = 0): ApiParams {
             val param = getBaseParams()
             param.addParam("pid", pid)
             return param
@@ -359,13 +360,19 @@ class RequestParamsHelper {
         }
 
 
-        //砍价 会员专享
         val ACT_PRODUCT_TYPE = "product_type"
+
+        fun getProductTypeParams(ktype: String, pid: String = "0"): ApiParams {
+            val param = getBaseParams()
+            param.addParam("ktype", ktype)
+            param.addParam("pid", pid)
+            return param
+        }
 
         //砍价商品分类查询
         val ACT_PRODUCT_TYPE_SEARCH = "product_type_search"
 
-        fun getProductTypeSearchParams(stype_id: String, type_id: String, ktype: String, page: Int, pagesize: Int = 0): ApiParams {
+        fun getProductTypeSearchParams(type_id: String, stype_id: String, ktype: String, page: Int, pagesize: Int = 10): ApiParams {
             val params = getWithPageParams(page, pagesize)
             params.addParam("stype_id", stype_id)
             params.addParam("type_id", type_id)
@@ -376,7 +383,7 @@ class RequestParamsHelper {
         //砍价商品查询
         val ACT_PRODUCT = "product"
 
-        fun getProductParams(ktype: String, sort: String, page: Int, pagesize: Int = 0): ApiParams {
+        fun getProductParams(ktype: String, sort: String, page: Int, pagesize: Int = 10): ApiParams {
             val param = getWithPageParams(page, pagesize)
             param.addParam("ktype", ktype)
             param.addParam("sort", sort)
@@ -398,13 +405,25 @@ class RequestParamsHelper {
 
         val ORDER_MODEL = "order"
 
+        val ACT_ADD_ORDER = "add_order"
 
-
-
-
+        /**
+         * 下订单
+         * @param gid 商品ID
+         * @param price 商品价格
+         * @param addressId 收货地址ID
+         * @param num 商品数量
+         * @param ktype 活动类型 (1 个人砍 2 团体砍 3 会员专享)
+         * @param mdtype 配送类型
+         * @param mliuyan 留言
+         * @param specification 商品规格
+         */
+        fun getAddOrderParams(orderData: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("order_data", orderData)
+            return param
+        }
         /**              order model  end           **/
-
-
 
     }
 

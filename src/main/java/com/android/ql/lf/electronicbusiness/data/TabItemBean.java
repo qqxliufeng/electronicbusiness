@@ -7,6 +7,7 @@ package com.android.ql.lf.electronicbusiness.data;
  */
 
 public class TabItemBean {
+
     //积分中的Tab字段
     private String jclassify_id;
     private String jclassify_title;

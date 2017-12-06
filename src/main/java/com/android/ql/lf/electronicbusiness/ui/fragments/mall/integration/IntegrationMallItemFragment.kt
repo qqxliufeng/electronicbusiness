@@ -32,11 +32,6 @@ class IntegrationMallItemFragment : AbstractLazyLoadFragment<IMallGoodsItemBean>
         }
     }
 
-    override fun initView(view: View?) {
-        isFirstRefresh = false
-        super.initView(view)
-    }
-
     override fun createAdapter(): BaseQuickAdapter<IMallGoodsItemBean, BaseViewHolder> =
             IntegrationMallItemAdapter(R.layout.adapter_integration_mall_item_layout, mArrayList)
 
@@ -48,22 +43,7 @@ class IntegrationMallItemFragment : AbstractLazyLoadFragment<IMallGoodsItemBean>
         return DividerGridItemDecoration(mContext)
     }
 
-    override fun lazyLoad() {
-        onRefresh()
-    }
-
-    override fun onRefresh() {
-        if (!isVisible || !isPrepared || isLoad) {
-            return
-        }
-        mSwipeRefreshLayout.post {
-            mSwipeRefreshLayout.isRefreshing = true
-        }
-        super.onRefresh()
-        loadData()
-    }
-
-    private fun loadData() {
+    override fun loadData() {
         mPresent.getDataByPost(0x0,
                 RequestParamsHelper.PRODUCT_MODEL,
                 arguments.getString(ACT_TYPE_FLAG),

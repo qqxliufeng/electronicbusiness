@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.NestedScrollView
+    <!--<android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="51dp">
@@ -284,20 +284,42 @@
                     android:theme="@style/style_cb_pay" />
             </RelativeLayout>
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.NestedScrollView>-->
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/id_srl_base_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="51dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/id_rv_base_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
-        android:background="#EEEEEE" />
+        android:background="#ddd" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
+        <TextView
+            android:id="@+id/mTvSubmitOrderGoodsCount"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:textColor="@color/black_tv_color"
+            android:textSize="@dimen/sp_14" />
 
         <TextView
             android:layout_width="0dp"
@@ -309,11 +331,11 @@
             android:textSize="@dimen/sp_14" />
 
         <TextView
+            android:id="@+id/mTvSubmitOrderGoodsPrice"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:gravity="center_vertical"
-            android:text="￥406.00"
             android:textColor="@color/red_tv_color"
             android:textSize="@dimen/sp_14" />
 
@@ -329,5 +351,4 @@
             android:textSize="@dimen/sp_16" />
 
     </LinearLayout>
-
 </RelativeLayout>

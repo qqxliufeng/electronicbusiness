@@ -13,6 +13,7 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchAndClassifyFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchGoodsFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.VipPrivilegeItemFragment
+import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_vip_privilege_layout.*
@@ -51,7 +52,7 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
         if (!isMvisible || !isPrepared || isLoaded) {
             return
         }
-        mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_TYPE, RequestParamsHelper.getProductTypeParams())
+        mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_TYPE, RequestParamsHelper.getProductTypeParams("3"))
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_vip_privilege_layout
@@ -72,16 +73,22 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
         }
     }
 
+    override fun onRequestStart(requestID: Int) {
+        super.onRequestStart(requestID)
+        progressDialog = MyProgressDialog(mContext)
+        progressDialog.show()
+    }
+
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
         if (json != null) {
             isLoaded = true
             val tempTitles = arrayListOf<TabItemBean>()
-//            val item = TabItemBean()
-//            item.classify_id = ""
-//            item.classify_title = "全部"
-//            tempTitles.add(item)
+            val item = TabItemBean()
+            item.classify_id = ""
+            item.classify_title = "全部"
+            tempTitles.add(item)
             val resultJsonArray = json.optJSONArray("result")
             (0 until resultJsonArray.length()).forEach {
                 tempTitles.add(Gson().fromJson(resultJsonArray.optJSONObject(it).toString(), TabItemBean::class.java))

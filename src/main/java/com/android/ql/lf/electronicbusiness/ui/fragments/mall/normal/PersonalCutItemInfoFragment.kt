@@ -2,10 +2,12 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Html
 import android.text.TextPaint
 import android.util.TypedValue
 import android.view.Menu
@@ -15,12 +17,17 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.PersonalCutInfoBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
+import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
+import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
+import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.google.gson.Gson
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlinx.android.synthetic.main.fragment_personal_cut_item_info_layout.*
 import org.jetbrains.anko.backgroundColor
@@ -33,9 +40,22 @@ import org.jetbrains.anko.support.v4.toast
  */
 class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
 
-    private var shareDialog: BottomSheetDialog? = null
+    companion object {
+        val GOODS_ID_FLAG = "goods_id_flag"
+    }
 
+    private var shareDialog: BottomSheetDialog? = null
     private val list = arrayListOf("", "")
+
+
+    private lateinit var tv_has_cut_money: TextView
+    private lateinit var tv_goods_name: TextView
+    private lateinit var tv_goods_desc: TextView
+
+
+    private var personalCutInfoBean: PersonalCutInfoBean? = null
+
+    private var bottomParamDialog: BottomGoodsParamDialog? = null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -51,6 +71,11 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
         val adapter = VipPrivilegeItemInfoFragment.VipPrivilegeItemGoodsInfoAdapter(R.layout.adapter_vip_privilege_item_goods_info_item_layout, list)
         mRvPersonalCutItemInfo.adapter = adapter
         val topView = View.inflate(mContext, R.layout.layout_personal_cut_item_goods_info_top_layout, null)
+        tv_has_cut_money = topView.findViewById(R.id.mTvPersonalCutItemInfoHasCutMoney)
+        tv_goods_name = topView.findViewById(R.id.mTvPersonalCutItemInfoName)
+        tv_goods_desc = topView.findViewById(R.id.mTvPersonalCutItemInfoDescription)
+
+
         adapter.addHeaderView(topView)
         topView.findViewById<TextView>(R.id.mTvAllComment).setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "全部评价", true, false, AllCommentFragment::class.java)
@@ -72,6 +97,10 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
 
         adapter.addFooterView(View.inflate(mContext, R.layout.layout_personal_cut_item_goods_info_bootom_layout, null))
         mTvPersonalCutItemInfoBuy.setOnClickListener {
+            if (personalCutInfoBean != null) {
+                showBottomParamDialog()
+            }
+
             val bottomDialog = BottomSheetDialog(mContext)
             val contentView = View.inflate(mContext, R.layout.layout_personal_cut_item_goods_info_bootom_params_layout, null)
             val ivClose = contentView.findViewById<ImageView>(R.id.mTvBottomParamClose)
@@ -93,7 +122,9 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
             bottomDialog.show()
         }
         mTvPersonalCutItemInfoCollection.setOnClickListener {
-            toast("收藏成功")
+            if (personalCutInfoBean != null) {
+                showBottomParamDialog()
+            }
         }
         mTvAskOnline.setOnClickListener {
             toast("请先登录")
@@ -102,6 +133,55 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
 //                    .build()
 //            startActivity(intent)
 //            startActivity(intentFor<ChatActivity>())
+        }
+    }
+
+    private fun showBottomParamDialog() {
+        if (bottomParamDialog == null) {
+            bottomParamDialog = BottomGoodsParamDialog(mContext)
+            bottomParamDialog!!.bindDataToView(
+                    personalCutInfoBean!!.result.detail.product_price,
+                    personalCutInfoBean!!.result.detail.product_entrepot,
+                    personalCutInfoBean!!.result.detail.product_name,
+                    if (!personalCutInfoBean!!.result.detail.product_pic.isEmpty()) {
+                        personalCutInfoBean!!.result.detail.product_pic[0]
+                    } else {
+                        ""
+                    },
+                    personalCutInfoBean!!.result.detail.product_specification)
+        }
+        bottomParamDialog!!.show()
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL, RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
+    }
+
+    override fun onRequestStart(requestID: Int) {
+        super.onRequestStart(requestID)
+        progressDialog = MyProgressDialog(mContext)
+        progressDialog.show()
+    }
+
+    override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
+        super.onRequestSuccess(requestID, result)
+        val json = checkResultCode(result)
+        if (json != null) {
+            personalCutInfoBean = Gson().fromJson(json.toString(), PersonalCutInfoBean::class.java)
+            mTvPersonalCutItemInfoEveryOneCut.text = ("每个人砍价${personalCutInfoBean!!.result.kprice}元")
+            val endTime = personalCutInfoBean!!.result.endtime
+            if ("0" == endTime) {
+                mTvPersonalCutItemInfoDownTime.setTime(0)
+                mTvPersonalCutItemInfoDownTime.stop()
+            }
+            mTvPersonalCutItemInfoHasCutNum.text = "已参砍人数${personalCutInfoBean!!.result.detail.product_knum}人"
+            mTvPersonalCutItemInfoPrice.text = "￥ ${personalCutInfoBean!!.result.detail.product_price}"
+            mTvPersonalCutItemInfoOldPrice.text = "￥ ${personalCutInfoBean!!.result.detail.product_yprice}"
+            mTvPersonalCutItemInfoReleaseCount.text = personalCutInfoBean!!.result.detail.product_entrepot
+            tv_has_cut_money.text = "累计已减${personalCutInfoBean!!.result.detail.product_minus}元"
+            tv_goods_name.text = personalCutInfoBean!!.result.detail.product_name
+            tv_goods_desc.text = Html.fromHtml(personalCutInfoBean!!.result.detail.product_ms)
         }
     }
 

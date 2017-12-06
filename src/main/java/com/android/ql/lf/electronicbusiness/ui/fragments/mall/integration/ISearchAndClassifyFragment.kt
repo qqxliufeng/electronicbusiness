@@ -91,7 +91,7 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_JPRODUCT_TYPE, RequestParamsHelper.getProductTypeParams())
+        mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_JPRODUCT_TYPE, RequestParamsHelper.getJProductTypeParams())
     }
 
     override fun onRequestStart(requestID: Int) {

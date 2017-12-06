@@ -39,10 +39,36 @@ public abstract class AbstractLazyLoadFragment<T> extends BaseRecyclerViewFragme
         lazyLoad();
     }
 
+    @Override
+    protected void initView(View view) {
+        isFirstRefresh = false;
+        super.initView(view);
+    }
+
+    @Override
+    public void onRefresh() {
+        if (!isVisible || !isPrepared || isLoad) {
+            return;
+        }
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+
+            }
+        });
+        super.onRefresh();
+        loadData();
+    }
+
+    protected abstract void loadData();
+
     /**
      * 懒加载方法
      */
-    protected abstract void lazyLoad();
+    protected void lazyLoad() {
+        onRefresh();
+    }
 
     protected void onInvisible() {
     }
