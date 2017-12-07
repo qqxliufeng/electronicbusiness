@@ -25,8 +25,18 @@ public class ShoppingCarItemBean implements Parcelable {
     private String shopcart_time;
     private String shopcart_uid;
     private String shopcart_ktype;
+    private String shopcart_mdprice;
 
     private String bbs;
+
+    public String getShopcart_mdprice() {
+        return shopcart_mdprice;
+    }
+
+    public void setShopcart_mdprice(String shopcart_mdprice) {
+        this.shopcart_mdprice = shopcart_mdprice;
+    }
+
 
     public String getBbs() {
         return bbs;
@@ -154,6 +164,7 @@ public class ShoppingCarItemBean implements Parcelable {
         dest.writeString(this.shopcart_time);
         dest.writeString(this.shopcart_uid);
         dest.writeString(this.shopcart_ktype);
+        dest.writeString(this.shopcart_mdprice);
         dest.writeString(this.bbs);
     }
 
@@ -170,6 +181,7 @@ public class ShoppingCarItemBean implements Parcelable {
         this.shopcart_time = in.readString();
         this.shopcart_uid = in.readString();
         this.shopcart_ktype = in.readString();
+        this.shopcart_mdprice = in.readString();
         this.bbs = in.readString();
     }
 

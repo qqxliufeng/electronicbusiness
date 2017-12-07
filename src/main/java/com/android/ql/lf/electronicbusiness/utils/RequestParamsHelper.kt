@@ -418,9 +418,10 @@ class RequestParamsHelper {
          * @param mliuyan 留言
          * @param specification 商品规格
          */
-        fun getAddOrderParams(orderData: String): ApiParams {
+        fun getAddOrderParams(payType: String,orderData: String): ApiParams {
             val param = getWithIdParams()
-            param.addParam("order_data", orderData)
+            param.addParam("paytype",payType)
+            param.addParam("post_data", orderData)
             return param
         }
         /**              order model  end           **/

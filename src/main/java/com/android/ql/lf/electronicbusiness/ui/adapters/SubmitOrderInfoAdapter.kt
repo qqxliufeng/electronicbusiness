@@ -45,6 +45,7 @@ class SubmitOrderInfoAdapter(layout: Int, list: ArrayList<ShoppingCarItemBean>) 
         helper.setText(R.id.mIvSubmitOrderGoodsCount, "共${item.shopcart_num}件商品")
         helper.setText(R.id.mIvSubmitOrderGoodsAllPrice, Html.fromHtml("小计：<span style='color:#ff0000'>￥ ${DecimalFormat("0.00").format(item.shopcart_num.toInt() * item.shopcart_price.toFloat())}</span>"))
         helper.setText(R.id.mTvSubmitOrderGoodsBBSContent, if (TextUtils.isEmpty(item.bbs)) "选填" else item.bbs)
+        helper.setText(R.id.mTvSubmitOrderGoodsExpressPrice,"普通快递${item.shopcart_mdprice}元")
         helper.addOnClickListener(R.id.mRlSubmitOrderGoodsBBS)
     }
 }

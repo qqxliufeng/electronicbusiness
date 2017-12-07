@@ -6,14 +6,13 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/mTvPayResultTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
-        android:drawableLeft="@drawable/img_icon_pitchon_pay_success"
         android:drawablePadding="@dimen/dp_10"
         android:gravity="center"
-        android:text="支付成功"
         android:textColor="@color/black_tv_color"
         android:textSize="18sp" />
 
@@ -25,104 +24,110 @@
         android:layout_marginTop="30dp"
         android:background="@drawable/shape_bt_bg1"
         android:text="立即返回"
+        android:layout_marginBottom="30dp"
         android:textColor="#fff" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_10"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/recycler_view_height_divider" />
-
-    <TextView
+    <LinearLayout
+        android:id="@+id/mLlPayResultOrderInfoContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/img_icon_group"
-        android:drawablePadding="@dimen/dp_10"
-        android:padding="@dimen/dp_10"
-        android:text="秋冬换季全棉四件套"
-        android:textColor="@color/black_tv_color" />
+        android:orientation="vertical">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@drawable/recycler_view_height_divider" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp_10">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_10"
+            android:background="@drawable/recycler_view_height_divider" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="订单编号：" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="12465476842541"
+            android:drawableLeft="@drawable/img_icon_group"
+            android:drawablePadding="@dimen/dp_10"
+            android:padding="@dimen/dp_10"
+            android:text="秋冬换季全棉四件套"
             android:textColor="@color/black_tv_color" />
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp_10">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/recycler_view_height_divider" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="消费金额：" />
+            android:padding="@dimen/dp_10">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="订单编号：" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="12465476842541"
+                android:textColor="@color/black_tv_color" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="2456.00元"
-            android:textColor="@color/black_tv_color" />
-    </RelativeLayout>
+            android:padding="@dimen/dp_10">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp_10">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="消费金额：" />
 
-        <TextView
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="2456.00元"
+                android:textColor="@color/black_tv_color" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="实付金额：" />
+            android:padding="@dimen/dp_10">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="实付金额：" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="2456.00元"
+                android:textColor="@color/red_tv_color" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="2456.00元"
-            android:textColor="@color/red_tv_color" />
-    </RelativeLayout>
+            android:padding="@dimen/dp_10">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp_10">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="消费时间：" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="消费时间：" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="2017-11-11 00:00"
+                android:textColor="@color/black_tv_color" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="2017-11-11 00:00"
-            android:textColor="@color/black_tv_color" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_10"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/recycler_view_height_divider" />
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_10"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/recycler_view_height_divider" />
+    </LinearLayout>
 </LinearLayout>

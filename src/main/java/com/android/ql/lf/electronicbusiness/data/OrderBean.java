@@ -15,6 +15,25 @@ public class OrderBean {
     private String mdtype;
     private String mliuyan;
     private String specification;
+    private String mdprice;
+
+    public String getBbs() {
+        return bbs;
+    }
+
+    public void setBbs(String bbs) {
+        this.bbs = bbs;
+    }
+
+    private String bbs;
+
+    public String getMdprice() {
+        return mdprice;
+    }
+
+    public void setMdprice(String mdprice) {
+        this.mdprice = mdprice;
+    }
 
     public String getGid() {
         return gid;
