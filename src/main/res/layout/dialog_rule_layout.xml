@@ -18,13 +18,11 @@
         android:layout_height="230dp">
 
         <TextView
+            android:id="@+id/mTvRuleDialogContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/dp_10"
-            android:text="1、完成购物，在我买网成功购买一件商品，即可获得我买网的积分，具体数量请参考商品详情页（购买该商品，可获得XX积分），订单成功签收后到账。（部分特惠组合礼包商品及全部我买团商品没有积分）
-2、完成购物，在我买网成功购买一件商品，即可获得我买网的积分，具体数量请参考商品详情页（购买该商品，可获得XX积分），订单成功签收后到账。（部分特惠组合礼包商品及全部我买团商品没有积分）
-3、完成购物，在我买网成功购买一件商品，即可获得我买网的积分，具体数量请参考商品详情页（购买该商品，可获得XX积分），订单成功签收后到账。（部分特惠组合礼包商品及全部我买团商品没有积分）
-4、完成购物，在我买网成功购买一件商品，即可获得我买网的积分，具体数量请参考商品详情页（购买该商品，可获得XX积分），订单成功签收后到账。（部分特惠组合礼包商品及全部我买团商品没有积分）" />
+            />
     </android.support.v4.widget.NestedScrollView>
 
     <LinearLayout

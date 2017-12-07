@@ -146,7 +146,7 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
         override fun convert(helper: BaseViewHolder?, item: IClassifyItemEntity?) {
             helper!!.setText(R.id.mSearchClassifyContentItemName, item!!.t.jclassify_title)
             val iv_icon = helper.getView<ImageView>(R.id.mSearchClassifyContentItemIcon)
-            GlideManager.loadCircleImage(iv_icon.context, "https://gss3.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=eb3a512554df8db1bc2e7b623118ba69/7af40ad162d9f2d3e0767452a3ec8a136327cc2c.jpg", iv_icon)
+            GlideManager.loadCircleImage(iv_icon.context, item.t.jclassify_pic, iv_icon)
         }
     }
 }

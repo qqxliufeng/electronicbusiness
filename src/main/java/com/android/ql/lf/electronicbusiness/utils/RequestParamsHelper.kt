@@ -120,7 +120,7 @@ class RequestParamsHelper {
             return params
         }
 
-        fun getMyMessageList() = getWithIdParams()
+        fun getMyMessageList(page: Int,pageSize: Int = 10) = getWithPageParams(page,pageSize)
 
         fun getResetPassword(oldPassword: String = "", newPassword: String = ""): ApiParams {
             val params = getWithIdParams()

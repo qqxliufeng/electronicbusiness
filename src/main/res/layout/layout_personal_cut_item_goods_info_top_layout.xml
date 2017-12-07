@@ -49,6 +49,7 @@
         android:padding="@dimen/dp_10">
 
         <TextView
+            android:id="@+id/mTvPersonalCutItemInfoCommentCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="订单评价（21）"
@@ -56,7 +57,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/mTvAllComment"
+            android:id="@+id/mTvPersonalCutItemInfoCommentCountAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

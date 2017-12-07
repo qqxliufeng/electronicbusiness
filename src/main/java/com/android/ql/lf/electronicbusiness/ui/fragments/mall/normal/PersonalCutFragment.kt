@@ -9,6 +9,7 @@ import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.TabItemBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainCutPrivilegeFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.google.gson.Gson
@@ -33,6 +34,7 @@ class PersonalCutFragment : BaseNetWorkingFragment() {
         if (userVisibleHint) {
             isMvisible = true
             loadData()
+            MainCutPrivilegeFragment.currentMode = "1"
         } else {
             isMvisible = false
         }
@@ -55,7 +57,9 @@ class PersonalCutFragment : BaseNetWorkingFragment() {
 
     override fun initView(view: View?) {
         mTvClassMore.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, SearchAndClassifyFragment::class.java)
+            val bundle = Bundle()
+            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, "1")
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, bundle,SearchAndClassifyFragment::class.java)
         }
     }
 

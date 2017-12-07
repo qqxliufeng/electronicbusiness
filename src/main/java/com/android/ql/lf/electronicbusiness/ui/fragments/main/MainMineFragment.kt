@@ -64,6 +64,15 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 7 -> { //购物车
                     mShoppingCar.performClick()
                 }
+                8 -> { //积分商城
+                    mIntegrationMall.performClick()
+                }
+                9 -> { //意见反馈
+                    mFeedBack.performClick()
+                }
+                10 -> { //设置
+                    mSetting.performClick()
+                }
             }
         }
         mMineTopView.alpha = 0.0f
@@ -88,11 +97,16 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "积分明细", true, false, IntegrationDetailFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 4
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
+                LoginFragment.startLogin(mContext)
             }
         }
         mSetting.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "设置", true, false, SettingFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "设置", true, false, SettingFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 10
+                LoginFragment.startLogin(mContext)
+            }
         }
         mMainMineMessage.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {
@@ -106,16 +120,31 @@ class MainMineFragment : BaseNetWorkingFragment() {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "物流信息", true, false, ExpressInfoFragment::class.java)
         }
         mIntegrationCountContainer.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "登录", true, true, LoginFragment::class.java)
+            if (!UserInfo.getInstance().isLogin) {
+                UserInfo.getInstance().loginTag = UserInfo.DEFAULT_LOGIN_TAG
+                LoginFragment.startLogin(mContext)
+            } else {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "积分明细", true, false, IntegrationDetailFragment::class.java)
+            }
         }
         mIntegrationMall.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "积分商城", true, false, IntegrationMallFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "积分商城", true, false, IntegrationMallFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 8
+                LoginFragment.startLogin(mContext)
+            }
         }
         mCutPrice.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "我的砍价", true, false, CutPriceListFragment::class.java)
         }
         mFeedBack.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "意见反馈", true, false, FeedBackFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "意见反馈", true, false, FeedBackFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 9
+                LoginFragment.startLogin(mContext)
+            }
         }
         mShoppingCar.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {
@@ -130,7 +159,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "所有订单", true, false, OrderListFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 6
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
+                LoginFragment.startLogin(mContext)
             }
         }
         mDFKOrder.setOnClickListener {
@@ -151,7 +180,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "我的问答", true, false, AskAndAnswerFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 5
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
+                LoginFragment.startLogin(mContext)
             }
         }
         mLlMainMineUserInfoContainer.setOnClickListener {
@@ -165,7 +194,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 mPresent.getDataByPost(0x1, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_SIGNIN, RequestParamsHelper.getSigninParams())
             } else {
                 UserInfo.getInstance().loginTag = 3
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
+                LoginFragment.startLogin(mContext)
             }
         }
         loadUserInfo()

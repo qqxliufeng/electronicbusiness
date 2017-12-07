@@ -66,10 +66,14 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
 //            dialog.show()
         }
         mLlSearchContainer.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true, SearchGoodsFragment::class.java)
+            val bundle = Bundle()
+            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, "3")
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true, bundle, SearchGoodsFragment::class.java)
         }
         mTvClassMore.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, SearchAndClassifyFragment::class.java)
+            val bundle = Bundle()
+            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, "3")
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false,bundle, SearchAndClassifyFragment::class.java)
         }
     }
 

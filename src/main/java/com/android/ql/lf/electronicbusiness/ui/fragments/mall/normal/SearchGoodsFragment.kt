@@ -12,6 +12,7 @@ import com.android.ql.lf.electronicbusiness.utils.DividerGridItemDecoration
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import android.view.View
+import com.android.ql.lf.electronicbusiness.data.PersonalCutGoodsItemBean
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import kotlinx.android.synthetic.main.fragment_search_goods_layout.*
 
@@ -20,7 +21,11 @@ import kotlinx.android.synthetic.main.fragment_search_goods_layout.*
  * Created by lf on 2017/11/14 0014.
  * @author lf on 2017/11/14 0014
  */
-class SearchGoodsFragment : BaseRecyclerViewFragment<String>() {
+class SearchGoodsFragment : BaseRecyclerViewFragment<PersonalCutGoodsItemBean>() {
+
+    companion object {
+        val K_TYPE_FLAG = "k_type_flag"
+    }
 
     enum class PRICE {
         PRICE_UP_TO_DOWN, PRICE_DOWN_TO_UP
@@ -41,7 +46,7 @@ class SearchGoodsFragment : BaseRecyclerViewFragment<String>() {
 
     override fun getLayoutId() = R.layout.fragment_search_goods_layout
 
-    override fun createAdapter(): BaseQuickAdapter<String, BaseViewHolder> =
+    override fun createAdapter(): BaseQuickAdapter<PersonalCutGoodsItemBean, BaseViewHolder> =
             SearchGoodsAdapter(R.layout.adapter_search_goods_item_layout, mArrayList)
 
     override fun getLayoutManager(): RecyclerView.LayoutManager {
@@ -63,6 +68,8 @@ class SearchGoodsFragment : BaseRecyclerViewFragment<String>() {
             mCTvSearchGoodsZH.isChecked = true
             mCTvSearchGoodsPrice.isChecked = false
             mCTvSearchGoodsSell.isChecked = false
+            sort = ""
+            onPostRefresh()
         }
         mLlSearchGoodsPriceContainer.setOnClickListener {
             mCTvSearchGoodsZH.isChecked = false
@@ -71,10 +78,13 @@ class SearchGoodsFragment : BaseRecyclerViewFragment<String>() {
             if (price == PRICE.PRICE_UP_TO_DOWN) {
                 price = PRICE.PRICE_DOWN_TO_UP
                 mCTvSearchGoodsPrice.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.img_icon_price_n, 0)
+                sort = "p1"
             } else {
                 price = PRICE.PRICE_UP_TO_DOWN
                 mCTvSearchGoodsPrice.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.img_icon_price_n2, 0)
+                sort = "p2"
             }
+            onPostRefresh()
         }
         mLlSearchGoodsSellContainer.setOnClickListener {
             mCTvSearchGoodsZH.isChecked = false
@@ -83,19 +93,36 @@ class SearchGoodsFragment : BaseRecyclerViewFragment<String>() {
             if (sell == SELL.SELL_UP_TO_DOWN) {
                 sell = SELL.SELL_DOWN_TO_UP
                 mCTvSearchGoodsSell.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.img_icon_price_n, 0)
+                sort = "sv1"
             } else {
                 sell = SELL.SELL_UP_TO_DOWN
                 mCTvSearchGoodsSell.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.img_icon_price_n2, 0)
+                sort = "sv2"
             }
+            onPostRefresh()
         }
     }
 
     override fun onRefresh() {
         super.onRefresh()
+        loadData()
+    }
+
+    private fun loadData() {
         mPresent.getDataByPost(0x0,
                 RequestParamsHelper.PRODUCT_MODEL,
                 RequestParamsHelper.ACT_PRODUCT,
-                RequestParamsHelper.getProductParams("3", sort, currentPage))
+                RequestParamsHelper.getProductParams(arguments.getString(K_TYPE_FLAG), sort, currentPage))
     }
 
+
+    override fun onLoadMore() {
+        super.onLoadMore()
+        loadData()
+    }
+
+    override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
+        super.onRequestSuccess(requestID, result)
+        processList(checkResultCode(result), PersonalCutGoodsItemBean::class.java)
+    }
 }

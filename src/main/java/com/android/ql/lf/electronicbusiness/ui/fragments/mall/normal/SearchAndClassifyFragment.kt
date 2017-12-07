@@ -8,6 +8,8 @@ import android.view.View
 import android.widget.CheckedTextView
 import android.widget.ImageView
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.ClassifyBean
+import com.android.ql.lf.electronicbusiness.data.ClassifyItemEntity
 import com.android.ql.lf.electronicbusiness.data.IClassifyBean
 import com.android.ql.lf.electronicbusiness.data.IClassifyItemEntity
 import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
@@ -28,8 +30,12 @@ import org.jetbrains.anko.support.v4.toast
  */
 class SearchAndClassifyFragment : BaseNetWorkingFragment() {
 
-    private val mMenuArrayList = arrayListOf<IClassifyBean>()
-    private val mItemArrayList = arrayListOf<IClassifyItemEntity>()
+    companion object {
+        val K_TYPE_FLAG = "k_type_flag"
+    }
+
+    private val mMenuArrayList = arrayListOf<ClassifyBean>()
+    private val mItemArrayList = arrayListOf<ClassifyItemEntity>()
 
     override fun getLayoutId(): Int = R.layout.fragment_normal_mall_search_and_classify_layout
 
@@ -53,7 +59,7 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
                 menuAdapter.notifyDataSetChanged()
                 var contentItemIndex = 0
                 for (entity in mItemArrayList) {
-                    if (entity.header != null && entity.header == mMenuArrayList[position].jclassify_title) {
+                    if (entity.header != null && entity.header == mMenuArrayList[position].classify_title) {
                         contentItemIndex = mItemArrayList.indexOf(entity)
                         break
                     }
@@ -70,7 +76,7 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
                     var index = 0
                     mMenuArrayList.forEachIndexed { _, searchMenuItemBean ->
                         searchMenuItemBean.isChecked = false
-                        if (entity.header == searchMenuItemBean.jclassify_title) {
+                        if (entity.header == searchMenuItemBean.classify_title) {
                             index = mMenuArrayList.indexOf(searchMenuItemBean)
                         }
                     }
@@ -91,7 +97,7 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_JPRODUCT_TYPE, RequestParamsHelper.getJProductTypeParams())
+        mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_TYPE, RequestParamsHelper.getProductTypeParams(arguments.getString(K_TYPE_FLAG)))
     }
 
     override fun onRequestStart(requestID: Int) {
@@ -104,12 +110,12 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
         if (json != null) {
-            mMenuArrayList.addAll(ListParseHelper<IClassifyBean>().fromJson(json.toString(), IClassifyBean::class.java))
+            mMenuArrayList.addAll(ListParseHelper<ClassifyBean>().fromJson(json.toString(), ClassifyBean::class.java))
             mMenuArrayList.forEach {
-                val contentEntity = IClassifyItemEntity(true, it.jclassify_title)
+                val contentEntity = ClassifyItemEntity(true, it.classify_title)
                 mItemArrayList.add(contentEntity)
                 it.sub.forEach {
-                    val item = IClassifyItemEntity(it)
+                    val item = ClassifyItemEntity(it)
                     mItemArrayList.add(item)
                 }
             }
@@ -118,7 +124,7 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
             }
             menuAdapter.notifyDataSetChanged()
             contentAdapter.notifyDataSetChanged()
-        }else{
+        } else {
             toast("加载失败，请稍后重试……")
         }
     }
@@ -128,25 +134,25 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
         toast("加载失败，请稍后重试……")
     }
 
-    class MenuAdapter(layoutId: Int, list: ArrayList<IClassifyBean>) : BaseQuickAdapter<IClassifyBean, BaseViewHolder>(layoutId, list) {
+    class MenuAdapter(layoutId: Int, list: ArrayList<ClassifyBean>) : BaseQuickAdapter<ClassifyBean, BaseViewHolder>(layoutId, list) {
 
-        override fun convert(helper: BaseViewHolder?, item: IClassifyBean?) {
-            helper?.setText(R.id.mSearchClassifyItemName, item?.jclassify_title)
+        override fun convert(helper: BaseViewHolder?, item: ClassifyBean?) {
+            helper?.setText(R.id.mSearchClassifyItemName, item?.classify_title)
             val ckName = helper?.getView<CheckedTextView>(R.id.mSearchClassifyItemName)
             ckName?.isChecked = item?.isChecked!!
         }
     }
 
-    class ContentAdapter(layoutId: Int, headerLayoutId: Int, list: ArrayList<IClassifyItemEntity>) : BaseSectionQuickAdapter<IClassifyItemEntity, BaseViewHolder>(layoutId, headerLayoutId, list) {
+    class ContentAdapter(layoutId: Int, headerLayoutId: Int, list: ArrayList<ClassifyItemEntity>) : BaseSectionQuickAdapter<ClassifyItemEntity, BaseViewHolder>(layoutId, headerLayoutId, list) {
 
-        override fun convertHead(helper: BaseViewHolder?, item: IClassifyItemEntity?) {
+        override fun convertHead(helper: BaseViewHolder?, item: ClassifyItemEntity?) {
             helper?.setText(R.id.mSearchClassifyContentItemTitle, item!!.header)
         }
 
-        override fun convert(helper: BaseViewHolder?, item: IClassifyItemEntity?) {
-            helper!!.setText(R.id.mSearchClassifyContentItemName, item!!.t.jclassify_title)
+        override fun convert(helper: BaseViewHolder?, item: ClassifyItemEntity?) {
+            helper!!.setText(R.id.mSearchClassifyContentItemName, item!!.t.classify_title)
             val iv_icon = helper.getView<ImageView>(R.id.mSearchClassifyContentItemIcon)
-            GlideManager.loadCircleImage(iv_icon.context, "https://gss3.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=eb3a512554df8db1bc2e7b623118ba69/7af40ad162d9f2d3e0767452a3ec8a136327cc2c.jpg", iv_icon)
+            GlideManager.loadCircleImage(iv_icon.context, item.t.classify_pic, iv_icon)
         }
     }
 }

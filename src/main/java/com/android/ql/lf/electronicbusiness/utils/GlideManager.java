@@ -49,13 +49,13 @@ public class GlideManager {
     public static void loadCircleImage(Context context, String path, ImageView imageView) {
         String tempPath;
         if (path != null) {
-            if (path.startsWith("http://") || path.startsWith("http://")) {
+            if (path.startsWith("http://") || path.startsWith("https://")) {
                 tempPath = path;
             } else {
-                tempPath = Constants.BASE_IP + path + "asdfasdfasdfa";
+                tempPath = Constants.BASE_IP + path;
             }
             Glide.with(context)
-                    .load("https://gss3.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=eb3a512554df8db1bc2e7b623118ba69/7af40ad162d9f2d3e0767452a3ec8a136327cc2c.jpg")
+                    .load(tempPath)
                     .error(R.drawable.img_glide_circle_load_default)
                     .placeholder(R.drawable.img_glide_circle_load_default)
                     .bitmapTransform(new CropCircleTransformation(context), new CenterCrop(context))

@@ -8,6 +8,7 @@ import android.text.TextPaint
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.ImageView
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.SpecificationBean
@@ -16,7 +17,6 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
-import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -83,6 +83,14 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         }
         controller = TxVideoPlayerController(mContext)
         controller.setTitle("")
+        val shareField = controller.javaClass.getDeclaredField("mShare")
+        val fullScreenField = controller.javaClass.getDeclaredField("mFullScreen")
+        shareField.isAccessible = true
+        fullScreenField.isAccessible = true
+        val tv_share = shareField.get(controller) as TextView
+        val iv_full_screen = fullScreenField.get(controller) as ImageView
+        tv_share.visibility = View.GONE
+        iv_full_screen.visibility = View.GONE
         mNiceVideoPlayer.setPlayerType(NiceVideoPlayer.TYPE_NATIVE)
         mNiceVideoPlayer.setController(controller)
         mNiceVideoPlayer.backgroundColor = Color.WHITE
@@ -124,10 +132,11 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         NiceVideoPlayerManager.instance().releaseNiceVideoPlayer()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL, RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
     }
+
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
@@ -174,7 +183,7 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                 }
                 mNiceVideoPlayer.setUp(detailJson.optString("product_video"), null)
                 val detailHtml = detailJson.optString("product_content")
-                wb_detail.loadData(detailHtml.replace("src=\"", "src=\"${Constants.BASE_IP}"), "text/html; charset=UTF-8", null)
+                wb_detail.loadData(detailHtml, "text/html; charset=UTF-8", null)
             }
         } else if (requestID == 0x1) {
             if (json != null) {
@@ -191,7 +200,9 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         if (bottomParamDialog == null) {
             val defaultPicPath = if (picJsonArray != null && picJsonArray.length() > 0) {
                 picJsonArray.optString(0)
-            } else {""}
+            } else {
+                ""
+            }
             bottomParamDialog = BottomGoodsParamDialog(context)
             bottomParamDialog!!.bindDataToView(tv_price.text.toString(),
                     tv_release_count.text.toString(),

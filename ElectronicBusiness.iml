@@ -154,6 +154,7 @@
     <orderEntry type="library" name="support-v4-26.1.0" level="project" />
     <orderEntry type="library" name="support-fragment-26.1.0" level="project" />
     <orderEntry type="library" name="anko-commons-0.10.1" level="project" />
+    <orderEntry type="library" name="banner-1.4.10" level="project" />
     <orderEntry type="library" name="okhttp-3.9.0" level="project" />
     <orderEntry type="library" name="ijkplayer-armv5-0.8.3" level="project" />
     <orderEntry type="library" name="exoplayer-r1.5.11" level="project" />

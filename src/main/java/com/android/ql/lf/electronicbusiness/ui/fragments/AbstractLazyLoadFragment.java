@@ -36,6 +36,9 @@ public abstract class AbstractLazyLoadFragment<T> extends BaseRecyclerViewFragme
     }
 
     protected void onVisible() {
+        if (isLoad){
+            return;
+        }
         lazyLoad();
     }
 
@@ -47,7 +50,7 @@ public abstract class AbstractLazyLoadFragment<T> extends BaseRecyclerViewFragme
 
     @Override
     public void onRefresh() {
-        if (!isVisible || !isPrepared || isLoad) {
+        if (!isVisible || !isPrepared) {
             return;
         }
         mSwipeRefreshLayout.post(new Runnable() {

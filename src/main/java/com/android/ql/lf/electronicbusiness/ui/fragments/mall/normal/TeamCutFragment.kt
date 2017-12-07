@@ -8,8 +8,10 @@ import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.TabItemBean
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainCutPrivilegeFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.google.gson.Gson
@@ -34,6 +36,7 @@ class TeamCutFragment : BaseNetWorkingFragment() {
         if (userVisibleHint) {
             isMvisible = true
             loadData()
+            MainCutPrivilegeFragment.currentMode = "2"
         } else {
             isMvisible = false
         }
@@ -55,6 +58,11 @@ class TeamCutFragment : BaseNetWorkingFragment() {
     override fun getLayoutId(): Int = R.layout.fragment_personal_cut_layout
 
     override fun initView(view: View?) {
+        mTvClassMore.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, "2")
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, bundle,SearchAndClassifyFragment::class.java)
+        }
     }
 
     override fun onRequestStart(requestID: Int) {
@@ -82,7 +90,7 @@ class TeamCutFragment : BaseNetWorkingFragment() {
         }
     }
 
-    class MyPersonalCutAdapter(private val titles: ArrayList<TabItemBean>,manager: FragmentManager) : FragmentStatePagerAdapter(manager) {
+    class MyPersonalCutAdapter(private val titles: ArrayList<TabItemBean>, manager: FragmentManager) : FragmentStatePagerAdapter(manager) {
 
         override fun getItem(position: Int): Fragment = TeamCutItemFragment.newInstance(titles[position].classify_id)
 
