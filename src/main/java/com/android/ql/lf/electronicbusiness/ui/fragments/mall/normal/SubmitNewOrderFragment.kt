@@ -47,7 +47,6 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
     private lateinit var subscription: Subscription
     private var tempList: ArrayList<ShoppingCarItemBean>? = null
 
-
     private lateinit var tv_address_name: TextView
     private lateinit var tv_address_phone: TextView
     private lateinit var tv_address_detail: TextView
@@ -202,8 +201,8 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                 if (cb_wx.isChecked) {
                     val wxBean = Gson().fromJson(json.optJSONObject("result").toString(), WXPayBean::class.java)
                     PayManager.wxPay(mContext, wxBean)
-                }else{
-
+                } else {
+                    PayManager.aliPay(mContext, handle, json.optString("result"))
                 }
             }
         }
@@ -254,6 +253,12 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                 }
             }
         }
+    }
+
+
+    override fun onDestroyView() {
+        handle.removeMessages(PayManager.SDK_PAY_FLAG)
+        super.onDestroyView()
     }
 }
 
