@@ -40,7 +40,10 @@ class OrderInfoFragment : BaseNetWorkingFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_ORDER_DETAIL, RequestParamsHelper.getOrderDetailParam(arguments.getString(ORDER_INFO_ID_FLAG, "")))
+        mPresent.getDataByPost(0x0,
+                RequestParamsHelper.MEMBER_MODEL,
+                RequestParamsHelper.ACT_ORDER_DETAIL,
+                RequestParamsHelper.getOrderDetailParam(arguments.getString(ORDER_INFO_ID_FLAG, "")))
     }
 
     override fun onRequestStart(requestID: Int) {

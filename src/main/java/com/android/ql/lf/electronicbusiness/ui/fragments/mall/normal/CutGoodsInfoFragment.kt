@@ -206,6 +206,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         when (currentMode) {
             1 -> { //个人砍
                 mTvPersonalCutItemInfoEveryOneCut.text = ("每个人砍价${cutInfoBean!!.result.kprice}元")
+                mTvPersonalCutItemInfoEveryOneCut.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_mark_personal_cut,0,0,0)
                 mTvPersonalCutItemInfoBuy.text = "￥${cutInfoBean!!.result.detail.product_price}\n立即购买"
                 mTvPersonalCutItemInfoCut.text = "- ￥${cutInfoBean!!.result.kprice}\n砍价"
                 mTvPersonalCutItemInfoCut.setOnClickListener {
@@ -217,6 +218,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             }
             2 -> { //团体砍
                 mTvPersonalCutItemInfoEveryOneCut.text = ("距离${cutInfoBean!!.result.kprice}元还差两人")
+                mTvPersonalCutItemInfoEveryOneCut.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_mark_team_cut,0,0,0)
                 mTvPersonalCutItemInfoBuy.text = "￥${cutInfoBean!!.result.detail.product_price}\n立即购买"
                 mTvPersonalCutItemInfoCut.text = "参与砍价"
                 mTvPersonalCutItemInfoCut.setOnClickListener {

@@ -227,6 +227,19 @@ class RequestParamsHelper {
             return param
         }
 
+        /**
+         * 修改订单状态
+         *   0 待付款  1 待发货  2 已发货/待收货 3 已收货/订单完成 4 取消订单 5 申请退款 6 已退款
+         */
+        val ACT_EDIT_ORDER_STATUS = "edit_order_status"
+
+        fun getEditOrderStatusParam(oid: String, status: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("oid", oid)
+            param.addParam("status", status)
+            return param
+        }
+
 
         //意见反馈
         val ACT_ADD_IDEA = "add_idea"
@@ -235,6 +248,15 @@ class RequestParamsHelper {
             val param = getWithIdParams()
             param.addParam("content", content)
             param.addParam("phone", phone)
+            return param
+        }
+
+        //删除订单
+        val ACT_DEL_DETAIL = "del_detail"
+
+        fun getDelDetailParam(oid: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("oid", oid)
             return param
         }
 
@@ -427,18 +449,27 @@ class RequestParamsHelper {
         //个人砍
         val ACT_ONEBARGAIN = "onebargain"
 
-        fun getOnebargainParam(gid:String): ApiParams {
+        fun getOnebargainParam(gid: String): ApiParams {
             val param = getWithIdParams()
-            param.addParam("gid",gid)
+            param.addParam("gid", gid)
             return param
         }
 
         //团体砍
         val ACT_MOREBARGAIN = "morebargain"
 
-        fun getMorebargainParam(gid:String): ApiParams {
+        fun getMorebargainParam(gid: String): ApiParams {
             val param = getWithIdParams()
-            param.addParam("gid",gid)
+            param.addParam("gid", gid)
+            return param
+        }
+
+        //轮播图 1 砍价 2 会员
+        val ACT_PRODUCT_LUNBO = "product_lunbo"
+
+        fun getLunBoParam(ktype: String): ApiParams {
+            val param = getBaseParams()
+            param.addParam("ktype", ktype)
             return param
         }
 
@@ -467,6 +498,17 @@ class RequestParamsHelper {
             param.addParam("post_data", orderData)
             return param
         }
+
+        val ACT_REFUND = "refund"
+        fun getRefundParam(name:String,phone:String,oid:String,content:String):ApiParams{
+            val param = getWithIdParams()
+            param.addParam("name",name)
+            param.addParam("phone",phone)
+            param.addParam("oid",oid)
+            param.addParam("content",content)
+            return param
+        }
+
         /**              order model  end           **/
 
     }

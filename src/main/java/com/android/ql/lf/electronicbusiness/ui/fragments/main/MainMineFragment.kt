@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.RefreshData
 import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
@@ -30,18 +31,24 @@ import rx.Subscription
  */
 class MainMineFragment : BaseNetWorkingFragment() {
 
-    lateinit var subscribe: Subscription
+
+    private lateinit var loginSubscribe: Subscription
+    private lateinit var qBadgeSubScribe: Subscription
 
     private var badge0: QBadgeView? = null
+    private var badge1: QBadgeView? = null
+    private var badge2: QBadgeView? = null
+    private var badge3: QBadgeView? = null
 
     companion object {
         fun newInstance() = MainMineFragment()
+        val REFRESH_QBADGE_VIEW_FLAG = "refresh QBadgeView"
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_main_mine_layout
 
     override fun initView(view: View?) {
-        subscribe = RxBus.getDefault().toObservable(UserInfo::class.java).subscribe {
+        loginSubscribe = RxBus.getDefault().toObservable(UserInfo::class.java).subscribe {
             loadUserInfo()
             when (UserInfo.getInstance().loginTag) {
                 1 -> { //点击个人信息返回的结果
@@ -86,6 +93,11 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 14 -> {//待评价
                     mSuccessOrder.performClick()
                 }
+            }
+        }
+        qBadgeSubScribe = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
+            if (RefreshData.isRefresh && RefreshData.any == REFRESH_QBADGE_VIEW_FLAG) {
+                mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_PERSONAL, RequestParamsHelper.getPersonal())
             }
         }
         mMineTopView.alpha = 0.0f
@@ -189,7 +201,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
             if (UserInfo.getInstance().isLogin) {
                 val bundle = Bundle()
                 bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DFH)
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "待发货", true, false, bundle,OrderListFragment::class.java)
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "待发货", true, false, bundle, OrderListFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 12
                 LoginFragment.startLogin(mContext)
@@ -199,7 +211,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
             if (UserInfo.getInstance().isLogin) {
                 val bundle = Bundle()
                 bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DSH)
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "待收货", true, false, bundle,OrderListFragment::class.java)
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "待收货", true, false, bundle, OrderListFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 13
                 LoginFragment.startLogin(mContext)
@@ -209,7 +221,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
             if (UserInfo.getInstance().isLogin) {
                 val bundle = Bundle()
                 bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DPJ)
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "待评价", true, false, bundle,OrderListFragment::class.java)
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "待评价", true, false, bundle, OrderListFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 14
                 LoginFragment.startLogin(mContext)
@@ -258,20 +270,31 @@ class MainMineFragment : BaseNetWorkingFragment() {
                         val arrJsonObject = jsonObject.optJSONObject("arr")
                         val s0 = arrJsonObject.optString("s0")
                         if ("0" != s0) {
-                            badge0 = QBadgeView(mContext)
+                            if (badge0 == null) {
+                                badge0 = QBadgeView(mContext)
+                            }
                             badge0!!.bindTarget(mDFKOrder).badgeNumber = s0.toInt()
                         }
                         val s1 = arrJsonObject.optString("s1")
                         if ("0" != s1) {
-                            QBadgeView(mContext).bindTarget(mDFHOrder).badgeNumber = s1.toInt()
+                            if (badge1 == null) {
+                                badge1 = QBadgeView(mContext)
+                            }
+                            badge1!!.bindTarget(mDFHOrder).badgeNumber = s1.toInt()
                         }
                         val s2 = arrJsonObject.optString("s2")
                         if ("0" != s2) {
-                            QBadgeView(mContext).bindTarget(mWaitingGoods).badgeNumber = s2.toInt()
+                            if (badge2 == null) {
+                                badge2 = QBadgeView(mContext)
+                            }
+                            badge2!!.bindTarget(mWaitingGoods).badgeNumber = s2.toInt()
                         }
                         val s3 = arrJsonObject.optString("s3")
                         if ("0" != s3) {
-                            QBadgeView(mContext).bindTarget(mSuccessOrder).badgeNumber = s3.toInt()
+                            if (badge3 == null) {
+                                badge3 = QBadgeView(mContext)
+                            }
+                            badge3!!.bindTarget(mSuccessOrder).badgeNumber = s3.toInt()
                         }
                     }
                 }
@@ -315,8 +338,11 @@ class MainMineFragment : BaseNetWorkingFragment() {
     }
 
     override fun onDestroyView() {
-        if (!subscribe.isUnsubscribed) {
-            subscribe.unsubscribe()
+        if (!loginSubscribe.isUnsubscribed) {
+            loginSubscribe.unsubscribe()
+        }
+        if(!qBadgeSubScribe.isUnsubscribed){
+            qBadgeSubScribe.unsubscribe()
         }
         super.onDestroyView()
     }

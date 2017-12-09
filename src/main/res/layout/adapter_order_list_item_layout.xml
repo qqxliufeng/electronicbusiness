@@ -37,7 +37,8 @@
         <ImageView
             android:id="@+id/mIvOrderListItemPic"
             android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"/>
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -118,19 +119,17 @@
         android:padding="@dimen/dp_10">
 
         <Button
-            android:id="@+id/mBtOrderListItemExpress"
+            android:id="@+id/mBtOrderListItemAction1"
             android:layout_width="80dp"
             android:layout_height="30dp"
             android:layout_marginRight="@dimen/dp_10"
-            android:background="@drawable/shape_tv_order_list_bg"
-            android:text="查看物流" />
+            android:background="@drawable/shape_tv_order_list_bg"/>
 
         <Button
-            android:id="@+id/mBtOrderListItemComment"
+            android:id="@+id/mBtOrderListItemAction2"
             android:layout_width="80dp"
             android:layout_height="30dp"
             android:background="@drawable/shape_tv_shopping_car_delete_bg"
-            android:text="评价"
             android:textColor="@color/red_tv_color" />
 
     </LinearLayout>

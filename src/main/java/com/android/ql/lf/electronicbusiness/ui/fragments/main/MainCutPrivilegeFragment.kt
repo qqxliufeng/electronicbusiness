@@ -14,6 +14,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.ProductBannerBean
+import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
@@ -22,6 +24,8 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchAndCl
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchGoodsFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.TeamCutFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
+import com.android.ql.lf.electronicbusiness.utils.Constants
+import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import kotlinx.android.synthetic.main.fragment_main_normal_privilege_layout.*
 
@@ -64,6 +68,11 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
     }
 
 
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mPresent.getDataByPost(0x1, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_LUNBO, RequestParamsHelper.getLunBoParam("1"))
+    }
+
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
         progressDialog = MyProgressDialog(mContext)
@@ -73,11 +82,34 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
-        if (json != null) {
-            ruleContent = json.optJSONObject("result").optString("ptgg_content")
-            showRuleDialog()
+        if (requestID == 0x0) {
+            if (json != null) {
+                ruleContent = json.optJSONObject("result").optString("ptgg_content")
+                showRuleDialog()
+            }
+        } else if (requestID == 0x1) {
+            if (json != null) {
+                val tempPics = arrayListOf<String>()
+                ListParseHelper<ProductBannerBean>().fromJson(json.toString(), ProductBannerBean::class.java).forEach {
+                    tempPics.add(it.lunbo_pic)
+                }
+                if (!tempPics.isEmpty()) {
+                    mBannerProductCut.setImageLoader(GlideImageLoader()).setImages(tempPics).setDelayTime(5000).start()
+                }
+            }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        mBannerProductCut.startAutoPlay()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mBannerProductCut.stopAutoPlay()
+    }
+
 
     private fun showRuleDialog() {
         val dialog = Dialog(mContext)

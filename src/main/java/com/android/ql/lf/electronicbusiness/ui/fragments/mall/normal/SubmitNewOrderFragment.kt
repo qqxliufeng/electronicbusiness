@@ -1,6 +1,7 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.support.v4.content.ContextCompat
@@ -11,24 +12,22 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.*
 import com.android.ql.lf.electronicbusiness.R
-import com.android.ql.lf.electronicbusiness.data.AddressBean
-import com.android.ql.lf.electronicbusiness.data.OrderBean
-import com.android.ql.lf.electronicbusiness.data.ShoppingCarItemBean
-import com.android.ql.lf.electronicbusiness.data.WXPayBean
+import com.android.ql.lf.electronicbusiness.data.*
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.SubmitOrderInfoAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainMineFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.AddressSelectFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mine.OrderInfoFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mine.OrderListFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.ui.views.PopupWindowDialog
-import com.android.ql.lf.electronicbusiness.utils.PayManager
-import com.android.ql.lf.electronicbusiness.utils.PayResult
-import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
-import com.android.ql.lf.electronicbusiness.utils.RxBus
+import com.android.ql.lf.electronicbusiness.utils.*
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_submit_order_layout.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription
 import java.text.DecimalFormat
@@ -76,16 +75,23 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                     val payResult = PayResult(msg.obj as Map<String, String>)
                     val resultInfo = payResult.result// 同步返回需要验证的信息
                     val resultStatus = payResult.resultStatus
+                    val bundle = Bundle()
                     if (TextUtils.equals(resultStatus, "9000")) {
-                        toast("支付成功")
+                        //支付成功
+                        bundle.putInt(PayResultFragment.PAY_CODE_FLAG, PayResultFragment.PAY_SUCCESS_CODE)
                     } else {
-                        toast("支付失败")
+                        //支付失败
+                        bundle.putInt(PayResultFragment.PAY_CODE_FLAG, PayResultFragment.PAY_FAIL_CODE)
                     }
+                    RefreshData.any = MainMineFragment.REFRESH_QBADGE_VIEW_FLAG
+                    RefreshData.isRefresh = true
+                    RxBus.getDefault().post(RefreshData)
+                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "支付结果", true, false, bundle, PayResultFragment::class.java)
+                    finish()
                 }
             }
         }
     }
-
 
     override fun getLayoutId() = R.layout.fragment_submit_order_layout
 
@@ -147,7 +153,7 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
             mArrayList.forEach {
                 val orderBean = OrderBean()
                 orderBean.address = addressBean!!.address_id
-                orderBean.gid = it.shopcart_id
+                orderBean.gid = it.shopcart_gid
                 orderBean.ktype = it.shopcart_ktype
                 orderBean.mliuyan = it.bbs
                 orderBean.num = it.shopcart_num
@@ -159,11 +165,7 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
             }
             val json = Gson().toJson(orderList)
             mPresent.getDataByPost(0x1, RequestParamsHelper.ORDER_MODEL, RequestParamsHelper.ACT_ADD_ORDER,
-                    RequestParamsHelper.getAddOrderParams(if (cb_wx.isChecked) {
-                        "wxpay"
-                    } else {
-                        "alipay"
-                    }, json))
+                    RequestParamsHelper.getAddOrderParams(if (cb_wx.isChecked) "wxpay" else "alipay", json))
         }
         ll_address_container.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "选择地址", true, false, AddressSelectFragment::class.java)
@@ -198,6 +200,7 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
             }
         } else if (requestID == 0x1) {
             if (json != null) {
+                PreferenceUtils.setPrefString(mContext, PayResultFragment.PAY_ORDER_RESULT_JSON_FLAG, json.optJSONObject("arr").toString())
                 if (cb_wx.isChecked) {
                     val wxBean = Gson().fromJson(json.optJSONObject("result").toString(), WXPayBean::class.java)
                     PayManager.wxPay(mContext, wxBean)
@@ -254,7 +257,6 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
             }
         }
     }
-
 
     override fun onDestroyView() {
         handle.removeMessages(PayManager.SDK_PAY_FLAG)

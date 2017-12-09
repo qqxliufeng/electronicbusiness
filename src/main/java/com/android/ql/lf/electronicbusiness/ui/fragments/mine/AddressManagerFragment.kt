@@ -145,6 +145,9 @@ class AddressManagerFragment : BaseRecyclerViewFragment<AddressBean>() {
                     break
                 }
             }
+            if (topItem == null) {
+                topItem = mArrayList[0]
+            }
             mPresent.getDataByPost(0x1,
                     RequestParamsHelper.MEMBER_MODEL,
                     RequestParamsHelper.ACT_DEFAULT_ADDRESS,

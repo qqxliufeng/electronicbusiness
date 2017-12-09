@@ -1,5 +1,7 @@
 package com.android.ql.lf.electronicbusiness.data;
 
+import java.util.ArrayList;
+
 /**
  * Created by liufeng on 2017/12/2.
  */
@@ -8,7 +10,7 @@ public class MyOrderBean {
     private String product_id;
     private String product_name;
     private String product_md;
-    private String product_pic;
+    private ArrayList<String> product_pic;
     private String product_hname;
     private String product_price;
     private String product_ktype;
@@ -49,11 +51,11 @@ public class MyOrderBean {
         this.product_md = product_md;
     }
 
-    public String getProduct_pic() {
+    public ArrayList<String> getProduct_pic() {
         return product_pic;
     }
 
-    public void setProduct_pic(String product_pic) {
+    public void setProduct_pic(ArrayList<String> product_pic) {
         this.product_pic = product_pic;
     }
 

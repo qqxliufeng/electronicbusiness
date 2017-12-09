@@ -30,7 +30,8 @@
                 android:orientation="vertical"
                 app:layout_collapseMode="parallax">
 
-                <ImageView
+                <com.youth.banner.Banner
+                    android:id="@+id/mBannerProductCut"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:scaleType="centerCrop"

@@ -7,13 +7,17 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.ProductBannerBean
 import com.android.ql.lf.electronicbusiness.data.TabItemBean
+import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchAndClassifyFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchGoodsFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.VipPrivilegeItemFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
+import com.android.ql.lf.electronicbusiness.utils.Constants
+import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_vip_privilege_layout.*
@@ -73,34 +77,61 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
         mTvClassMore.setOnClickListener {
             val bundle = Bundle()
             bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, "3")
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false,bundle, SearchAndClassifyFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, bundle, SearchAndClassifyFragment::class.java)
         }
     }
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
-        progressDialog = MyProgressDialog(mContext)
-        progressDialog.show()
+        if (requestID == 0x0) {
+            progressDialog = MyProgressDialog(mContext)
+            progressDialog.show()
+        }
     }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
-        if (json != null) {
-            isLoaded = true
-            val tempTitles = arrayListOf<TabItemBean>()
-            val item = TabItemBean()
-            item.classify_id = ""
-            item.classify_title = "全部"
-            tempTitles.add(item)
-            val resultJsonArray = json.optJSONArray("result")
-            (0 until resultJsonArray.length()).forEach {
-                tempTitles.add(Gson().fromJson(resultJsonArray.optJSONObject(it).toString(), TabItemBean::class.java))
+        if (requestID == 0x0) {
+            mPresent.getDataByPost(0x1, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_LUNBO, RequestParamsHelper.getLunBoParam("2"))
+            if (json != null) {
+                isLoaded = true
+                val tempTitles = arrayListOf<TabItemBean>()
+                val item = TabItemBean()
+                item.classify_id = ""
+                item.classify_title = "全部"
+                tempTitles.add(item)
+                val resultJsonArray = json.optJSONArray("result")
+                (0 until resultJsonArray.length()).forEach {
+                    tempTitles.add(Gson().fromJson(resultJsonArray.optJSONObject(it).toString(), TabItemBean::class.java))
+                }
+                mVipPrivilegeViewPager.adapter = MyViewPagerAdapter(tempTitles, childFragmentManager)
+                mVipPrivilegeTabLayout.setupWithViewPager(mVipPrivilegeViewPager)
             }
-            mVipPrivilegeViewPager.adapter = MyViewPagerAdapter(tempTitles, childFragmentManager)
-            mVipPrivilegeTabLayout.setupWithViewPager(mVipPrivilegeViewPager)
+        }else if (requestID == 0x1){
+            if (json != null) {
+                val tempPics = arrayListOf<String>()
+                ListParseHelper<ProductBannerBean>().fromJson(json.toString(), ProductBannerBean::class.java).forEach {
+                    tempPics.add(it.lunbo_pic)
+                }
+                if (!tempPics.isEmpty()) {
+                    mBannerProductCut.setImageLoader(GlideImageLoader()).setImages(tempPics).setDelayTime(5000).start()
+                }
+            }
         }
     }
+
+
+    override fun onResume() {
+        super.onResume()
+        mBannerProductCut.startAutoPlay()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mBannerProductCut.stopAutoPlay()
+    }
+
 
     class MyViewPagerAdapter(var list: ArrayList<TabItemBean>, manager: FragmentManager) : FragmentStatePagerAdapter(manager) {
 
@@ -113,7 +144,6 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
         override fun getCount(): Int = list.size
 
         override fun getPageTitle(position: Int): CharSequence = list[position].classify_title
-
     }
 
 }
