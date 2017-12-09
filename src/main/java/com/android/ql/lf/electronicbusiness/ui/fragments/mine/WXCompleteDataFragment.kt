@@ -1,0 +1,142 @@
+package com.android.ql.lf.electronicbusiness.ui.fragments.mine
+
+import android.text.TextUtils
+import android.view.View
+import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.CodeBean
+import com.android.ql.lf.electronicbusiness.data.UserInfo
+import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
+import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
+import com.android.ql.lf.electronicbusiness.utils.CounterHelper
+import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
+import com.android.ql.lf.electronicbusiness.utils.RxBus
+import com.google.gson.Gson
+import kotlinx.android.synthetic.main.fragment_wx_complete_data_layout.*
+import org.jetbrains.anko.support.v4.toast
+import org.json.JSONObject
+import java.util.regex.Pattern
+
+/**
+ * Created by lf on 2017/11/28 0028.
+ * @author lf on 2017/11/28 0028
+ */
+class WXCompleteDataFragment : BaseNetWorkingFragment() {
+
+    private var mCode: String = ""
+
+    private lateinit var counterHelper: CounterHelper
+
+    override fun getLayoutId() = R.layout.fragment_wx_complete_data_layout
+
+    override fun initView(view: View?) {
+        counterHelper = CounterHelper()
+        counterHelper.onTick = { millisUntilFinished ->
+            mCodeGet.text = "剩余(${millisUntilFinished / 1000}秒)"
+        }
+        counterHelper.onFinish = {
+            mCodeGet.text = "没有收到验证码？"
+            mCodeGet.isEnabled = true
+        }
+        val uid = arguments.getString("uid", "")
+        val nickName = arguments.getString("nickName", "")
+        mTvWxCompleteDataTitle.text = "完善资料 - $nickName"
+
+        mBack.setOnClickListener { finish() }
+        mCodeGet.setOnClickListener {
+            if (TextUtils.isEmpty(mEtPhone.text.toString())) {
+                toast("手机号不能为空")
+                return@setOnClickListener
+            }
+            if (!Pattern.matches(RegisterFragment.REGEX_MOBILE, mEtPhone.text.toString())) {
+                toast("请输入合法的手机号")
+                return@setOnClickListener
+            }
+            counterHelper.start()
+            mCodeGet.isEnabled = false
+            mPresent.getDataByPost(0x0, RequestParamsHelper.LOGIN_MODEL, RequestParamsHelper.ACT_CODE,
+                    RequestParamsHelper.getCodeParams(mEtPhone.text.toString()))
+        }
+        mClearPhone.setOnClickListener {
+            mEtPhone.setText("")
+        }
+        mBtRegister.setOnClickListener {
+            if (TextUtils.isEmpty(mEtPhone.text.toString())) {
+                toast("手机号不能为空")
+                return@setOnClickListener
+            }
+            if (!Pattern.matches(RegisterFragment.REGEX_MOBILE, mEtPhone.text.toString())) {
+                toast("请输入合法的手机号")
+                return@setOnClickListener
+            }
+            if (TextUtils.isEmpty(mEtCode.text.toString())) {
+                toast("验证码不能为空")
+                return@setOnClickListener
+            }
+            if (mCode != mEtCode.text.toString()) {
+                toast("请输入正确的验证码")
+                return@setOnClickListener
+            }
+            mPresent.getDataByPost(0x1, RequestParamsHelper.LOGIN_MODEL, RequestParamsHelper.ACT_WX_PERFECT,
+                    RequestParamsHelper.getWXCompleteDataParam(mEtPhone.text.toString()))
+        }
+    }
+
+    override fun onRequestStart(requestID: Int) {
+        super.onRequestStart(requestID)
+        if (requestID == 0x1) {
+            progressDialog = MyProgressDialog(mContext, "正在注册，请稍后……")
+            progressDialog.show()
+        }
+    }
+
+    override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
+        super.onRequestSuccess(requestID, result)
+        if (requestID == 0x0) {
+            val codeBean: CodeBean = Gson().fromJson(result.toString(), CodeBean::class.java)
+            if ("200" == codeBean.status) {
+                mCode = codeBean.code
+                toast("验证码已经发送，请注意查收")
+            }
+        } else if (requestID == 0x1) {
+            val json = JSONObject(result.toString())
+            val code = json.optString("code")
+            if ("200" == code) {
+                onLoginSuccess(json)
+            } else {
+                toast(json.optString("msg"))
+            }
+        }
+    }
+
+    private fun onLoginSuccess(json: JSONObject) {
+        toast(json.optString("msg"))
+        val userJson = json.optJSONObject("result")
+        parseUserInfo(userJson)
+        RxBus.getDefault().post(UserInfo.getInstance())
+        finish()
+    }
+
+    private fun parseUserInfo(userJson: JSONObject?) {
+        UserInfo.getInstance().memberId = userJson!!.optString("member_id")
+        UserInfo.getInstance().memberName = userJson.optString("member_name")
+        UserInfo.getInstance().memberPhone = userJson.optString("member_phone")
+        UserInfo.getInstance().memberRank = userJson.optString("member_rank")
+        UserInfo.getInstance().memberSex = userJson.optString("member_sex")
+        UserInfo.getInstance().memberMtime = userJson.optString("member_mtime")
+        UserInfo.getInstance().memberIntegral = userJson.optString("member_integral")
+        UserInfo.getInstance().memberForm = userJson.optString("member_form")
+        UserInfo.getInstance().memberAddress = userJson.optString("member_address")
+        UserInfo.getInstance().memberPic = userJson.optString("member_pic")
+    }
+
+    override fun onRequestFail(requestID: Int, e: Throwable) {
+        super.onRequestFail(requestID, e)
+        toast("完善资料失败，请稍后重试……")
+    }
+
+    override fun onDestroyView() {
+        counterHelper.stop()
+        super.onDestroyView()
+    }
+
+}

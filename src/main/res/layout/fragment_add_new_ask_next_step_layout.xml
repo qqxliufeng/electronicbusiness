@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
+
+        <EditText
+            android:id="@+id/mEtAddNewAskNextStepContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="top"
+            android:hint="在这里添加问题描述（最多500字）"
+            android:minLines="8"
+            android:padding="@dimen/dp_10"
+            android:textColor="@color/black_tv_color"
+            android:textSize="@dimen/sp_14" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_10"
+            android:background="@drawable/recycler_view_height_divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/dp_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="图片"
+                android:textColor="@color/black_tv_color"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:text="(选填)"
+                android:textColor="#a5A5A5"
+                android:textSize="@dimen/sp_14" />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mRvAddNewAskImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/dp_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="标签选择"
+                android:textColor="@color/black_tv_color"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:text="(最多3个，最少1个)"
+                android:textColor="#a5A5A5"
+                android:textSize="@dimen/sp_14" />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mRvAddNewAskTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/dp_10"
+            android:paddingTop="@dimen/dp_10">
+
+            <CheckBox
+                android:id="@+id/mCkAddNewAskNextStep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="确认同意"
+                android:checked="true"
+                android:textColor="#a5a5a5"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="《XXX发布免责声明》"
+                android:textColor="#FB8325" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/mBtSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bt_bg1"
+            android:text="确定提交"
+            android:textColor="#fff" />
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

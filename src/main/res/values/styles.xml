@@ -1,0 +1,92 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppFragmentContainerTheme" parent="AppTheme"></style>
+
+    <style name="TextInputLayoutStyle">
+        <item name="colorControlNormal">@color/colorControlNormal</item>
+        <item name="colorControlActivated">@color/colorControlActivated</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
+    </style>
+
+    <style name="SelectAddressTheme" parent="AppTheme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+
+    <style name="style_cb_pay">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="myRatingBar" parent="@android:style/Widget.Holo.RatingBar">
+        <item name="android:progressDrawable">@drawable/my_ratingbar_drawable</item>
+        <item name="android:minHeight">30px</item>
+    </style>
+
+
+    <style name="style_ct_main_ask_and_answer_top">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/select_ct_ask_top</item>
+        <item name="android:background">@drawable/selector_ct_ask_top_bg</item>
+        <item name="android:layout_marginLeft">@dimen/dp_10</item>
+        <item name="android:layout_marginRight">@dimen/dp_10</item>
+    </style>
+
+    <style name="style_tv_mine_statue">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:drawablePadding">5dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:textColor">#686868</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/selector_press_bg</item>
+    </style>
+
+    <style name="style_tv_mine_list">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:drawablePadding">@dimen/dp_10</item>
+        <item name="android:drawableRight">@drawable/icon_inter</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingLeft">@dimen/dp_10</item>
+        <item name="android:paddingRight">@dimen/dp_10</item>
+        <item name="android:textColor">#393939</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/selector_press_bg</item>
+    </style>
+
+    <!--            IM    -->
+    <style name="text_subhead_black">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_title</item>
+        <item name="android:textSize">@dimen/text_subhead</item>
+    </style>
+
+    <style name="text_body">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_sub</item>
+        <item name="android:textSize">@dimen/text_body</item>
+    </style>
+    <!--            IM    -->
+
+</resources>
