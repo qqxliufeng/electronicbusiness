@@ -5,6 +5,7 @@ import android.widget.ImageView;
 
 import com.android.ql.lf.electronicbusiness.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -19,12 +20,17 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 public class GlideManager {
 
     public static void loadImage(Context context, String path, ImageView imageView) {
-        Glide.with(context).load(Constants.BASE_IP + path).error(R.drawable.img_glide_load_default).placeholder(R.drawable.img_glide_load_default).into(imageView);
+        Glide.with(context).load(Constants.BASE_IP + path)
+                .error(R.drawable.img_glide_load_default)
+                .placeholder(R.drawable.img_glide_load_default)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageView);
     }
 
     public static void loadRoundImage(Context context, String path, ImageView imageView,int rounded) {
         Glide.with(context)
                 .load(Constants.BASE_IP + path)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .bitmapTransform(new CenterCrop(context), new RoundedCornersTransformation(context, rounded, 0))
                 .into(imageView);
     }
@@ -41,6 +47,7 @@ public class GlideManager {
                     .load(tempPath)
                     .error(R.drawable.pic_headportrait)
                     .placeholder(R.drawable.pic_headportrait)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .bitmapTransform(new CropCircleTransformation(context), new CenterCrop(context))
                     .into(imageView);
         }
@@ -58,6 +65,7 @@ public class GlideManager {
                     .load(tempPath)
                     .error(R.drawable.img_glide_circle_load_default)
                     .placeholder(R.drawable.img_glide_circle_load_default)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .bitmapTransform(new CropCircleTransformation(context), new CenterCrop(context))
                     .into(imageView);
         }

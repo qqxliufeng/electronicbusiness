@@ -11,16 +11,16 @@ import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.CommentForGoodsBean
 import com.android.ql.lf.electronicbusiness.data.SpecificationBean
 import com.android.ql.lf.electronicbusiness.data.UserInfo
+import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.BaseViewHolder
 import com.google.gson.Gson
 import com.xiao.nicevideoplayer.NiceVideoPlayer
 import com.xiao.nicevideoplayer.NiceVideoPlayerManager
@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.vip_privilege_item_info_layout.*
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONArray
+import org.json.JSONObject
 import rx.Subscription
 
 
@@ -42,7 +43,8 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         val GOODS_ID_FLAG = "goods_id_flag"
     }
 
-    private val list = arrayListOf("", "")
+    private val list = arrayListOf<CommentForGoodsBean>()
+    private lateinit var adapter: GoodsInfoCommentAdapter
 
     private lateinit var tv_sell: TextView
     private lateinit var tv_release_count: TextView
@@ -96,7 +98,7 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         mNiceVideoPlayer.backgroundColor = Color.WHITE
 
 
-        val adapter = VipPrivilegeItemGoodsInfoAdapter(R.layout.adapter_vip_privilege_item_goods_info_item_layout, list)
+        adapter = GoodsInfoCommentAdapter(R.layout.adapter_vip_privilege_item_goods_info_item_layout, list)
         mRvVipPrivilegeItemGoodsInfo.layoutManager = LinearLayoutManager(mContext)
         mRvVipPrivilegeItemGoodsInfo.adapter = adapter
 
@@ -124,6 +126,7 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
             }
         }
         wb_detail.settings.javaScriptEnabled = true
+        wb_detail.isFocusable = false
         adapter.addFooterView(bottomView)
     }
 
@@ -137,7 +140,6 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL, RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
     }
 
-
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
         progressDialog = MyProgressDialog(mContext, "正在加载……")
@@ -149,6 +151,9 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         val json = checkResultCode(result)
         if (requestID == 0x0) {
             if (json != null) {
+
+                loadComment(json)
+
                 val detailJson = json.optJSONObject("result").optJSONObject("detail")
                 goodsId = detailJson.optString("product_id")
                 tv_sell.text = "${detailJson.optString("product_sv")}人购买"
@@ -184,11 +189,25 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                 mNiceVideoPlayer.setUp(detailJson.optString("product_video"), null)
                 val detailHtml = detailJson.optString("product_content")
                 wb_detail.loadData(detailHtml, "text/html; charset=UTF-8", null)
+
+
             }
         } else if (requestID == 0x1) {
             if (json != null) {
                 toast("加入购物车成功")
             }
+        }
+    }
+
+    private fun loadComment(json: JSONObject) {
+        val optJSONObject = json.optJSONObject("arr")
+        val commentJsonArray = optJSONObject.optJSONArray("list")
+        tv_comment_num.text = "订单评价(${optJSONObject.optString("count")})"
+        if (commentJsonArray != null && commentJsonArray.length() > 0) {
+            (0 until commentJsonArray.length()).forEach {
+                list.add(Gson().fromJson(commentJsonArray.optJSONObject(it).toString(), CommentForGoodsBean::class.java))
+            }
+            adapter.notifyDataSetChanged()
         }
     }
 
@@ -222,8 +241,4 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         super.onDestroyView()
     }
 
-    class VipPrivilegeItemGoodsInfoAdapter(layoutId: Int, list: ArrayList<String>) : BaseQuickAdapter<String, BaseViewHolder>(layoutId, list) {
-        override fun convert(helper: BaseViewHolder?, item: String?) {
-        }
-    }
 }

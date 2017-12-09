@@ -10,6 +10,7 @@
         android:orientation="vertical">
 
         <EditText
+            android:id="@+id/mEtFeedBackContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
@@ -17,6 +18,7 @@
             android:gravity="top"
             android:textSize="@dimen/sp_16"
             android:hint="请留下您的宝贵意见（100字以内）"
+            android:maxLength="100"
             android:minLines="7"
             android:padding="5dp" />
 
@@ -40,6 +42,7 @@
                 android:textSize="@dimen/sp_16" />
 
             <EditText
+                android:id="@+id/mEtFeedBackPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -56,6 +59,7 @@
             android:background="#f5f5f5" />
 
         <TextView
+            android:id="@+id/mTvFeedBackKFPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autoLink="phone"
@@ -72,6 +76,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/mBtFeedBackSubmit"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"

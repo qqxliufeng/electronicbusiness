@@ -47,7 +47,7 @@ public class UserInfo {
         this.memberPic = memberPic;
     }
 
-    private int loginTag = DEFAULT_LOGIN_TAG;
+    private Object loginTag = DEFAULT_LOGIN_TAG;
 
     public String getMemberId() {
         return memberId;
@@ -126,11 +126,11 @@ public class UserInfo {
     }
 
 
-    public int getLoginTag() {
+    public Object getLoginTag() {
         return loginTag;
     }
 
-    public void setLoginTag(int loginTag) {
+    public void setLoginTag(Object loginTag) {
         this.loginTag = loginTag;
     }
 

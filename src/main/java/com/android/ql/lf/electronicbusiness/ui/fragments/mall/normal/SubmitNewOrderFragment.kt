@@ -67,13 +67,13 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
     override fun createAdapter(): BaseQuickAdapter<ShoppingCarItemBean, BaseViewHolder> =
             SubmitOrderInfoAdapter(R.layout.adapter_submit_order_info_item_layout, mArrayList)
 
-    val handle = @SuppressLint("HandlerLeak")
+    private val handle = @SuppressLint("HandlerLeak")
     object : Handler() {
         override fun handleMessage(msg: Message?) {
             super.handleMessage(msg)
             when (msg!!.what) {
                 PayManager.SDK_PAY_FLAG -> {
-                    val payResult = PayResult(msg!!.obj as Map<String, String>)
+                    val payResult = PayResult(msg.obj as Map<String, String>)
                     val resultInfo = payResult.result// 同步返回需要验证的信息
                     val resultStatus = payResult.resultStatus
                     if (TextUtils.equals(resultStatus, "9000")) {

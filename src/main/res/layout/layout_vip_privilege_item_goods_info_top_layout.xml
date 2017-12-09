@@ -106,7 +106,6 @@
             android:id="@+id/mTvVipPrivilegeGoodsInfoTopAllCommentNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="订单评价（21）"
             android:textColor="@color/red_tv_color"
             android:textSize="14sp" />
 

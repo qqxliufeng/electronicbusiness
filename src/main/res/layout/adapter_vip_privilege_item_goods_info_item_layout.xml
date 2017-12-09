@@ -22,70 +22,47 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/mIvVipGoodsInfoItemFace"
+                android:id="@+id/mIvGoodsInfoCommentItemFace"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/img_test_face" />
+                android:scaleType="centerCrop"/>
 
             <TextView
+                android:id="@+id/mTvGoodsInfoCommentItemName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/dp_10"
-                android:layout_toRightOf="@+id/mIvVipGoodsInfoItemFace"
-                android:text="用户_1048654135415"
+                android:layout_toRightOf="@+id/mIvGoodsInfoCommentItemFace"
                 android:textColor="@color/black_tv_color"
                 android:textSize="@dimen/sp_14" />
 
 
             <TextView
+                android:id="@+id/mTvGoodsInfoCommentItemTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:text="2017-10-30"
                 android:textColor="#949494"
                 android:textSize="@dimen/sp_14" />
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/mTvGoodsInfoCommentItemContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/dp_10"
             android:layout_marginTop="@dimen/dp_10"
-            android:text="全棉四件套，本款全工艺全棉四件套精雕细琢选材料，选用新疆优质先进的环保技术"
             android:textColor="#676767"
             android:textSize="@dimen/sp_14" />
 
         <LinearLayout
+            android:id="@+id/mLlGoodsInfoCommentItemPicContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img_icon_test_pic_05" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginLeft="@dimen/dp_10"
-                android:layout_marginRight="@dimen/dp_10"
-                android:layout_weight="1"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img_icon_test_pic_05" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img_icon_test_pic_05" />
         </LinearLayout>
-
 
     </LinearLayout>
 </LinearLayout>

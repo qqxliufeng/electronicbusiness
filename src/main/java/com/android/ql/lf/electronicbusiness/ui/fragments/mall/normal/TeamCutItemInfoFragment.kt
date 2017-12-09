@@ -16,8 +16,10 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.CommentForGoodsBean
 import com.android.ql.lf.electronicbusiness.data.TeamCutInfoBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
+import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
@@ -34,6 +36,7 @@ import org.jetbrains.anko.backgroundColor
  * Created by lf on 2017/11/13 0013.
  * @author lf on 2017/11/13 0013
  */
+@Deprecated("过期了，请使用 CutGoodsInfoFragment")
 class TeamCutItemInfoFragment : BaseNetWorkingFragment() {
 
     companion object {
@@ -51,7 +54,7 @@ class TeamCutItemInfoFragment : BaseNetWorkingFragment() {
     private lateinit var htv_content_info: HtmlTextView
 
 
-    private val list = arrayListOf("", "")
+    private val list = arrayListOf<CommentForGoodsBean>()
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -64,7 +67,7 @@ class TeamCutItemInfoFragment : BaseNetWorkingFragment() {
         mTvTeamCutItemInfoOldPrice.paint.flags = TextPaint.ANTI_ALIAS_FLAG
         mTvTeamCutItemInfoOldPrice.paint.flags = TextPaint.STRIKE_THRU_TEXT_FLAG
         mRvTeamCutItemInfo.layoutManager = LinearLayoutManager(mContext)
-        val adapter = VipPrivilegeItemInfoFragment.VipPrivilegeItemGoodsInfoAdapter(R.layout.adapter_vip_privilege_item_goods_info_item_layout, list)
+        val adapter = GoodsInfoCommentAdapter(R.layout.adapter_vip_privilege_item_goods_info_item_layout, list)
         mRvTeamCutItemInfo.adapter = adapter
         val topView = View.inflate(mContext, R.layout.layout_personal_cut_item_goods_info_top_layout, null)
 
@@ -130,7 +133,6 @@ class TeamCutItemInfoFragment : BaseNetWorkingFragment() {
         super.onViewCreated(view, savedInstanceState)
         mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL, RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
     }
-
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)

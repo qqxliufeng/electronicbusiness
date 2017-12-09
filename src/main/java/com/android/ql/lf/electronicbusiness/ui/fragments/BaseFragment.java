@@ -1,5 +1,6 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -51,7 +52,7 @@ public abstract class BaseFragment extends Fragment {
 
 
     public void finish() {
-        ((BaseActivity) mContext).finish();
+        ((Activity) mContext).finish();
     }
 
 }

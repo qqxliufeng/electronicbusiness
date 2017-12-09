@@ -11,30 +11,30 @@
         android:padding="@dimen/dp_10">
 
         <ImageView
+            android:id="@+id/mIvGoodsInfoRecommendPic"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/img_icon_test_pic_05" />
+            android:scaleType="centerCrop"/>
 
         <TextView
+            android:id="@+id/mTvGoodsInfoRecommendName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_10"
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:text="秋冬季换装秋冬季换装秋冬季换装"
             android:textColor="@color/black_tv_color"
             android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/mTvGoodsInfoRecommendPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_10"
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:text="￥12.00"
             android:textColor="@color/red_tv_color"
             android:textSize="14sp" />
     </LinearLayout>

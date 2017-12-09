@@ -9,7 +9,7 @@ import java.util.List;
  * @author lf on 2017/12/6 0006
  */
 
-public class PersonalCutInfoBean {
+public class CutGoodsInfoBean {
 
     /**
      * code : 200
@@ -80,7 +80,7 @@ public class PersonalCutInfoBean {
         private String nextprice;
         private String resnum;
         private String endtime;
-        private List<KindBean> kind;
+        private List<PersonalCutGoodsItemBean> kind;
 
         public DetailBean getDetail() {
             return detail;
@@ -122,11 +122,11 @@ public class PersonalCutInfoBean {
             this.endtime = endtime;
         }
 
-        public List<KindBean> getKind() {
+        public List<PersonalCutGoodsItemBean> getKind() {
             return kind;
         }
 
-        public void setKind(List<KindBean> kind) {
+        public void setKind(List<PersonalCutGoodsItemBean> kind) {
             this.kind = kind;
         }
 
@@ -202,8 +202,17 @@ public class PersonalCutInfoBean {
             private String product_bprice;
             private String product_jstatus;
             private String product_endstatus;
+            private String product_jtoken;
             private List<String> product_pic;
             private ArrayList<SpecificationBean> product_specification;
+
+            public String getProduct_jtoken() {
+                return product_jtoken;
+            }
+
+            public void setProduct_jtoken(String product_jtoken) {
+                this.product_jtoken = product_jtoken;
+            }
 
             public String getProduct_id() {
                 return product_id;
@@ -485,72 +494,6 @@ public class PersonalCutInfoBean {
                 this.product_specification = product_specification;
             }
         }
-
-        public static class KindBean {
-            /**
-             * product_id : 30
-             * product_pic : /Public/Uploads/images/2017-12-04/small_5a24e952107d4.jpg,/Public/Uploads/images/2017-12-04/small_5a24e9584b899.jpg
-             * product_price : 120.00
-             * product_minus : 0.00
-             * product_knum : 0
-             * product_time : 2017-12-05 11:56:46
-             */
-
-            private String product_id;
-            private ArrayList<String> product_pic;
-            private String product_price;
-            private String product_minus;
-            private String product_knum;
-            private String product_time;
-
-            public String getProduct_id() {
-                return product_id;
-            }
-
-            public void setProduct_id(String product_id) {
-                this.product_id = product_id;
-            }
-
-            public ArrayList<String> getProduct_pic() {
-                return product_pic;
-            }
-
-            public void setProduct_pic(ArrayList<String> product_pic) {
-                this.product_pic = product_pic;
-            }
-
-            public String getProduct_price() {
-                return product_price;
-            }
-
-            public void setProduct_price(String product_price) {
-                this.product_price = product_price;
-            }
-
-            public String getProduct_minus() {
-                return product_minus;
-            }
-
-            public void setProduct_minus(String product_minus) {
-                this.product_minus = product_minus;
-            }
-
-            public String getProduct_knum() {
-                return product_knum;
-            }
-
-            public void setProduct_knum(String product_knum) {
-                this.product_knum = product_knum;
-            }
-
-            public String getProduct_time() {
-                return product_time;
-            }
-
-            public void setProduct_time(String product_time) {
-                this.product_time = product_time;
-            }
-        }
     }
 
     public static class ArrBean {
@@ -560,7 +503,7 @@ public class PersonalCutInfoBean {
          */
 
         private String count;
-        private List<?> list;
+        private List<CommentForGoodsBean> list;
 
         public String getCount() {
             return count;
@@ -570,11 +513,11 @@ public class PersonalCutInfoBean {
             this.count = count;
         }
 
-        public List<?> getList() {
+        public List<CommentForGoodsBean> getList() {
             return list;
         }
 
-        public void setList(List<?> list) {
+        public void setList(List<CommentForGoodsBean> list) {
             this.list = list;
         }
     }

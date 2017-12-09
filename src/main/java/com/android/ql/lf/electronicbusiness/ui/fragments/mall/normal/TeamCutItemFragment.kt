@@ -68,11 +68,10 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<TeamCutGoodsItemBean>() {
         processList(checkResultCode(result), TeamCutGoodsItemBean::class.java)
     }
 
-
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onMyItemClick(adapter, view, position)
         val bundle = Bundle()
         bundle.putString(TeamCutItemInfoFragment.GOODS_ID_FLAG, mArrayList[position].product_id)
-        FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, TeamCutItemInfoFragment::class.java)
+        FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle,CutGoodsInfoFragment::class.java)
     }
 }

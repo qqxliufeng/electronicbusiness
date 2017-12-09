@@ -5,16 +5,20 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.PersonalCutGoodsItemBean
+import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.PersonalCutItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.AbstractLazyLoadFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
+import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import rx.Subscription
 
 /**
  * Created by lf on 2017/11/11 0011.
@@ -32,6 +36,11 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<PersonalCutGoodsItemBea
         }
     }
 
+    private lateinit var currentItem: PersonalCutGoodsItemBean
+
+    private lateinit var subscription: Subscription
+
+
     override fun createAdapter(): BaseQuickAdapter<PersonalCutGoodsItemBean, BaseViewHolder> =
             PersonalCutItemAdapter(R.layout.adapter_personal_cut_item_layout, mArrayList)
 
@@ -41,6 +50,16 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<PersonalCutGoodsItemBea
         return itemDecoration
     }
 
+    override fun initView(view: View?) {
+        super.initView(view)
+        subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
+            when (UserInfo.getInstance().loginTag) {
+                "${this@PersonalCutItemFragment.hashCode()}${this@PersonalCutItemFragment}" -> {
+                    enterGoodsInfo()
+                }
+            }
+        }
+    }
 
     override fun loadData() {
         if (TextUtils.isEmpty(arguments.getString("cid"))) {
@@ -68,10 +87,26 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<PersonalCutGoodsItemBea
     }
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
-        super.onMyItemClick(adapter, view, position)
+        currentItem = mArrayList[position]
+        if (UserInfo.getInstance().isLogin) {
+            enterGoodsInfo()
+        } else {
+            UserInfo.getInstance().loginTag = "${this.hashCode()}${this}"
+            LoginFragment.startLogin(mContext)
+        }
+    }
+
+    private fun enterGoodsInfo() {
         val bundle = Bundle()
-        bundle.putString(PersonalCutItemInfoFragment.GOODS_ID_FLAG,mArrayList[position].product_id)
-        FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle,PersonalCutItemInfoFragment::class.java)
+        bundle.putString(CutGoodsInfoFragment.GOODS_ID_FLAG, currentItem.product_id)
+        FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, CutGoodsInfoFragment::class.java)
+    }
+
+    override fun onDestroyView() {
+        if (!subscription.isUnsubscribed) {
+            subscription.unsubscribe()
+        }
+        super.onDestroyView()
     }
 
 }

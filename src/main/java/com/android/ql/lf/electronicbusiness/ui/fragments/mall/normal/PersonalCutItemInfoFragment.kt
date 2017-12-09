@@ -11,23 +11,23 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
-import com.android.ql.lf.electronicbusiness.data.PersonalCutInfoBean
+import com.android.ql.lf.electronicbusiness.data.CommentForGoodsBean
+import com.android.ql.lf.electronicbusiness.data.PersonalCutGoodsItemBean
+import com.android.ql.lf.electronicbusiness.data.CutGoodsInfoBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
+import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
+import com.android.ql.lf.electronicbusiness.ui.adapters.RecommedGoodsInfoAdatper
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
-import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
-import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.google.gson.Gson
-import com.youth.banner.loader.ImageLoader
 import kotlinx.android.synthetic.main.fragment_personal_cut_item_info_layout.*
 import org.jetbrains.anko.support.v4.toast
 
@@ -36,6 +36,7 @@ import org.jetbrains.anko.support.v4.toast
  * Created by lf on 2017/11/13 0013.
  * @author lf on 2017/11/13 0013
  */
+@Deprecated("过期了，请使用 CutGoodsInfoFragment")
 class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
 
     companion object {
@@ -43,18 +44,24 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
     }
 
     private var shareDialog: BottomSheetDialog? = null
-    private val commentList = arrayListOf<String>("")
+    private val commentList = arrayListOf<CommentForGoodsBean>()
+    private lateinit var adapter: GoodsInfoCommentAdapter
+
+    private val recommendList = arrayListOf<PersonalCutGoodsItemBean>()
+    private lateinit var recommendAdapter: BaseQuickAdapter<PersonalCutGoodsItemBean, BaseViewHolder>
 
 
     private lateinit var tv_has_cut_money: TextView
     private lateinit var tv_goods_name: TextView
     private lateinit var tv_goods_desc: TextView
 
+    private lateinit var mRvRecommend: RecyclerView
+
     private lateinit var tv_comment_count: TextView
     private lateinit var htv_content_info: HtmlTextView
 
 
-    private var personalCutInfoBean: PersonalCutInfoBean? = null
+    private var personalCutInfoBean: CutGoodsInfoBean? = null
 
     private var bottomParamDialog: BottomGoodsParamDialog? = null
 
@@ -70,7 +77,7 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
         mTvPersonalCutItemInfoOldPrice.paint.flags = TextPaint.STRIKE_THRU_TEXT_FLAG
 
         mRvPersonalCutItemInfo.layoutManager = LinearLayoutManager(mContext)
-        val adapter = VipPrivilegeItemInfoFragment.VipPrivilegeItemGoodsInfoAdapter(R.layout.adapter_vip_privilege_item_goods_info_item_layout, commentList)
+        adapter = GoodsInfoCommentAdapter(R.layout.adapter_vip_privilege_item_goods_info_item_layout, commentList)
         mRvPersonalCutItemInfo.adapter = adapter
 
 
@@ -81,7 +88,6 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
 
         tv_comment_count = topView.findViewById(R.id.mTvPersonalCutItemInfoCommentCount)
 
-
         adapter.addHeaderView(topView)
         topView.findViewById<TextView>(R.id.mTvPersonalCutItemInfoCommentCountAll).setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "全部评价", true, false, AllCommentFragment::class.java)
@@ -91,14 +97,12 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
         }
 
         val bottomRecommendView = View.inflate(mContext, R.layout.layout_personal_cut_item_goods_info_bootom_recommend_layout, null)
-        val mRvRecommend = bottomRecommendView.findViewById<RecyclerView>(R.id.mRvPersonalCutItemGoodsInfoRecommend)
+        mRvRecommend = bottomRecommendView.findViewById(R.id.mRvPersonalCutItemGoodsInfoRecommend)
         mRvRecommend.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
         mRvRecommend.isNestedScrollingEnabled = false
-        val recommendList = arrayListOf("", "", "", "")
-        mRvRecommend.adapter = object : BaseQuickAdapter<String, BaseViewHolder>(R.layout.layout_personal_cut_item_goods_info_bootom_recommend_item_layout, recommendList) {
-            override fun convert(helper: BaseViewHolder?, item: String?) {
-            }
-        }
+
+        recommendAdapter = RecommedGoodsInfoAdatper(R.layout.layout_personal_cut_item_goods_info_bootom_recommend_item_layout, recommendList)
+        mRvRecommend.adapter = recommendAdapter
         adapter.addFooterView(bottomRecommendView, LinearLayoutManager.HORIZONTAL)
 
         val bottomInfoContentView = View.inflate(mContext, R.layout.layout_personal_cut_item_goods_info_bootom_layout, null)
@@ -156,7 +160,8 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
         if (json != null) {
-            personalCutInfoBean = Gson().fromJson(json.toString(), PersonalCutInfoBean::class.java)
+            personalCutInfoBean = Gson().fromJson(json.toString(), CutGoodsInfoBean::class.java)
+            setCommentList()
             mTvPersonalCutItemInfoEveryOneCut.text = ("每个人砍价${personalCutInfoBean!!.result.kprice}元")
             mTvPersonalCutItemInfoBuy.text = "￥${personalCutInfoBean!!.result.detail.product_price}\n立即购买"
             mTvPersonalCutItemInfoCut.text = "- ￥${personalCutInfoBean!!.result.kprice}\n砍价"
@@ -170,6 +175,9 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
                 mTvPersonalCutItemInfoDownTime.setTime(0)
                 mTvPersonalCutItemInfoDownTime.stop()
             }
+
+            setRecommendList()
+
             mTvPersonalCutItemInfoHasCutNum.text = "已参砍人数${personalCutInfoBean!!.result.detail.product_knum}人"
             mTvPersonalCutItemInfoPrice.text = "￥ ${personalCutInfoBean!!.result.detail.product_price}"
             mTvPersonalCutItemInfoOldPrice.text = "￥ ${personalCutInfoBean!!.result.detail.product_yprice}"
@@ -180,17 +188,22 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
 
             setBanner()
 
-            setCommentList()
-
             htv_content_info.setHtmlFromString(personalCutInfoBean!!.result.detail.product_content, false)
-
+            adapter.notifyDataSetChanged()
+            mRvPersonalCutItemInfo.smoothScrollToPosition(0)
         }
+    }
+
+    private fun setRecommendList() {
+        recommendList.addAll(personalCutInfoBean!!.result.kind)
+        recommendAdapter.notifyDataSetChanged()
     }
 
     private fun setCommentList() {
         tv_comment_count.text = "商品评价(${personalCutInfoBean!!.arr.count})"
-        mRvPersonalCutItemInfo.scrollToPosition(0)
+        commentList.addAll(personalCutInfoBean!!.arr.list)
     }
+
 
     /**
      * 设置Banner

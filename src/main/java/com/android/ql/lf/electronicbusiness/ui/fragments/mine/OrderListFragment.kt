@@ -30,6 +30,19 @@ import org.jetbrains.anko.support.v4.toast
  */
 class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
 
+    companion object {
+        val ORDER_STATUE_FLAG = "order_statue_flag"
+
+        // 0 待付款 1 待发货 2 待收货 3 待评价 4 完成 5 已取消 6 已退款
+        val STATUS_OF_DFK = "0"
+        val STATUS_OF_DFH = "1"
+        val STATUS_OF_DSH = "2"
+        val STATUS_OF_DPJ = "3"
+        val STATUS_OF_FINISH = "4"
+        val STATUS_OF_CANCEL = "5"
+        val STATUS_OF_BACK = "6"
+    }
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         setHasOptionsMenu(true)
@@ -67,8 +80,13 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
 
     override fun onRefresh() {
         super.onRefresh()
-        mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_MYORDER,
-                RequestParamsHelper.getMyOrderParams(currentPage))
+        if (arguments != null) {
+            mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_MYORDER_STATUS,
+                    RequestParamsHelper.getMyorderStatusParam(arguments.getString(ORDER_STATUE_FLAG), currentPage))
+        } else {
+            mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_MYORDER,
+                    RequestParamsHelper.getMyOrderParams(currentPage))
+        }
     }
 
     override fun onLoadMore() {
@@ -94,7 +112,7 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         val bundle = Bundle()
-        bundle.putString(OrderInfoFragment.ORDER_INFO_ID_FLAG,mArrayList[position].order_id)
-        FragmentContainerActivity.startFragmentContainerActivity(mContext, "订单详情", true, false,bundle, OrderInfoFragment::class.java)
+        bundle.putString(OrderInfoFragment.ORDER_INFO_ID_FLAG, mArrayList[position].order_id)
+        FragmentContainerActivity.startFragmentContainerActivity(mContext, "订单详情", true, false, bundle, OrderInfoFragment::class.java)
     }
 }

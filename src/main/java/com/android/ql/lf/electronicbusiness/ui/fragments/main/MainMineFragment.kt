@@ -1,5 +1,6 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.main
 
+import android.os.Bundle
 import android.support.v4.widget.NestedScrollView
 import android.text.TextUtils
 import android.util.Log
@@ -72,6 +73,18 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 }
                 10 -> { //设置
                     mSetting.performClick()
+                }
+                11 -> {//待付款
+                    mDFKOrder.performClick()
+                }
+                12 -> {//待发货
+                    mDFHOrder.performClick()
+                }
+                13 -> {//待收货
+                    mWaitingGoods.performClick()
+                }
+                14 -> {//待评价
+                    mSuccessOrder.performClick()
                 }
             }
         }
@@ -163,17 +176,44 @@ class MainMineFragment : BaseNetWorkingFragment() {
             }
         }
         mDFKOrder.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "待付款", true, false, OrderListFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                val bundle = Bundle()
+                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DFK)
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "待付款", true, false, bundle, OrderListFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 11
+                LoginFragment.startLogin(mContext)
+            }
         }
         mDFHOrder.setOnClickListener {
-            //            FragmentContainerActivity.startFragmentContainerActivity(mContext, "待发货", true, false, OrderListFragment::class.java)
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "待发货", true, false, AddressManagerFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                val bundle = Bundle()
+                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DFH)
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "待发货", true, false, bundle,OrderListFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 12
+                LoginFragment.startLogin(mContext)
+            }
         }
         mWaitingGoods.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "待收货", true, false, OrderListFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                val bundle = Bundle()
+                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DSH)
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "待收货", true, false, bundle,OrderListFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 13
+                LoginFragment.startLogin(mContext)
+            }
         }
         mSuccessOrder.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "待评价", true, false, OrderListFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                val bundle = Bundle()
+                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DPJ)
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "待评价", true, false, bundle,OrderListFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 14
+                LoginFragment.startLogin(mContext)
+            }
         }
         mAskAnswer.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {

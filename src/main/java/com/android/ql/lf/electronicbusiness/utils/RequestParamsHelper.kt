@@ -120,7 +120,7 @@ class RequestParamsHelper {
             return params
         }
 
-        fun getMyMessageList(page: Int,pageSize: Int = 10) = getWithPageParams(page,pageSize)
+        fun getMyMessageList(page: Int, pageSize: Int = 10) = getWithPageParams(page, pageSize)
 
         fun getResetPassword(oldPassword: String = "", newPassword: String = ""): ApiParams {
             val params = getWithIdParams()
@@ -211,6 +211,30 @@ class RequestParamsHelper {
             val param = getWithIdParams()
             param.addParam("cid", cid)
             param.addParam("num", num)
+            return param
+        }
+
+
+        /**
+         * 根据不同的状态获取不同的订单信息
+         * 0 待付款 1 待发货 2 待收货 3 待评价 4 完成 5 已取消 6 已退款
+         */
+        val ACT_MYORDER_STATUS = "myorder_status"
+
+        fun getMyorderStatusParam(status: String, page: Int, pageSize: Int = 10): ApiParams {
+            val param = getWithPageParams(page, pageSize)
+            param.addParam("status", status)
+            return param
+        }
+
+
+        //意见反馈
+        val ACT_ADD_IDEA = "add_idea"
+
+        fun getAddIdeaParam(content: String, phone: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("content", content)
+            param.addParam("phone", phone)
             return param
         }
 
@@ -394,8 +418,27 @@ class RequestParamsHelper {
         val ACT_PRODUCT_DETAIL = "product_detail"
 
         fun getProductDetailParam(gid: String): ApiParams {
-            val param = getBaseParams()
+            val param = getWithIdParams()
             param.addParam("gid", gid)
+            return param
+        }
+
+
+        //个人砍
+        val ACT_ONEBARGAIN = "onebargain"
+
+        fun getOnebargainParam(gid:String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("gid",gid)
+            return param
+        }
+
+        //团体砍
+        val ACT_MOREBARGAIN = "morebargain"
+
+        fun getMorebargainParam(gid:String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("gid",gid)
             return param
         }
 
@@ -418,9 +461,9 @@ class RequestParamsHelper {
          * @param mliuyan 留言
          * @param specification 商品规格
          */
-        fun getAddOrderParams(payType: String,orderData: String): ApiParams {
+        fun getAddOrderParams(payType: String, orderData: String): ApiParams {
             val param = getWithIdParams()
-            param.addParam("paytype",payType)
+            param.addParam("paytype", payType)
             param.addParam("post_data", orderData)
             return param
         }
