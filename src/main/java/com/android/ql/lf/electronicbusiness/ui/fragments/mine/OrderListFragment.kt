@@ -19,17 +19,13 @@ import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.OrderListItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainMineFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.ExpressInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import org.jetbrains.anko.bundleOf
-import org.jetbrains.anko.hintTextColor
 import org.jetbrains.anko.support.v4.toast
-import q.rorbin.badgeview.QBadgeView
 import rx.Subscription
 
 /**
@@ -67,12 +63,9 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
 
     override fun initView(view: View?) {
         super.initView(view)
-
         subScription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
             if (it.isRefresh && it.any == REFRESH_ORDER_FLAG) {
-                RefreshData.isRefresh = true
-                RefreshData.any = MainMineFragment.REFRESH_QBADGE_VIEW_FLAG
-                RxBus.getDefault().post(RefreshData)
+                OrderPresent.notifyRefreshOrderNum()
                 onPostRefresh()
             }
         }
@@ -87,7 +80,7 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
         val searchView = menuItem?.actionView as SearchView
         searchView.isIconified = true
         val searchAutoComplete = searchView.findViewById<SearchView.SearchAutoComplete>(android.support.v7.appcompat.R.id.search_src_text)
-        searchAutoComplete.hintTextColor = Color.WHITE
+        searchAutoComplete.setHintTextColor(Color.WHITE)
         searchAutoComplete.hint = "输入商品名或首字母"
         searchAutoComplete.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 4.0f, mContext.resources.displayMetrics)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -140,15 +133,13 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
         when (requestID) {
-            0x0 -> {
+            0x0 -> { //加载列表 订单
                 processList(json, MyOrderBean::class.java)
             }
-            0x1 -> {
+            0x1 -> { // 取消订单
                 if (json != null) {
                     onPostRefresh()
-                    RefreshData.any = MainMineFragment.REFRESH_QBADGE_VIEW_FLAG
-                    RefreshData.isRefresh = true
-                    RxBus.getDefault().post(RefreshData)
+                    OrderPresent.notifyRefreshOrderNum()
                 }
             }
         }

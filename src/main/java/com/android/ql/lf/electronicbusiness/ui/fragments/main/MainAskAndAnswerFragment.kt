@@ -1,13 +1,10 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.main
 
-import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.IndexAskInfoBean
@@ -16,8 +13,6 @@ import com.android.ql.lf.electronicbusiness.data.TagBean
 import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
-import com.android.ql.lf.electronicbusiness.ui.activities.MainActivity
-import com.android.ql.lf.electronicbusiness.ui.activities.SelectAddressActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.MainAskAndAnswerAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.ask.AddNewAskFragment
@@ -32,7 +27,6 @@ import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.listener.OnItemClickListener
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_main_ask_and_answer_layout.*
 import kotlinx.android.synthetic.main.layout_main_ank_and_answer_top_layout.*
 import org.jetbrains.anko.collections.forEachWithIndex

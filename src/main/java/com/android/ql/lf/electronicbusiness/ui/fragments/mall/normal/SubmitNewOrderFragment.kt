@@ -13,13 +13,11 @@ import android.view.View
 import android.widget.*
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.*
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.SubmitOrderInfoAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainMineFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.AddressSelectFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mine.OrderInfoFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mine.OrderListFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.ui.views.PopupWindowDialog
 import com.android.ql.lf.electronicbusiness.utils.*
@@ -27,7 +25,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_submit_order_layout.*
-import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription
 import java.text.DecimalFormat
@@ -83,9 +80,7 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                         //支付失败
                         bundle.putInt(PayResultFragment.PAY_CODE_FLAG, PayResultFragment.PAY_FAIL_CODE)
                     }
-                    RefreshData.any = MainMineFragment.REFRESH_QBADGE_VIEW_FLAG
-                    RefreshData.isRefresh = true
-                    RxBus.getDefault().post(RefreshData)
+                    OrderPresent.notifyRefreshOrderNum()
                     FragmentContainerActivity.startFragmentContainerActivity(mContext, "支付结果", true, false, bundle, PayResultFragment::class.java)
                     finish()
                 }

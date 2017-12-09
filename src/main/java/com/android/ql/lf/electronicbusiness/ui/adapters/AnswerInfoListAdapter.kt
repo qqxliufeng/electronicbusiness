@@ -20,7 +20,7 @@ class AnswerInfoListAdapter(layoutId: Int, list: ArrayList<AnswerBean>) : BaseQu
         GlideManager.loadFaceCircleImage(iv_face.context, item!!.member_pic, iv_face)
         helper.setText(R.id.mTvAnswerInfoItemName, item.member_name)
         helper.setText(R.id.mTvAnswerInfoItemContent, item.answer_content)
-        helper.setText(R.id.mTvAnswerInfoItemTime, item.answer_qid)
+        helper.setText(R.id.mTvAnswerInfoItemTime, item.answer_time)
         helper.setText(R.id.mTvPraiseText, if ("暂无" == item.answer_click) PraiseView.PRAISE_TEXT else item.answer_click)
     }
 }

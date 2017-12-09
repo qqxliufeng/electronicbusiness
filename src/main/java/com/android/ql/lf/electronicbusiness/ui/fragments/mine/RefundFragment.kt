@@ -8,12 +8,11 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import com.android.ql.lf.electronicbusiness.R
-import com.android.ql.lf.electronicbusiness.data.RefreshData
 import com.android.ql.lf.electronicbusiness.data.UserInfo
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
-import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.listener.OnItemClickListener
@@ -111,9 +110,7 @@ class RefundFragment : BaseNetWorkingFragment() {
         val json = checkResultCode(result)
         if (json != null) {
             toast("退款申请成功")
-            RefreshData.isRefresh = true
-            RefreshData.any = OrderListFragment.REFRESH_ORDER_FLAG
-            RxBus.getDefault().post(RefreshData)
+            OrderPresent.notifyRefreshOrderList()
             finish()
         } else {
             toast("退款申请失败")

@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.CreateOrderSuccessBean
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.OrderInfoFragment
@@ -44,6 +45,7 @@ class PayResultFragment : BaseFragment() {
             finish()
         }
         if (arguments != null) {
+            OrderPresent.notifyRefreshOrderNum()
             when (arguments.getInt(PAY_CODE_FLAG)) {
                 PAY_SUCCESS_CODE -> {
                     mLlPayResultOrderInfoContainer.visibility = View.VISIBLE

@@ -56,7 +56,7 @@ class AskAndAnswerOfAnswerFragment : BaseRecyclerViewFragment<AnswerBean>() {
             R.id.mTvAnswerItemExpand -> {
                 answerBean.isExpand = !answerBean.isExpand
                 answerBean.maxLines = if (answerBean.isExpand) Int.MAX_VALUE else 3
-                mBaseAdapter.notifyItemChanged(position + 1)
+                mBaseAdapter.notifyItemChanged(position)
             }
         }
     }
