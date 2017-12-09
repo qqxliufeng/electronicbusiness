@@ -97,7 +97,6 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<PersonalCutGoodsItemBea
     }
 
     private fun enterGoodsInfo() {
-
         val bundle = Bundle()
         bundle.putString(CutGoodsInfoFragment.GOODS_ID_FLAG, currentItem.product_id)
         FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, CutGoodsInfoFragment::class.java)
