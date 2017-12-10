@@ -25,6 +25,7 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchGoods
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.TeamCutFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.Constants
+import com.android.ql.lf.electronicbusiness.utils.CounterHelper
 import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import kotlinx.android.synthetic.main.fragment_main_normal_privilege_layout.*
@@ -127,19 +128,16 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
         dialog.setCancelable(false)
         dialog.window.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(mContext, android.R.color.transparent)))
         dialog.show()
-        val timer = object : CountDownTimer(6 * 1000, 1000) {
-            override fun onFinish() {
-
-                btKnow.text = "我知道了"
-                btKnow.isEnabled = true
-                btNoTip.isEnabled = true
-            }
-
-            override fun onTick(millisUntilFinished: Long) {
-                btKnow.text = "我知道了（${millisUntilFinished / 1000}）"
-            }
+        val counterHelper = CounterHelper(5000)
+        counterHelper.onFinish = {
+            btKnow.text = "我知道了"
+            btKnow.isEnabled = true
+            btNoTip.isEnabled = true
         }
-        timer.start()
+        counterHelper.onTick = {
+            btKnow.text = "我知道了（${it / 1000}）"
+        }
+        counterHelper.start()
     }
 
     class MyNormalPrivilegeAdapter(manage: FragmentManager) : FragmentStatePagerAdapter(manage) {
