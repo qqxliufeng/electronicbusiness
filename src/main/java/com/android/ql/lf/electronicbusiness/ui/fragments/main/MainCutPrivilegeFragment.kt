@@ -129,6 +129,7 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
         dialog.show()
         val timer = object : CountDownTimer(6 * 1000, 1000) {
             override fun onFinish() {
+
                 btKnow.text = "我知道了"
                 btKnow.isEnabled = true
                 btNoTip.isEnabled = true
