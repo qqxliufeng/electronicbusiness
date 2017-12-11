@@ -38,8 +38,6 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
     private lateinit var answerBean: AnswerBean
     private var replyAnswerBean: ReplyAnswerBean? = null
 
-    private lateinit var subscription: Subscription
-
     override fun getLayoutId() = R.layout.fragment_comment_info_layout
 
     override fun createAdapter(): BaseQuickAdapter<ReplyAnswerBean, BaseViewHolder> =
@@ -150,12 +148,5 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
                 }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
     }
 }

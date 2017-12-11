@@ -61,8 +61,6 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
 
     private var bottomParamDialog: BottomGoodsParamDialog? = null
 
-    private lateinit var subscription: Subscription
-
     private var picJsonArray: JSONArray? = null
     private var specifications: ArrayList<SpecificationBean>? = null
 
@@ -238,12 +236,4 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         }
         bottomParamDialog!!.show()
     }
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
-    }
-
 }

@@ -8,6 +8,7 @@ import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.RefreshData
 import com.android.ql.lf.electronicbusiness.data.UserInfo
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.ExpressInfoFragment
@@ -190,7 +191,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
         mDFKOrder.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {
                 val bundle = Bundle()
-                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DFK)
+                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderPresent.OrderStatus.STATUS_OF_DFK.toString())
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "待付款", true, false, bundle, OrderListFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 11
@@ -200,7 +201,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
         mDFHOrder.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {
                 val bundle = Bundle()
-                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DFH)
+                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderPresent.OrderStatus.STATUS_OF_DFH.toString())
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "待发货", true, false, bundle, OrderListFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 12
@@ -210,7 +211,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
         mWaitingGoods.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {
                 val bundle = Bundle()
-                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DSH)
+                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderPresent.OrderStatus.STATUS_OF_DSH.toString())
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "待收货", true, false, bundle, OrderListFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 13
@@ -220,7 +221,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
         mSuccessOrder.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {
                 val bundle = Bundle()
-                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderListFragment.STATUS_OF_DPJ)
+                bundle.putString(OrderListFragment.ORDER_STATUE_FLAG, OrderPresent.OrderStatus.STATUS_OF_DPJ.toString())
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "待评价", true, false, bundle, OrderListFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 14

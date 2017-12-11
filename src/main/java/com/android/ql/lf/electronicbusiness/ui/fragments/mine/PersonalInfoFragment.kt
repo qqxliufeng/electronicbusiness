@@ -39,8 +39,6 @@ class PersonalInfoFragment : BaseNetWorkingFragment() {
 
     override fun getLayoutId(): Int = R.layout.fragment_mine_personal_info_layout
 
-    private lateinit var subscription: Subscription
-
     override fun initView(view: View?) {
         subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
             mTvPersonalInfoNickName.text = UserInfo.getInstance().memberName
@@ -51,7 +49,7 @@ class PersonalInfoFragment : BaseNetWorkingFragment() {
             val width = metrics.widthPixels
             val imagePicker = ImagePicker.getInstance()
             imagePicker.isShowCamera = true
-            imagePicker.imageLoader = MyImageLoader()
+            imagePicker.imageLoader = SelectImageManager.SelectImageLoader()
             imagePicker.focusWidth = width - 50 * 2
             imagePicker.isMultiMode = false
             imagePicker.selectLimit = 1
@@ -136,12 +134,4 @@ class PersonalInfoFragment : BaseNetWorkingFragment() {
         super.onRequestFail(requestID, e)
         toast("头像上传失败，请稍后重试！")
     }
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
-    }
-
 }

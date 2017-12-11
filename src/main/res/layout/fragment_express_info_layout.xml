@@ -36,18 +36,18 @@
                     android:textSize="@dimen/sp_16" />
 
                 <TextView
+                    android:id="@+id/mTvExpressName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="快递公司"
                     android:textColor="#AAAAAA"
                     android:textSize="@dimen/sp_14" />
 
                 <TextView
+                    android:id="@+id/mTvExpressNum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:text="订单编号：123456789"
                     android:textColor="#AAAAAA"
                     android:textSize="@dimen/sp_14" />
             </RelativeLayout>

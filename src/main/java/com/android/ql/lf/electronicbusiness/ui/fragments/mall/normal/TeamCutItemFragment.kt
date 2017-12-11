@@ -38,8 +38,6 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
 
     private lateinit var currentItem: GoodsItemBean
 
-    private lateinit var subscription: Subscription
-
     private val currentLoginFlag by lazy {
         "${this.hashCode()}${this}"
     }
@@ -104,12 +102,5 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
         val bundle = Bundle()
         bundle.putString(TeamCutItemInfoFragment.GOODS_ID_FLAG, currentItem.product_id)
         FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, CutGoodsInfoFragment::class.java)
-    }
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
     }
 }

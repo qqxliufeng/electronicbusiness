@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.android.ql.lf.electronicbusiness.ui.activities.BaseActivity;
 
 import butterknife.ButterKnife;
+import rx.Subscription;
 
 
 /**
@@ -23,6 +24,8 @@ import butterknife.ButterKnife;
 public abstract class BaseFragment extends Fragment {
 
     protected Context mContext;
+
+    protected Subscription subscription = null;
 
     @Override
     public void onAttach(Context context) {
@@ -55,4 +58,11 @@ public abstract class BaseFragment extends Fragment {
         ((Activity) mContext).finish();
     }
 
+    @Override
+    public void onDestroyView() {
+        if (subscription!=null && !subscription.isUnsubscribed()){
+            subscription.unsubscribe();
+        }
+        super.onDestroyView();
+    }
 }

@@ -43,7 +43,6 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
     }
 
     private var addressBean: AddressBean? = null
-    private lateinit var subscription: Subscription
     private var tempList: ArrayList<ShoppingCarItemBean>? = null
 
     private lateinit var tv_address_name: TextView

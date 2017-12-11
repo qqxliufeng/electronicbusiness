@@ -17,13 +17,12 @@ import rx.Subscription
  */
 class SubmitIntegrationOrderFragment : BaseNetWorkingFragment() {
 
-    private lateinit var subject: Subscription
 
     override fun getLayoutId() = R.layout.fragment_integration_submit_order_layout
 
     override fun initView(view: View?) {
 
-        subject = RxBus.getDefault().toObservable(AddressBean::class.java).subscribe {
+        subscription = RxBus.getDefault().toObservable(AddressBean::class.java).subscribe {
 //            mTvOrderPersonName.text = it.name
 //            mTvOrderPersonPhone.text = it.phone
 //            mTvOrderPersonDetail.text = it.detail
@@ -35,13 +34,5 @@ class SubmitIntegrationOrderFragment : BaseNetWorkingFragment() {
         mLlSubmitOrderAddress.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "选择地址", true, false, AddressSelectFragment::class.java)
         }
-    }
-
-
-    override fun onDestroyView() {
-        if (!subject.isUnsubscribed) {
-            subject.unsubscribe()
-        }
-        super.onDestroyView()
     }
 }

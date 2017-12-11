@@ -34,8 +34,6 @@ class AddNewAddressFragment : BaseNetWorkingFragment() {
         val ADDRESS_BEAN_FLAG = "address_bean_flag"
     }
 
-    private lateinit var subscription: Subscription
-
     private var addressInfo: String? = null
 
     private var addressBean: AddressBean? = null
@@ -134,12 +132,5 @@ class AddNewAddressFragment : BaseNetWorkingFragment() {
                 toast("${jsonObject.optString("msg")}")
             }
         }
-    }
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
     }
 }

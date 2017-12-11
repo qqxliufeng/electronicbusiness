@@ -272,6 +272,15 @@ class RequestParamsHelper {
             return param
         }
 
+        //快递查询
+        val ACT_GETLOGISTICS = "getlogistics"
+
+        fun getGetlogisticsParam(num: String):ApiParams{
+            val param = getWithIdParams()
+            param.addParam("nu",num)
+            return param
+        }
+
         /**              member model  end           **/
 
 

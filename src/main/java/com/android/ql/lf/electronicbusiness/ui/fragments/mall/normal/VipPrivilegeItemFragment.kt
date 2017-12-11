@@ -36,13 +36,11 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
     }
 
 
-    private lateinit var subScription:Subscription
-
     private lateinit var currentItem:VipGoodsBean
 
     override fun initView(view: View?) {
         super.initView(view)
-        subScription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
+        subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
             when(UserInfo.getInstance().loginTag){
                 "${this@VipPrivilegeItemFragment.hashCode()}${this@VipPrivilegeItemFragment}"->{
                     enterGoodsInfo()
@@ -100,13 +98,4 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
         bundle.putString(VipPrivilegeItemInfoFragment.GOODS_ID_FLAG, currentItem.product_id)
         FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, VipPrivilegeItemInfoFragment::class.java)
     }
-
-
-    override fun onDestroyView() {
-        if (!subScription.isUnsubscribed){
-            subScription.unsubscribe()
-        }
-        super.onDestroyView()
-    }
-
 }

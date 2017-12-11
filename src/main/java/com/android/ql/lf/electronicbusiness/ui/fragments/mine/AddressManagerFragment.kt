@@ -33,8 +33,6 @@ class AddressManagerFragment : BaseRecyclerViewFragment<AddressBean>() {
     private var currentItem: AddressBean? = null
     private var topItem: AddressBean? = null
 
-    lateinit var subscription: Subscription
-
     override fun getLayoutId() = R.layout.fragment_address_manage_list_layout
 
     override fun createAdapter(): BaseQuickAdapter<AddressBean, BaseViewHolder> =
@@ -164,13 +162,6 @@ class AddressManagerFragment : BaseRecyclerViewFragment<AddressBean>() {
                     RequestParamsHelper.ACT_DEL_ADDRESS, RequestParamsHelper.getDelAddressParams(currentItem!!.address_id))
         }.setNegativeButton("取消", null).create().show()
 
-    }
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
     }
 
 }

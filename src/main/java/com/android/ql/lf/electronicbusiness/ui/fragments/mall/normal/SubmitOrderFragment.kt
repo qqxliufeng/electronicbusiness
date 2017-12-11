@@ -119,13 +119,4 @@ class SubmitOrderFragment : BaseNetWorkingFragment() {
 //        mIvSubmitOrderAddressPhone.text = addressBean!!.address_phone
 //        mIvSubmitOrderAddressDetail.text = "${addressBean!!.address_addres}  ${addressBean!!.address_detail}"
     }
-
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
-    }
-
 }

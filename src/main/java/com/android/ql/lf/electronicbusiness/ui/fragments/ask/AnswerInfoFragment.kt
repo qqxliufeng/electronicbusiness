@@ -40,8 +40,6 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
 
     private var askInfoBean: IndexAskInfoBean? = null
 
-    private lateinit var subscription: Subscription
-
     override fun getLayoutId() = R.layout.fragment_answer_info_layout
 
     override fun createAdapter(): BaseQuickAdapter<AnswerBean, BaseViewHolder> = AnswerInfoListAdapter(R.layout.adapter_answer_info_list_item_layout, mArrayList)
@@ -211,12 +209,5 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                 mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_PRAISE, RequestParamsHelper.getPraise(mArrayList[0].answer_id))
             }
         }
-    }
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
     }
 }

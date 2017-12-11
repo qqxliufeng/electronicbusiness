@@ -38,19 +38,9 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
         val ORDER_STATUE_FLAG = "order_statue_flag"
 
         val REFRESH_ORDER_FLAG = "refresh order"
-
-        // 0 待付款 1 待发货 2 待收货 3 待评价 4 完成 5 已取消 6 已退款
-        val STATUS_OF_DFK = "0"
-        val STATUS_OF_DFH = "1"
-        val STATUS_OF_DSH = "2"
-        val STATUS_OF_DPJ = "3"
-        val STATUS_OF_FINISH = "4"
-        val STATUS_OF_CANCEL = "5"
-        val STATUS_OF_BACK = "6"
     }
 
     private lateinit var currentOrder: MyOrderBean
-    private lateinit var subScription: Subscription
 
     private val orderPresent: OrderPresent by lazy {
         OrderPresent(mPresent)
@@ -63,7 +53,7 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
 
     override fun initView(view: View?) {
         super.initView(view)
-        subScription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
+        subscription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
             if (it.isRefresh && it.any == REFRESH_ORDER_FLAG) {
                 OrderPresent.notifyRefreshOrderNum()
                 onPostRefresh()
@@ -158,61 +148,42 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
     }
 
     private fun action1() {
-        when (currentOrder.order_token) {
-        //"待付款"
-            "0" -> {
+        when (OrderPresent.getOrderStatus(currentOrder.order_token)) {
+            OrderPresent.OrderStatus.STATUS_OF_DFK -> {
                 //取消订单
                 AlertDialog.Builder(context).setMessage("是否要取消订单？").setPositiveButton("是") { _, _ ->
                     orderPresent.cancelOrder(0x1, currentOrder.order_id)
                 }.setNegativeButton("不了", null).create().show()
             }
-        //"待发货"
-            "1" -> {
+            OrderPresent.OrderStatus.STATUS_OF_DFH -> {
             }
-        //"待收货"
-            "2" -> {
-
+            OrderPresent.OrderStatus.STATUS_OF_DSH -> {
             }
-        //"待评价"
-            "3" -> {
-
+            OrderPresent.OrderStatus.STATUS_OF_DPJ -> {
             }
-        //"完成"
-            "4" -> {
-
+            OrderPresent.OrderStatus.STATUS_OF_FINISH -> {
             }
-        //"已取消"
-            "5" -> {
-
+            OrderPresent.OrderStatus.STATUS_OF_CANCEL -> {
             }
-        //"已退款"
-            "6" -> {
-
+            OrderPresent.OrderStatus.STATUS_OF_BACK -> {
             }
-        //"其它"
             else -> {
             }
         }
     }
 
     private fun action2() {
-        when (currentOrder.order_token) {
-        //"待付款"
-            "0" -> {
+        when (OrderPresent.getOrderStatus(currentOrder.order_token)) {
+            OrderPresent.OrderStatus.STATUS_OF_DFK -> {
             }
-        //"待发货"
-            "1" -> {
-                //申请退款
+            OrderPresent.OrderStatus.STATUS_OF_DFH -> {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "申请退款", true, false, bundleOf(Pair("oid", currentOrder.order_id)), RefundFragment::class.java)
             }
-        //"待收货"
-            "2" -> {
+            OrderPresent.OrderStatus.STATUS_OF_DSH -> {
             }
-        //"待评价"
-            "3" -> {
+            OrderPresent.OrderStatus.STATUS_OF_DPJ -> {
             }
-        //"完成"
-            "4" -> {
+            OrderPresent.OrderStatus.STATUS_OF_FINISH -> {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext,
                         "商品评价",
                         true,
@@ -221,13 +192,10 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
                                 Pair(OrderCommentSubmitFragment.PRODUCT_ID_FLAG, currentOrder.product_id)),
                         OrderCommentSubmitFragment::class.java)
             }
-        //"已取消"
-            "5" -> {
+            OrderPresent.OrderStatus.STATUS_OF_CANCEL -> {
             }
-        //"已退款"
-            "6" -> {
+            OrderPresent.OrderStatus.STATUS_OF_BACK -> {
             }
-        //"其它"
             else -> {
             }
         }
@@ -237,13 +205,5 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
         val bundle = Bundle()
         bundle.putString(OrderInfoFragment.ORDER_INFO_ID_FLAG, mArrayList[position].order_id)
         FragmentContainerActivity.startFragmentContainerActivity(mContext, "订单详情", true, false, bundle, OrderInfoFragment::class.java)
-    }
-
-    override fun onDestroyView() {
-        if (!subScription.isUnsubscribed) {
-            subScription.unsubscribe()
-        }
-        orderPresent.destroy()
-        super.onDestroyView()
     }
 }

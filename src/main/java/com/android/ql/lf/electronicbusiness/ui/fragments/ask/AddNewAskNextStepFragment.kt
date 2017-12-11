@@ -56,8 +56,6 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
     private lateinit var imagesAdapter: SelectImageManager.SelectImagesAdapter
     private lateinit var topView: View
 
-    private lateinit var subscription: Subscription
-
     private val firstImageItemBean by lazy {
         SelectImageItemBean(null, R.drawable.img_add_image)
     }
@@ -224,13 +222,6 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
         toast("提问失败")
-    }
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
     }
 
 }

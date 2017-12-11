@@ -48,8 +48,6 @@ class SearchGoodsFragment : BaseRecyclerViewFragment<GoodsItemBean>() {
 
     private lateinit var currentItem: GoodsItemBean
 
-    private lateinit var subscription: Subscription
-
     private val currentKType by lazy {
         arguments.getString(K_TYPE_FLAG)
     }
@@ -174,12 +172,4 @@ class SearchGoodsFragment : BaseRecyclerViewFragment<GoodsItemBean>() {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundleOf(Pair(CutGoodsInfoFragment.GOODS_ID_FLAG, currentItem.product_id)), CutGoodsInfoFragment::class.java)
         }
     }
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
-    }
-
 }

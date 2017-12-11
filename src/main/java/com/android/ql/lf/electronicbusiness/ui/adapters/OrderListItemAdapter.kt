@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.MyOrderBean
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -18,11 +19,7 @@ class OrderListItemAdapter(layoutId: Int, list: ArrayList<MyOrderBean>) : BaseQu
         helper!!.addOnClickListener(R.id.mBtOrderListItemAction1)
         helper.addOnClickListener(R.id.mBtOrderListItemAction2)
         val iv_pic = helper.getView<ImageView>(R.id.mIvOrderListItemPic)
-        GlideManager.loadImage(iv_pic.context, if (item!!.product_pic.isEmpty()) {
-            ""
-        } else {
-            item.product_pic[0]
-        }, iv_pic)
+        GlideManager.loadImage(iv_pic.context, if (item!!.product_pic.isEmpty()) "" else item.product_pic[0], iv_pic)
         helper.setText(R.id.mTvOrderListItemTitle, item.product_name)
         helper.setText(R.id.mTvOrderListItemPrice, "￥ ${item.product_price}")
         helper.setText(R.id.mIvOrderListItemNum, "X ${item.order_num}")
@@ -47,32 +44,32 @@ class OrderListItemAdapter(layoutId: Int, list: ArrayList<MyOrderBean>) : BaseQu
                 tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_vip_s, 0, 0, 0)
             }
         }
-        helper.setText(R.id.mTvShoppingCarItemEditMode, when (item.order_token) {
-            "0" -> {
+        helper.setText(R.id.mTvShoppingCarItemEditMode, when (OrderPresent.getOrderStatus(item.order_token)) {
+            OrderPresent.OrderStatus.STATUS_OF_DFK -> {
                 tv_action1.text = "取消订单"
                 tv_action2.text = "付款"
                 "待付款"
             }
-            "1" -> {
+            OrderPresent.OrderStatus.STATUS_OF_DFH -> {
                 tv_action1.visibility = View.GONE
                 tv_action2.text = "申请退款"
                 "待发货"
             }
-            "2" -> {
+            OrderPresent.OrderStatus.STATUS_OF_DSH -> {
                 "待收货"
             }
-            "3" -> {
+            OrderPresent.OrderStatus.STATUS_OF_DPJ -> {
                 "待评价"
             }
-            "4" -> {
+            OrderPresent.OrderStatus.STATUS_OF_FINISH -> {
                 tv_action1.visibility = View.GONE
                 tv_action2.text = "去评价"
                 "完成"
             }
-            "5" -> {
+            OrderPresent.OrderStatus.STATUS_OF_CANCEL -> {
                 "已取消"
             }
-            "6" -> {
+            OrderPresent.OrderStatus.STATUS_OF_BACK -> {
                 "已退款"
             }
             else -> {

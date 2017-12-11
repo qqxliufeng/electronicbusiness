@@ -41,8 +41,6 @@ class LoginFragment : BaseNetWorkingFragment() {
 
     private lateinit var iwxApi: IWXAPI
 
-    private lateinit var subscription: Subscription
-
     override fun initView(view: View?) {
         subscription = RxBus.getDefault().toObservable(BaseResp::class.java).subscribe {
             if (it is SendAuth.Resp) {
@@ -153,12 +151,5 @@ class LoginFragment : BaseNetWorkingFragment() {
         UserInfo.getInstance().memberForm = userJson.optString("member_form")
         UserInfo.getInstance().memberAddress = userJson.optString("member_address")
         UserInfo.getInstance().memberPic = userJson.optString("member_pic")
-    }
-
-    override fun onDestroyView() {
-        if (!subscription.isUnsubscribed) {
-            subscription.unsubscribe()
-        }
-        super.onDestroyView()
     }
 }

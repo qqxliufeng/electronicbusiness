@@ -8,6 +8,7 @@ import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.ExpressInfoFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.CutGoodsInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.TeamCutItemInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
@@ -112,7 +113,7 @@ class OrderInfoFragment : BaseNetWorkingFragment() {
                         "拇指斗价团体砍"
                     }
                     "3" -> {
-                        mTvOrderInfoDetailKtype.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.img_icon_goods_info_vip, 0, 0, 0)
+                        mTvOrderInfoDetailKtype.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.img_icon_vip_s, 0, 0, 0)
                         "拇指斗价会员专享"
                     }
                     else -> {
@@ -131,7 +132,7 @@ class OrderInfoFragment : BaseNetWorkingFragment() {
                 }
                 mLlOrderInfoDetailGoodsContainer.setOnClickListener {
                     val bundle = Bundle()
-                    bundle.putString(TeamCutItemInfoFragment.GOODS_ID_FLAG, orderInfo.product_id)
+                    bundle.putString(CutGoodsInfoFragment.GOODS_ID_FLAG, orderInfo.product_id)
                     FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, TeamCutItemInfoFragment::class.java)
                 }
             }
