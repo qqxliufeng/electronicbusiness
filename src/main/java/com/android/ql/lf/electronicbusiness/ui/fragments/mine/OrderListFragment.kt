@@ -3,6 +3,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.support.design.widget.BottomSheetDialog
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
@@ -12,6 +13,9 @@ import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
+import android.widget.CheckBox
+import android.widget.RelativeLayout
+import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.MyOrderBean
 import com.android.ql.lf.electronicbusiness.data.RefreshData
@@ -20,6 +24,7 @@ import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActiv
 import com.android.ql.lf.electronicbusiness.ui.adapters.OrderListItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
+import com.android.ql.lf.electronicbusiness.ui.views.SelectPayTypeView
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -41,6 +46,8 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
     }
 
     private lateinit var currentOrder: MyOrderBean
+
+    private var bottomPayDialog: BottomSheetDialog? = null
 
     private val orderPresent: OrderPresent by lazy {
         OrderPresent(mPresent)
@@ -132,6 +139,9 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
                     OrderPresent.notifyRefreshOrderNum()
                 }
             }
+            0x2 -> { //付款
+
+            }
         }
     }
 
@@ -174,7 +184,22 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
 
     private fun action2() {
         when (OrderPresent.getOrderStatus(currentOrder.order_token)) {
+        //待付款
             OrderPresent.OrderStatus.STATUS_OF_DFK -> {
+                if (bottomPayDialog == null) {
+                    bottomPayDialog = BottomSheetDialog(mContext)
+                    val contentView = SelectPayTypeView(mContext)
+                    contentView.setShowConfirmView(View.VISIBLE)
+                    contentView.setOnConfirmClickListener {
+                        bottomPayDialog!!.dismiss()
+                        toast(contentView.payType)
+                    }
+//                        mPresent.getDataByPost(0x2, RequestParamsHelper.ORDER_MODEL, RequestParamsHelper.ACT_ADD_ORDER,
+//                                RequestParamsHelper.getAddOrderParams(contentView.payType, ""))
+                    bottomPayDialog!!.setContentView(contentView)
+                } else {
+                    bottomPayDialog!!.show()
+                }
             }
             OrderPresent.OrderStatus.STATUS_OF_DFH -> {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "申请退款", true, false, bundleOf(Pair("oid", currentOrder.order_id)), RefundFragment::class.java)

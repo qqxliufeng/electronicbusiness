@@ -23,6 +23,7 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragmen
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.AddressSelectFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.ui.views.PopupWindowDialog
+import com.android.ql.lf.electronicbusiness.ui.views.SelectPayTypeView
 import com.android.ql.lf.electronicbusiness.utils.*
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -51,10 +52,7 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
     private lateinit var bt_empty_address: Button
     private lateinit var ll_address_container: LinearLayout
 
-    private lateinit var rl_wx_container: RelativeLayout
-    private lateinit var rl_ali_container: RelativeLayout
-    private lateinit var cb_wx: CheckBox
-    private lateinit var cb_ali: CheckBox
+    private var payType: String = SelectPayTypeView.WX_PAY
 
     private val orderList = arrayListOf<OrderBean>()
 
@@ -129,23 +127,7 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
         ll_address_container = headerView.findViewById(R.id.mLlSubmitOrderAddress)
 
         val bottomView = View.inflate(mContext, R.layout.layout_submit_new_order_bottom_layout, null)
-        rl_wx_container = bottomView.findViewById(R.id.mRlSubmitOrderWXContainer)
-        rl_ali_container = bottomView.findViewById(R.id.mRlSubmitOrderAliPayContainer)
-        cb_ali = bottomView.findViewById(R.id.mCbALiPay)
-        cb_wx = bottomView.findViewById(R.id.mCbWX)
-
-        cb_ali.setOnCheckedChangeListener { _, isChecked ->
-            cb_wx.isChecked = !isChecked
-        }
-        cb_wx.setOnCheckedChangeListener { _, isChecked ->
-            cb_ali.isChecked = !isChecked
-        }
-        rl_wx_container.setOnClickListener {
-            cb_wx.isChecked = true
-        }
-        rl_ali_container.setOnClickListener {
-            cb_ali.isChecked = true
-        }
+        val payView = bottomView.findViewById<SelectPayTypeView>(R.id.mStvPay)
         mTvSubmitOrder.setOnClickListener {
             mArrayList.forEach {
                 val orderBean = OrderBean()
@@ -162,8 +144,9 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                 orderList.add(orderBean)
             }
             val json = Gson().toJson(orderList)
+            payType = payView.payType
             mPresent.getDataByPost(0x1, RequestParamsHelper.ORDER_MODEL, RequestParamsHelper.ACT_ADD_ORDER,
-                    RequestParamsHelper.getAddOrderParams(if (cb_wx.isChecked) "wxpay" else "alipay", json))
+                    RequestParamsHelper.getAddOrderParams(payType, json))
         }
         ll_address_container.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "选择地址", true, false, AddressSelectFragment::class.java)
@@ -199,7 +182,7 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
         } else if (requestID == 0x1) {
             if (json != null) {
                 PreferenceUtils.setPrefString(mContext, PayResultFragment.PAY_ORDER_RESULT_JSON_FLAG, json.optJSONObject("arr").toString())
-                if (cb_wx.isChecked) {
+                if (payType == SelectPayTypeView.WX_PAY) {
                     val wxBean = Gson().fromJson(json.optJSONObject("result").toString(), WXPayBean::class.java)
                     PayManager.wxPay(mContext, wxBean)
                 } else {
