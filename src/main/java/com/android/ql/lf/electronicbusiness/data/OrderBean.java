@@ -8,6 +8,7 @@ package com.android.ql.lf.electronicbusiness.data;
 
 public class OrderBean {
     private String gid;
+    private String cid;
     private String price;
     private String address;
     private String num;
@@ -16,6 +17,14 @@ public class OrderBean {
     private String mliuyan;
     private String specification;
     private String mdprice;
+
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
 
     public String getBbs() {
         return bbs;

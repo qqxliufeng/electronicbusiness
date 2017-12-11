@@ -32,6 +32,21 @@ class OrderListItemAdapter(layoutId: Int, list: ArrayList<MyOrderBean>) : BaseQu
         helper.addOnClickListener(R.id.mBtOrderListItemAction1)
         val tv_action2 = helper.getView<TextView>(R.id.mBtOrderListItemAction2)
         helper.addOnClickListener(R.id.mBtOrderListItemAction2)
+        val tv_k_type = helper.getView<TextView>(R.id.mTvOrderListItemKType)
+        when (item.product_ktype) {
+            "1" -> { //个人砍
+                tv_k_type.text = "拇指斗价个人砍"
+                tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_group, 0, 0, 0)
+            }
+            "2" -> { //团体砍
+                tv_k_type.text = "拇指斗价团体砍"
+                tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_presonal, 0, 0, 0)
+            }
+            "3" -> { //会员专享
+                tv_k_type.text = "拇指斗价会员专享"
+                tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_vip_s, 0, 0, 0)
+            }
+        }
         helper.setText(R.id.mTvShoppingCarItemEditMode, when (item.order_token) {
             "0" -> {
                 tv_action1.text = "取消订单"
@@ -50,6 +65,8 @@ class OrderListItemAdapter(layoutId: Int, list: ArrayList<MyOrderBean>) : BaseQu
                 "待评价"
             }
             "4" -> {
+                tv_action1.visibility = View.GONE
+                tv_action2.text = "去评价"
                 "完成"
             }
             "5" -> {

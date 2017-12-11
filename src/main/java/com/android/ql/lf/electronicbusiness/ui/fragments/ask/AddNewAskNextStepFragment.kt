@@ -1,35 +1,30 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.ask
 
-import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
+import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.view.View
-import android.widget.ImageView
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.RefreshData
+import com.android.ql.lf.electronicbusiness.data.SelectImageItemBean
+import com.android.ql.lf.electronicbusiness.data.TagBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.AddNewAskTagsAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
+import com.android.ql.lf.electronicbusiness.utils.ImageUploadHelper
+import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
+import com.android.ql.lf.electronicbusiness.utils.RxBus
+import com.android.ql.lf.electronicbusiness.utils.SelectImageManager
 import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.lzy.imagepicker.ImagePicker
-import com.lzy.imagepicker.loader.ImageLoader
-import kotlinx.android.synthetic.main.fragment_add_new_ask_next_step_layout.*
-import com.lzy.imagepicker.ui.ImageGridActivity
-import android.content.Intent
-import android.os.Bundle
-import android.text.TextUtils
-import android.util.Log
-import com.android.ql.lf.electronicbusiness.data.RefreshData
-import com.android.ql.lf.electronicbusiness.data.TagBean
-import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
-import com.android.ql.lf.electronicbusiness.utils.*
 import com.lzy.imagepicker.bean.ImageItem
+import com.lzy.imagepicker.ui.ImageGridActivity
+import kotlinx.android.synthetic.main.fragment_add_new_ask_next_step_layout.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.jetbrains.anko.support.v4.toast
@@ -46,7 +41,6 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
     lateinit var title: String
     private val tags: StringBuilder = StringBuilder()
     lateinit var content: String
-    private lateinit var addIconBitmap: Bitmap
 
     companion object {
         val TITLE_FLAG = "title_flag"
@@ -54,21 +48,25 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
 
     private val MAX_SELECTED_ITEMS = 3
 
-    private val imageList = arrayListOf<Bitmap>()
+    private val imageList = arrayListOf<SelectImageItemBean>()
     private val tagsList = arrayListOf<TagBean>()
     private var imageListFile: ArrayList<ImageItem>? = null
 
     private lateinit var addNewAskTagsAdapter: AddNewAskTagsAdapter
-    private lateinit var imagesAdapter: AddNewAskImagesAdapter
+    private lateinit var imagesAdapter: SelectImageManager.SelectImagesAdapter
     private lateinit var topView: View
 
     private lateinit var subscription: Subscription
+
+    private val firstImageItemBean by lazy {
+        SelectImageItemBean(null, R.drawable.img_add_image)
+    }
 
     override fun getLayoutId() = R.layout.fragment_add_new_ask_next_step_layout
 
     override fun initView(view: View?) {
         title = arguments.getString(TITLE_FLAG)
-        imagesAdapter = AddNewAskImagesAdapter(R.layout.adapter_comment_image_item_layout, imageList)
+        imagesAdapter = SelectImageManager.SelectImagesAdapter(R.layout.adapter_comment_image_item_layout, imageList)
         subscription = RxBus.getDefault().toObservable(ArrayList::class.java).subscribe { tempList ->
             if (tempList != null && !tempList.isEmpty() && tempList[0] is TagBean) {
                 tempList.forEach {
@@ -91,8 +89,7 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
         (mContext as FragmentContainerActivity).windowManager.defaultDisplay.getMetrics(metrics)
         val width = metrics.widthPixels
 
-        addIconBitmap = BitmapFactory.decodeResource(mContext.resources, R.drawable.img_add_image)
-        imageList.add(addIconBitmap)
+        imageList.add(firstImageItemBean)
         mRvAddNewAskImage.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
         mRvAddNewAskTags.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
         mRvAddNewAskImage.adapter = imagesAdapter
@@ -110,7 +107,7 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
             override fun onSimpleItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
                 val imagePicker = ImagePicker.getInstance()
                 imagePicker.isShowCamera = true
-                imagePicker.imageLoader = MyImageLoader()
+                imagePicker.imageLoader = SelectImageManager.SelectImageLoader()
                 imagePicker.focusWidth = width - 50 * 2
                 imagePicker.isMultiMode = true
                 imagePicker.selectLimit = MAX_SELECTED_ITEMS - imageList.size + 1
@@ -149,7 +146,6 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
                     override fun onActionFailed() {
                         toast("上传失败，请稍后重试！")
                     }
-
                     override fun onActionStart() {
                         progressDialog = MyProgressDialog(mContext, "正在上传……")
                         progressDialog.show()
@@ -185,51 +181,20 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
         return tags.toString()
     }
 
-    fun uploadImage() {
-        //            progressDialog = ProgressDialog.show(mContext, null, "正在上传……")
-//            val dir = File(Constants.IMAGE_PATH)
-//            if (!dir.exists()) {
-//                dir.mkdirs()
-//            }
-//            val builder = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("token", Constants.md5Token())
-//            val compressImageList = ArrayList<String>()
-//            if (imageListFile != null && !imageListFile!!.isEmpty()) {
-//                Observable.from(imageListFile)
-//                        .map {
-//                            val path = "$dir/${System.currentTimeMillis()}.jpg"
-//                            ImageFactory.compressAndGenImage(it.path, path, 100, false)
-//                            compressImageList.add(path)
-//                        }
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe {
-//                            if (compressImageList.size == imageListFile!!.size) {
-//                                compressImageList.forEachWithIndex { i, it ->
-//                                    val file = File(it)
-//                                    builder.addFormDataPart("$i", file.name, RequestBody.create(MultipartBody.FORM, file))
-//                                }
-//                                mPresent.uploadFile(0x1, "t", "pictime", builder.build().parts())
-//                            }
-//                        }
-//            }else{
-//                mPresent.uploadFile(0x1, "t", "pictime", builder.build().parts())
-//            }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == FragmentContainerActivity.IMAGE_PICKER) {
             if (data != null) {
                 val list = data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS) as ArrayList<ImageItem>
                 list.forEach {
-                    imageList.add(ImageFactory.getBitmap(it.path))
+                    imageList.add(SelectImageItemBean(it.path,0))
                 }
                 if (imageListFile == null) {
                     imageListFile = ArrayList()
                 }
                 imageListFile!!.addAll(list)
                 if (imageList.size == MAX_SELECTED_ITEMS + 1) {
-                    imageList.remove(addIconBitmap)
+                    imageList.remove(firstImageItemBean)
                 }
                 imagesAdapter.notifyDataSetChanged()
             }
@@ -241,7 +206,6 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
         progressDialog = MyProgressDialog(mContext, "正在上传……")
         progressDialog.show()
     }
-
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
@@ -267,28 +231,6 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
             subscription.unsubscribe()
         }
         super.onDestroyView()
-    }
-
-    class AddNewAskImagesAdapter(layoutId: Int, list: ArrayList<Bitmap>) : BaseQuickAdapter<Bitmap, BaseViewHolder>(layoutId, list) {
-        override fun convert(helper: BaseViewHolder?, item: Bitmap?) {
-            helper!!.setImageBitmap(R.id.mIvCommentImageItem, item)
-        }
-    }
-
-    class MyImageLoader : ImageLoader {
-        override fun displayImage(activity: Activity, path: String, imageView: ImageView, width: Int, height: Int) {
-            Glide.with(activity).load(Uri.fromFile(File(path))).error(R.drawable.img_glide_load_default).placeholder(R.drawable.img_glide_load_default).centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView)
-        }
-
-        override fun displayImagePreview(activity: Activity, path: String, imageView: ImageView, width: Int, height: Int) {
-            Glide.with(activity)
-                    .load(Uri.fromFile(File(path)))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imageView)
-        }
-
-        override fun clearMemoryCache() {}
     }
 
 }

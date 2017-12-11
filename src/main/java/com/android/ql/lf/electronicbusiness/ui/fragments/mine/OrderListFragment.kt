@@ -213,6 +213,13 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
             }
         //"完成"
             "4" -> {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext,
+                        "商品评价",
+                        true,
+                        false,
+                        bundleOf(Pair(OrderCommentSubmitFragment.ORDER_ID_FLAG, currentOrder.order_id),
+                                Pair(OrderCommentSubmitFragment.PRODUCT_ID_FLAG, currentOrder.product_id)),
+                        OrderCommentSubmitFragment::class.java)
             }
         //"已取消"
             "5" -> {

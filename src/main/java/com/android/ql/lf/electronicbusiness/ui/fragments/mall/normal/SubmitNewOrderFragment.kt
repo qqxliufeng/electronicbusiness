@@ -152,6 +152,7 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                 val orderBean = OrderBean()
                 orderBean.address = addressBean!!.address_id
                 orderBean.gid = it.shopcart_gid
+                orderBean.cid = it.shopcart_id
                 orderBean.ktype = it.shopcart_ktype
                 orderBean.mliuyan = it.bbs
                 orderBean.num = it.shopcart_num

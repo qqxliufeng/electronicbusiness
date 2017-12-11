@@ -260,6 +260,18 @@ class RequestParamsHelper {
             return param
         }
 
+        //评价商品
+        val ACT_EVALUATE = "evaluate"
+
+        fun getEvaluateParam(oid:String,gid:String,content:String,f:String):ApiParams{
+            val param = getWithIdParams()
+            param.addParam("oid",oid)
+            param.addParam("gid",gid)
+            param.addParam("content",content)
+            param.addParam("f",f)
+            return param
+        }
+
         /**              member model  end           **/
 
 

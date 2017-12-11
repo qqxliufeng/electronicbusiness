@@ -30,7 +30,9 @@ import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.fragment_normal_mall_search_and_classify_layout.*
 import kotlinx.android.synthetic.main.fragment_personal_cut_item_info_layout.*
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
@@ -119,6 +121,11 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
 
         recommendAdapter = RecommedGoodsInfoAdatper(R.layout.layout_personal_cut_item_goods_info_bootom_recommend_item_layout, recommendList)
         mRvRecommend.adapter = recommendAdapter
+        mRvRecommend.addOnItemTouchListener(object : OnItemClickListener() {
+            override fun onSimpleItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundleOf(Pair(CutGoodsInfoFragment.GOODS_ID_FLAG, recommendList[position].product_id)), CutGoodsInfoFragment::class.java)
+            }
+        })
         adapter.addFooterView(bottomRecommendView, LinearLayoutManager.HORIZONTAL)
 
         val bottomInfoContentView = View.inflate(mContext, R.layout.layout_personal_cut_item_goods_info_bootom_layout, null)
