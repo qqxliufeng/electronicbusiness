@@ -13,6 +13,7 @@ import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchAndClassifyFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchGoodsFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.VipPrivilegeItemFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
@@ -21,6 +22,7 @@ import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_vip_privilege_layout.*
+import org.jetbrains.anko.bundleOf
 
 /**
  * Created by lf on 2017/11/7 0007.
@@ -70,14 +72,10 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
 //            dialog.show()
         }
         mLlSearchContainer.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, "3")
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true, bundle, SearchGoodsFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, bundleOf(Pair(SearchFragment.K_TYPE_FLAG,"3")), SearchFragment::class.java)
         }
         mTvClassMore.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, "3")
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, bundle, SearchAndClassifyFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, bundleOf(Pair(SearchAndClassifyFragment.K_TYPE_FLAG,"3")), SearchAndClassifyFragment::class.java)
         }
     }
 
