@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * @author lf on 2017/12/6 0006
  */
 
-public class PersonalCutGoodsItemBean {
+public class GoodsItemBean {
 
     private String product_id;
     private ArrayList<String> product_pic;

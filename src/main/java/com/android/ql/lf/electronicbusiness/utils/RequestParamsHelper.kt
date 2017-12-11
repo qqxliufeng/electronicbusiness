@@ -418,11 +418,12 @@ class RequestParamsHelper {
         //砍价商品分类查询
         val ACT_PRODUCT_TYPE_SEARCH = "product_type_search"
 
-        fun getProductTypeSearchParams(type_id: String, stype_id: String, ktype: String, page: Int, pagesize: Int = 10): ApiParams {
+        fun getProductTypeSearchParams(type_id: String, stype_id: String, ktype: String,sort: String, page: Int, pagesize: Int = 10): ApiParams {
             val params = getWithPageParams(page, pagesize)
             params.addParam("stype_id", stype_id)
             params.addParam("type_id", type_id)
             params.addParam("ktype", ktype)
+            params.addParam("sort", sort)
             return params
         }
 
@@ -473,6 +474,15 @@ class RequestParamsHelper {
             return param
         }
 
+        //全部评价
+        val ACT_ALL_COMMENT = "all_comment"
+
+        fun getAllCommentParam(gid: String, page: Int, pageSize: Int = 10): ApiParams {
+            val param = getWithPageParams(page, pageSize)
+            param.addParam("gid", gid)
+            return param
+        }
+
         /**              product model  end           **/
 
         /**              order model  end           **/
@@ -500,12 +510,12 @@ class RequestParamsHelper {
         }
 
         val ACT_REFUND = "refund"
-        fun getRefundParam(name:String,phone:String,oid:String,content:String):ApiParams{
+        fun getRefundParam(name: String, phone: String, oid: String, content: String): ApiParams {
             val param = getWithIdParams()
-            param.addParam("name",name)
-            param.addParam("phone",phone)
-            param.addParam("oid",oid)
-            param.addParam("content",content)
+            param.addParam("name", name)
+            param.addParam("phone", phone)
+            param.addParam("oid", oid)
+            param.addParam("content", content)
             return param
         }
 

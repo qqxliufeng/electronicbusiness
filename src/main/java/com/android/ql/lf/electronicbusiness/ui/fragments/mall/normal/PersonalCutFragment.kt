@@ -84,6 +84,7 @@ class PersonalCutFragment : BaseNetWorkingFragment() {
                 tempTitles.add(Gson().fromJson(resultJsonArray.optJSONObject(it).toString(), TabItemBean::class.java))
             }
             mVpPersonalCut.adapter = MyPersonalCutAdapter(tempTitles, childFragmentManager)
+            mVpPersonalCut.offscreenPageLimit = 5
             mTlPersonalCut.setupWithViewPager(mVpPersonalCut)
         }
     }

@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.GoodsItemBean
 import com.android.ql.lf.electronicbusiness.data.TeamCutGoodsItemBean
 import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
@@ -23,7 +24,7 @@ import rx.Subscription
  * Created by lf on 2017/11/11 0011.
  * @author lf on 2017/11/11 0011
  */
-class TeamCutItemFragment : AbstractLazyLoadFragment<TeamCutGoodsItemBean>() {
+class TeamCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
 
     companion object {
         fun newInstance(cid: String): TeamCutItemFragment {
@@ -35,22 +36,26 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<TeamCutGoodsItemBean>() {
         }
     }
 
-    private lateinit var currentItem: TeamCutGoodsItemBean
+    private lateinit var currentItem: GoodsItemBean
 
     private lateinit var subscription: Subscription
+
+    private val currentLoginFlag by lazy {
+        "${this.hashCode()}${this}"
+    }
 
     override fun initView(view: View?) {
         super.initView(view)
         subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
             when (UserInfo.getInstance().loginTag) {
-                "${this@TeamCutItemFragment.hashCode()}${this@TeamCutItemFragment}" -> {
+                currentLoginFlag -> {
                     enterGoodsInfo()
                 }
             }
         }
     }
 
-    override fun createAdapter(): BaseQuickAdapter<TeamCutGoodsItemBean, BaseViewHolder> =
+    override fun createAdapter(): BaseQuickAdapter<GoodsItemBean, BaseViewHolder> =
             TeamCutItemAdapter(R.layout.adapter_team_cut_item_layout, mArrayList)
 
     override fun getItemDecoration(): RecyclerView.ItemDecoration {
@@ -69,7 +74,7 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<TeamCutGoodsItemBean>() {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT_TYPE_SEARCH,
-                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString("cid"), "", "2", currentPage))
+                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString("cid"), "", "2", "",currentPage))
         }
     }
 
@@ -80,7 +85,8 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<TeamCutGoodsItemBean>() {
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
-        processList(checkResultCode(result), TeamCutGoodsItemBean::class.java)
+        isLoad = true
+        processList(checkResultCode(result), GoodsItemBean::class.java)
     }
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
@@ -89,7 +95,7 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<TeamCutGoodsItemBean>() {
         if (UserInfo.getInstance().isLogin) {
             enterGoodsInfo()
         } else {
-            UserInfo.getInstance().loginTag = "${this.hashCode()}$this"
+            UserInfo.getInstance().loginTag = currentLoginFlag
             LoginFragment.startLogin(mContext)
         }
     }

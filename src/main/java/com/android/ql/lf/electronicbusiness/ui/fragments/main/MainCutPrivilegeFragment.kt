@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -17,14 +16,11 @@ import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.ProductBannerBean
 import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
-import com.android.ql.lf.electronicbusiness.ui.fragments.BaseFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.PersonalCutFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchAndClassifyFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchGoodsFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.TeamCutFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
-import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.CounterHelper
 import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper

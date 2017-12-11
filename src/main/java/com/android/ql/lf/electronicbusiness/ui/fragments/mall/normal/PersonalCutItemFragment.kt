@@ -5,10 +5,9 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
-import com.android.ql.lf.electronicbusiness.data.PersonalCutGoodsItemBean
+import com.android.ql.lf.electronicbusiness.data.GoodsItemBean
 import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.PersonalCutItemAdapter
@@ -24,7 +23,7 @@ import rx.Subscription
  * Created by lf on 2017/11/11 0011.
  * @author lf on 2017/11/11 0011
  */
-class PersonalCutItemFragment : AbstractLazyLoadFragment<PersonalCutGoodsItemBean>() {
+class PersonalCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
 
     companion object {
         fun newInstance(cid: String): PersonalCutItemFragment {
@@ -36,12 +35,16 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<PersonalCutGoodsItemBea
         }
     }
 
-    private lateinit var currentItem: PersonalCutGoodsItemBean
+    private lateinit var currentItem: GoodsItemBean
 
     private lateinit var subscription: Subscription
 
+    private val currentLoginFlag by lazy {
+        "${this@PersonalCutItemFragment.hashCode()}${this@PersonalCutItemFragment}"
+    }
 
-    override fun createAdapter(): BaseQuickAdapter<PersonalCutGoodsItemBean, BaseViewHolder> =
+
+    override fun createAdapter(): BaseQuickAdapter<GoodsItemBean, BaseViewHolder> =
             PersonalCutItemAdapter(R.layout.adapter_personal_cut_item_layout, mArrayList)
 
     override fun getItemDecoration(): RecyclerView.ItemDecoration {
@@ -54,7 +57,7 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<PersonalCutGoodsItemBea
         super.initView(view)
         subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
             when (UserInfo.getInstance().loginTag) {
-                "${this@PersonalCutItemFragment.hashCode()}${this@PersonalCutItemFragment}" -> {
+                currentLoginFlag -> {
                     enterGoodsInfo()
                 }
             }
@@ -71,7 +74,7 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<PersonalCutGoodsItemBea
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT_TYPE_SEARCH,
-                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString("cid"), "", "1", currentPage))
+                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString("cid"), "", "1", "",currentPage))
         }
     }
 
@@ -83,7 +86,7 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<PersonalCutGoodsItemBea
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         isLoad = true
-        processList(checkResultCode(result), PersonalCutGoodsItemBean::class.java)
+        processList(checkResultCode(result), GoodsItemBean::class.java)
     }
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
@@ -91,7 +94,7 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<PersonalCutGoodsItemBea
         if (UserInfo.getInstance().isLogin) {
             enterGoodsInfo()
         } else {
-            UserInfo.getInstance().loginTag = "${this.hashCode()}${this}"
+            UserInfo.getInstance().loginTag = currentLoginFlag
             LoginFragment.startLogin(mContext)
         }
     }

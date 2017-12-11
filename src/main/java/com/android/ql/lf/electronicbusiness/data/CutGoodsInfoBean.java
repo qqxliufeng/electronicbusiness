@@ -80,7 +80,7 @@ public class CutGoodsInfoBean {
         private String nextprice;
         private String resnum;
         private String endtime;
-        private List<PersonalCutGoodsItemBean> kind;
+        private List<GoodsItemBean> kind;
 
         public DetailBean getDetail() {
             return detail;
@@ -122,11 +122,11 @@ public class CutGoodsInfoBean {
             this.endtime = endtime;
         }
 
-        public List<PersonalCutGoodsItemBean> getKind() {
+        public List<GoodsItemBean> getKind() {
             return kind;
         }
 
-        public void setKind(List<PersonalCutGoodsItemBean> kind) {
+        public void setKind(List<GoodsItemBean> kind) {
             this.kind = kind;
         }
 

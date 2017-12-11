@@ -14,7 +14,7 @@ import android.view.View
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.CommentForGoodsBean
-import com.android.ql.lf.electronicbusiness.data.PersonalCutGoodsItemBean
+import com.android.ql.lf.electronicbusiness.data.GoodsItemBean
 import com.android.ql.lf.electronicbusiness.data.CutGoodsInfoBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
@@ -47,8 +47,8 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
     private val commentList = arrayListOf<CommentForGoodsBean>()
     private lateinit var adapter: GoodsInfoCommentAdapter
 
-    private val recommendList = arrayListOf<PersonalCutGoodsItemBean>()
-    private lateinit var recommendAdapter: BaseQuickAdapter<PersonalCutGoodsItemBean, BaseViewHolder>
+    private val recommendList = arrayListOf<GoodsItemBean>()
+    private lateinit var recommendAdapter: BaseQuickAdapter<GoodsItemBean, BaseViewHolder>
 
 
     private lateinit var tv_has_cut_money: TextView

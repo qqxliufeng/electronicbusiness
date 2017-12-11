@@ -14,6 +14,7 @@ import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.CommentForGoodsBean
 import com.android.ql.lf.electronicbusiness.data.SpecificationBean
 import com.android.ql.lf.electronicbusiness.data.UserInfo
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
@@ -27,6 +28,7 @@ import com.xiao.nicevideoplayer.NiceVideoPlayerManager
 import com.xiao.nicevideoplayer.TxVideoPlayerController
 import kotlinx.android.synthetic.main.vip_privilege_item_info_layout.*
 import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONArray
 import org.json.JSONObject
@@ -112,6 +114,8 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         tv_goods_content = topView.findViewById(R.id.mTvVipPrivilegeGoodsInfoTopContent)
         tv_comment_num = topView.findViewById(R.id.mTvVipPrivilegeGoodsInfoTopAllCommentNum)
         topView.findViewById<TextView>(R.id.mTvVipPrivilegeGoodsInfoTopAllComment).setOnClickListener {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext,"全部评价",true,false,
+                    bundleOf(Pair(AllCommentFragment.GOODS_ID_FLAG,goodsId!!)),AllCommentFragment::class.java)
         }
 
         adapter.addHeaderView(topView)
@@ -137,7 +141,8 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL, RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
+        mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL,
+                RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
     }
 
     override fun onRequestStart(requestID: Int) {

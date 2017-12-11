@@ -2,7 +2,7 @@ package com.android.ql.lf.electronicbusiness.ui.adapters
 
 import android.widget.ImageView
 import com.android.ql.lf.electronicbusiness.R
-import com.android.ql.lf.electronicbusiness.data.PersonalCutGoodsItemBean
+import com.android.ql.lf.electronicbusiness.data.GoodsItemBean
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -11,8 +11,8 @@ import com.chad.library.adapter.base.BaseViewHolder
  * Created by lf on 2017/11/10 0010.
  * @author lf on 2017/11/10 0010
  */
-class PersonalCutItemAdapter(layoutId: Int, list: ArrayList<PersonalCutGoodsItemBean>) : BaseQuickAdapter<PersonalCutGoodsItemBean, BaseViewHolder>(layoutId, list) {
-    override fun convert(helper: BaseViewHolder?, item: PersonalCutGoodsItemBean?) {
+class PersonalCutItemAdapter(layoutId: Int, list: ArrayList<GoodsItemBean>) : BaseQuickAdapter<GoodsItemBean, BaseViewHolder>(layoutId, list) {
+    override fun convert(helper: BaseViewHolder?, item: GoodsItemBean?) {
         val iv_pic = helper!!.getView<ImageView>(R.id.mIvPersonalCutItemPic)
         GlideManager.loadImage(iv_pic.context, if (!item!!.product_pic.isEmpty()) {
             item.product_pic[0]

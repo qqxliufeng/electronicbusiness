@@ -12,10 +12,10 @@
         android:background="#fff">
 
         <TextView
+            android:id="@+id/mTvAllCommentNum"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/dp_10"
-            android:text="全部评价(21)"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/sp_16"
             app:layout_scrollFlags="scroll|enterAlways" />

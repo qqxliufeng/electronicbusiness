@@ -3,7 +3,6 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
-import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -18,7 +17,7 @@ import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.CommentForGoodsBean
 import com.android.ql.lf.electronicbusiness.data.CutGoodsInfoBean
-import com.android.ql.lf.electronicbusiness.data.PersonalCutGoodsItemBean
+import com.android.ql.lf.electronicbusiness.data.GoodsItemBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.adapters.RecommedGoodsInfoAdatper
@@ -33,6 +32,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_personal_cut_item_info_layout.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
 
@@ -51,8 +51,8 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
     private val commentList = arrayListOf<CommentForGoodsBean>()
     private lateinit var adapter: GoodsInfoCommentAdapter
 
-    private val recommendList = arrayListOf<PersonalCutGoodsItemBean>()
-    private lateinit var recommendAdapter: BaseQuickAdapter<PersonalCutGoodsItemBean, BaseViewHolder>
+    private val recommendList = arrayListOf<GoodsItemBean>()
+    private lateinit var recommendAdapter: BaseQuickAdapter<GoodsItemBean, BaseViewHolder>
 
 
     private lateinit var tv_has_cut_money: TextView
@@ -106,7 +106,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
 
         adapter.addHeaderView(topView)
         topView.findViewById<TextView>(R.id.mTvPersonalCutItemInfoCommentCountAll).setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "全部评价", true, false, AllCommentFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "全部评价", true, false, bundleOf(Pair(AllCommentFragment.GOODS_ID_FLAG, cutInfoBean!!.result.detail.product_id)), AllCommentFragment::class.java)
         }
         mTvPersonalCutItemInfoBuy.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "提交订单", true, false, SubmitOrderFragment::class.java)
@@ -206,7 +206,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         when (currentMode) {
             1 -> { //个人砍
                 mTvPersonalCutItemInfoEveryOneCut.text = ("每个人砍价${cutInfoBean!!.result.kprice}元")
-                mTvPersonalCutItemInfoEveryOneCut.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_mark_personal_cut,0,0,0)
+                mTvPersonalCutItemInfoEveryOneCut.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_mark_personal_cut, 0, 0, 0)
                 mTvPersonalCutItemInfoBuy.text = "￥${cutInfoBean!!.result.detail.product_price}\n立即购买"
                 mTvPersonalCutItemInfoCut.text = "- ￥${cutInfoBean!!.result.kprice}\n砍价"
                 mTvPersonalCutItemInfoCut.setOnClickListener {
@@ -218,7 +218,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             }
             2 -> { //团体砍
                 mTvPersonalCutItemInfoEveryOneCut.text = ("距离${cutInfoBean!!.result.kprice}元还差两人")
-                mTvPersonalCutItemInfoEveryOneCut.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_mark_team_cut,0,0,0)
+                mTvPersonalCutItemInfoEveryOneCut.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_mark_team_cut, 0, 0, 0)
                 mTvPersonalCutItemInfoBuy.text = "￥${cutInfoBean!!.result.detail.product_price}\n立即购买"
                 mTvPersonalCutItemInfoCut.text = "参与砍价"
                 mTvPersonalCutItemInfoCut.setOnClickListener {

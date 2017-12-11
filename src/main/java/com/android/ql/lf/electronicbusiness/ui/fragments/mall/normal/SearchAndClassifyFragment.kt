@@ -13,6 +13,7 @@ import com.android.ql.lf.electronicbusiness.data.ClassifyItemEntity
 import com.android.ql.lf.electronicbusiness.data.IClassifyBean
 import com.android.ql.lf.electronicbusiness.data.IClassifyItemEntity
 import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
@@ -22,6 +23,7 @@ import com.chad.library.adapter.base.BaseSectionQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.listener.OnItemClickListener
 import kotlinx.android.synthetic.main.fragment_normal_mall_search_and_classify_layout.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 
 /**
@@ -37,6 +39,9 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
     private val mMenuArrayList = arrayListOf<ClassifyBean>()
     private val mItemArrayList = arrayListOf<ClassifyItemEntity>()
 
+    private lateinit var menuItem: ClassifyBean
+    private lateinit var contentItem: ClassifyItemEntity
+
     override fun getLayoutId(): Int = R.layout.fragment_normal_mall_search_and_classify_layout
 
     private lateinit var menuAdapter: MenuAdapter
@@ -48,11 +53,22 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
         contentAdapter = ContentAdapter(R.layout.adapter_search_and_classify_content_item_layout,
                 R.layout.adapter_search_and_classify_content_header_item_layout, mItemArrayList)
         mRcContent.adapter = contentAdapter
+        mRcContent.addOnItemTouchListener(object : OnItemClickListener() {
+            override fun onSimpleItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+                contentItem = mItemArrayList[position]
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true,
+                        bundleOf(Pair(SearchGoodsFragment.TYPE_ID_FLAG, menuItem.classify_id),
+                                Pair(SearchGoodsFragment.STYPE_ID_FLAG, contentItem.t.classify_id),
+                                Pair(SearchGoodsFragment.K_TYPE_FLAG, arguments.getString(SearchGoodsFragment.K_TYPE_FLAG, ""))),
+                        SearchGoodsFragment::class.java)
+            }
+        })
         mRcMenu.layoutManager = LinearLayoutManager(mContext)
         menuAdapter = MenuAdapter(R.layout.adapter_search_and_classify_menu_item_layout, mMenuArrayList)
         mRcMenu.adapter = menuAdapter
         mRcMenu.addOnItemTouchListener(object : OnItemClickListener() {
             override fun onSimpleItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+                menuItem = mMenuArrayList[position]
                 mMenuArrayList.forEachIndexed { index, searchMenuItemBean ->
                     searchMenuItemBean.isChecked = index == position
                 }
@@ -120,6 +136,7 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
                 }
             }
             if (!mMenuArrayList.isEmpty()) {
+                menuItem = mMenuArrayList[0]
                 mMenuArrayList[0].isChecked = true
             }
             menuAdapter.notifyDataSetChanged()

@@ -7,13 +7,17 @@ import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.data.VipGoodsBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.VipPrivilegeItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.AbstractLazyLoadFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
+import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import rx.Subscription
 
 /**
  * Created by lf on 2017/11/11 0011.
@@ -22,7 +26,6 @@ import com.chad.library.adapter.base.BaseViewHolder
 class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
 
     companion object {
-
         val ITEM_ID_FLAG = "item_id_flag"
 
         fun newInstance(bundle: Bundle): VipPrivilegeItemFragment {
@@ -31,6 +34,23 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
             return vipPrivilegeItemFragment
         }
     }
+
+
+    private lateinit var subScription:Subscription
+
+    private lateinit var currentItem:VipGoodsBean
+
+    override fun initView(view: View?) {
+        super.initView(view)
+        subScription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
+            when(UserInfo.getInstance().loginTag){
+                "${this@VipPrivilegeItemFragment.hashCode()}${this@VipPrivilegeItemFragment}"->{
+                    enterGoodsInfo()
+                }
+            }
+        }
+    }
+
 
     override fun createAdapter(): BaseQuickAdapter<VipGoodsBean, BaseViewHolder> =
             VipPrivilegeItemAdapter(R.layout.adapter_vip_privilege_item_layout, mArrayList)
@@ -47,17 +67,18 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT,
                     RequestParamsHelper.getProductParams("3", "", currentPage))
-        }else{
+        } else {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT_TYPE_SEARCH,
-                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString(ITEM_ID_FLAG), "", "3",currentPage))
+                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString(ITEM_ID_FLAG), "", "3","", currentPage))
         }
     }
 
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
+        isLoad = true
         val json = checkResultCode(result)
         processList(json, VipGoodsBean::class.java)
     }
@@ -65,9 +86,27 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onMyItemClick(adapter, view, position)
+        currentItem = mArrayList[position]
+        if (UserInfo.getInstance().isLogin) {
+            enterGoodsInfo()
+        } else {
+            UserInfo.getInstance().loginTag = "${this.hashCode()}$this"
+            LoginFragment.startLogin(mContext)
+        }
+    }
+
+    private fun enterGoodsInfo(){
         val bundle = Bundle()
-        bundle.putString(VipPrivilegeItemInfoFragment.GOODS_ID_FLAG, mArrayList[position].product_id)
+        bundle.putString(VipPrivilegeItemInfoFragment.GOODS_ID_FLAG, currentItem.product_id)
         FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, VipPrivilegeItemInfoFragment::class.java)
+    }
+
+
+    override fun onDestroyView() {
+        if (!subScription.isUnsubscribed){
+            subScription.unsubscribe()
+        }
+        super.onDestroyView()
     }
 
 }

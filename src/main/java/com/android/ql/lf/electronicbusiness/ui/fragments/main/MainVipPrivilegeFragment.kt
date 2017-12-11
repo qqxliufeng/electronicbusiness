@@ -106,6 +106,7 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
                     tempTitles.add(Gson().fromJson(resultJsonArray.optJSONObject(it).toString(), TabItemBean::class.java))
                 }
                 mVipPrivilegeViewPager.adapter = MyViewPagerAdapter(tempTitles, childFragmentManager)
+                mVipPrivilegeViewPager.offscreenPageLimit = 5
                 mVipPrivilegeTabLayout.setupWithViewPager(mVipPrivilegeViewPager)
             }
         }else if (requestID == 0x1){
