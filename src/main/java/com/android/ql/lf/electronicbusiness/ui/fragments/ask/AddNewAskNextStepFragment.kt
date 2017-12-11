@@ -139,7 +139,10 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
                     tags.append(it.tag_title).append(",")
                 }
                 tags.deleteCharAt(tags.length - 1)
-                mPresent.getDataByPost(0x0, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_ADD_QUIZ, RequestParamsHelper.getAddQuizParams(title, content, tags.toString()))
+                mPresent.getDataByPost(0x0,
+                        RequestParamsHelper.QAA_MODEL,
+                        RequestParamsHelper.ACT_ADD_QUIZ,
+                        RequestParamsHelper.getAddQuizParams(title, content, addTags()))
             } else {
                 //上传图片
                 ImageUploadHelper(object : ImageUploadHelper.OnImageUploadListener {
@@ -157,6 +160,7 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
                         builder.addFormDataPart("title", title)
                         builder.addFormDataPart("content", content)
                         builder.addFormDataPart("type", tags.toString())
+                        builder.addFormDataPart("type", addTags())
                         paths.forEachIndexed { index, s ->
                             val file = File(s)
                             builder.addFormDataPart("$index", file.name, RequestBody.create(MultipartBody.FORM, file))
@@ -167,6 +171,18 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
                 }).upload(imageListFile)
             }
         }
+    }
+
+    /**
+     * 添加选择的标签
+     */
+    private fun addTags(): String {
+        val tags = StringBuilder()
+        tagsList.forEach {
+            tags.append(it.tag_title).append(",")
+        }
+        tags.deleteCharAt(tags.length - 1)
+        return tags.toString()
     }
 
     fun uploadImage() {
@@ -222,16 +238,10 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
-        if (requestID == 0x0) {
-            progressDialog = MyProgressDialog(mContext, "正在上传……")
-            progressDialog.show()
-        }
+        progressDialog = MyProgressDialog(mContext, "正在上传……")
+        progressDialog.show()
     }
 
-    override fun onRequestEnd(requestID: Int) {
-        super.onRequestEnd(requestID)
-        progressDialog.dismiss()
-    }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
@@ -249,7 +259,7 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
-        Log.e("TAG", "fail-> $e.message")
+        toast("提问失败")
     }
 
     override fun onDestroyView() {

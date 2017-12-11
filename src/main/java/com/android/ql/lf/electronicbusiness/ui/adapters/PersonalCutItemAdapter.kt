@@ -22,7 +22,7 @@ class PersonalCutItemAdapter(layoutId: Int, list: ArrayList<PersonalCutGoodsItem
 
         helper.setText(R.id.mIvPersonalCutItemName, item.product_name)
         helper.setText(R.id.mTvPersonalCutItemMoney, "￥ ${item.product_price}")
-        helper.setText(R.id.mTvPersonalCutItemHasCut, "已减${item.product_price}元")
+        helper.setText(R.id.mTvPersonalCutItemHasCut, "已减${item.product_minus}元")
         helper.setText(R.id.mTvPersonalCutItemHasPersonNum, "${item.product_knum}人参与")
 
     }

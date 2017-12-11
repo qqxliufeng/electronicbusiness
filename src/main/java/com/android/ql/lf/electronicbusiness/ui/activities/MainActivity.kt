@@ -27,6 +27,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
     override fun getLayoutId(): Int = R.layout.activity_main
 
+    private var exitTime:Long = 0
+
     override fun initView() {
         BottomNavigationViewHelper.disableShiftMode(mMainNavigation)
         mMainNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
@@ -168,6 +170,15 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
             1 -> mMainNavigation.selectedItemId = R.id.navigation_dashboard
             2 -> mMainNavigation.selectedItemId = R.id.navigation_notifications
             3 -> mMainNavigation.selectedItemId = R.id.navigation_message
+        }
+    }
+
+    override fun onBackPressed() {
+        if (System.currentTimeMillis() - exitTime  > 2000){
+            exitTime = System.currentTimeMillis()
+            toast("再一次退出")
+        }else {
+            super.onBackPressed()
         }
     }
 

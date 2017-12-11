@@ -16,6 +16,7 @@ class AskAndAnswerOfAnswerAdapter(layoutId: Int, list: ArrayList<AnswerBean>) : 
         helper!!.addOnClickListener(R.id.mTvAnswerItemExpand)
         val tvExpand = helper.getView<TextView>(R.id.mTvAnswerItemExpand)
         val tvAnswer = helper.getView<TextView>(R.id.mTvAnswerItemAnswerContent)
+        helper.addOnClickListener(R.id.mTvAnswerItemExpand)
         helper.setText(R.id.mTvAnswerItemAnswerTitle, "问题：${item!!.answer_title}")
         helper.setText(R.id.mTvAnswerItemAnswerContent, "回答：${item.answer_content}")
         tvExpand.text = if (item!!.isExpand) "收起" else "展开"
