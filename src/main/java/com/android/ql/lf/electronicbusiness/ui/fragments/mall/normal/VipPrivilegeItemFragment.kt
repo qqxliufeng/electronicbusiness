@@ -9,6 +9,7 @@ import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.data.VipGoodsBean
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.VipPrivilegeItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.AbstractLazyLoadFragment
@@ -38,11 +39,15 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
 
     private lateinit var currentItem:VipGoodsBean
 
+    private val currentFlag by lazy {
+        "${this.hashCode()}$this"
+    }
+
     override fun initView(view: View?) {
         super.initView(view)
         subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
             when(UserInfo.getInstance().loginTag){
-                "${this@VipPrivilegeItemFragment.hashCode()}${this@VipPrivilegeItemFragment}"->{
+                currentFlag->{
                     enterGoodsInfo()
                 }
             }
@@ -64,12 +69,12 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT,
-                    RequestParamsHelper.getProductParams("3", "", currentPage))
+                    RequestParamsHelper.getProductParams(OrderPresent.GoodsType.VIP_GOODS, "", currentPage))
         } else {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT_TYPE_SEARCH,
-                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString(ITEM_ID_FLAG), "", "3","", currentPage))
+                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString(ITEM_ID_FLAG), "", OrderPresent.GoodsType.VIP_GOODS,"", currentPage))
         }
     }
 
@@ -88,7 +93,7 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
         if (UserInfo.getInstance().isLogin) {
             enterGoodsInfo()
         } else {
-            UserInfo.getInstance().loginTag = "${this.hashCode()}$this"
+            UserInfo.getInstance().loginTag = currentFlag
             LoginFragment.startLogin(mContext)
         }
     }

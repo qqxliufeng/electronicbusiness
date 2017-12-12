@@ -31,39 +31,49 @@ class OrderListItemAdapter(layoutId: Int, list: ArrayList<MyOrderBean>) : BaseQu
         helper.addOnClickListener(R.id.mBtOrderListItemAction2)
         val tv_k_type = helper.getView<TextView>(R.id.mTvOrderListItemKType)
         when (item.product_ktype) {
-            "1" -> { //个人砍
+            OrderPresent.GoodsType.PERSONAL_CUT_GOODS -> { //个人砍
                 tv_k_type.text = "拇指斗价个人砍"
                 tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_group, 0, 0, 0)
             }
-            "2" -> { //团体砍
+            OrderPresent.GoodsType.TEAM_CUT_GOODS -> { //团体砍
                 tv_k_type.text = "拇指斗价团体砍"
                 tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_presonal, 0, 0, 0)
             }
-            "3" -> { //会员专享
+            OrderPresent.GoodsType.VIP_GOODS -> { //会员专享
                 tv_k_type.text = "拇指斗价会员专享"
                 tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_vip_s, 0, 0, 0)
             }
         }
         helper.setText(R.id.mTvShoppingCarItemEditMode, when (OrderPresent.getOrderStatus(item.order_token)) {
             OrderPresent.OrderStatus.STATUS_OF_DFK -> {
+                tv_action1.visibility = View.VISIBLE
+                tv_action2.visibility = View.VISIBLE
                 tv_action1.text = "取消订单"
                 tv_action2.text = "付款"
                 "待付款"
             }
             OrderPresent.OrderStatus.STATUS_OF_DFH -> {
                 tv_action1.visibility = View.GONE
+                tv_action2.visibility = View.VISIBLE
                 tv_action2.text = "申请退款"
                 "待发货"
             }
             OrderPresent.OrderStatus.STATUS_OF_DSH -> {
+                tv_action1.visibility = View.VISIBLE
+                tv_action2.visibility = View.VISIBLE
+                tv_action2.text = "确认收货"
+                tv_action1.text = "查看快递"
                 "待收货"
             }
             OrderPresent.OrderStatus.STATUS_OF_DPJ -> {
+                tv_action1.visibility = View.GONE
+                tv_action2.visibility = View.VISIBLE
+                tv_action2.text = "去评价"
                 "待评价"
             }
             OrderPresent.OrderStatus.STATUS_OF_FINISH -> {
                 tv_action1.visibility = View.GONE
-                tv_action2.text = "去评价"
+                tv_action2.visibility = View.GONE
                 "完成"
             }
             OrderPresent.OrderStatus.STATUS_OF_CANCEL -> {

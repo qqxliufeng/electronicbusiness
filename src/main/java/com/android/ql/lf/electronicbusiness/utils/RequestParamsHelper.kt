@@ -263,21 +263,30 @@ class RequestParamsHelper {
         //评价商品
         val ACT_EVALUATE = "evaluate"
 
-        fun getEvaluateParam(oid:String,gid:String,content:String,f:String):ApiParams{
+        fun getEvaluateParam(oid: String, gid: String, content: String, f: String): ApiParams {
             val param = getWithIdParams()
-            param.addParam("oid",oid)
-            param.addParam("gid",gid)
-            param.addParam("content",content)
-            param.addParam("f",f)
+            param.addParam("oid", oid)
+            param.addParam("gid", gid)
+            param.addParam("content", content)
+            param.addParam("f", f)
             return param
         }
 
         //快递查询
         val ACT_GETLOGISTICS = "getlogistics"
 
-        fun getGetlogisticsParam(num: String):ApiParams{
+        fun getGetlogisticsParam(num: String): ApiParams {
             val param = getWithIdParams()
-            param.addParam("nu",num)
+            param.addParam("nu", num)
+            return param
+        }
+
+        //订单搜索
+        val ACT_MYORDER_SEARCH = "myorder_search"
+
+        fun getMyOrderSearchParam(keyword: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("keyword", keyword)
             return param
         }
 
@@ -439,7 +448,7 @@ class RequestParamsHelper {
         //砍价商品分类查询
         val ACT_PRODUCT_TYPE_SEARCH = "product_type_search"
 
-        fun getProductTypeSearchParams(type_id: String, stype_id: String, ktype: String,sort: String, page: Int, pagesize: Int = 10): ApiParams {
+        fun getProductTypeSearchParams(type_id: String, stype_id: String, ktype: String, sort: String, page: Int, pagesize: Int = 10): ApiParams {
             val params = getWithPageParams(page, pagesize)
             params.addParam("stype_id", stype_id)
             params.addParam("type_id", type_id)
@@ -504,6 +513,16 @@ class RequestParamsHelper {
             return param
         }
 
+        //商品搜索
+        val ACT_PRODUCT_SEARCH = "product_search"
+
+        fun getProductSearchParam(keyword: String, ktype: String, page: Int, pagesize: Int = 10): ApiParams {
+            val param = getWithPageParams(page, pagesize)
+            param.addParam("keyword", keyword)
+            param.addParam("ktype", ktype)
+            return param
+        }
+
         /**              product model  end           **/
 
         /**              order model  end           **/
@@ -537,6 +556,17 @@ class RequestParamsHelper {
             param.addParam("phone", phone)
             param.addParam("oid", oid)
             param.addParam("content", content)
+            return param
+        }
+
+        //订单支付
+        val ACT_PAY = "pay"
+
+        fun getPayParam(oid: String, gid: String, payType: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("oid", oid)
+            param.addParam("gid", gid)
+            param.addParam("paytype", payType)
             return param
         }
 

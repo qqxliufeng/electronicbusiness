@@ -25,6 +25,13 @@ public class OrderPresent {
         public static int STATUS_OF_BACK = 6;
     }
 
+    // "1" 个人砍  "2" 团体砍 "3" 会员专享
+    public static class GoodsType {
+        public static String VIP_GOODS = "3";
+        public static String PERSONAL_CUT_GOODS = "1";
+        public static String TEAM_CUT_GOODS = "2";
+    }
+
     private GetDataFromNetPresent present;
 
     public OrderPresent(GetDataFromNetPresent present) {
@@ -53,6 +60,17 @@ public class OrderPresent {
                 RequestParamsHelper.Companion.getMEMBER_MODEL(),
                 RequestParamsHelper.Companion.getACT_EDIT_ORDER_STATUS(),
                 RequestParamsHelper.Companion.getEditOrderStatusParam(orderId, "4"));
+    }
+
+    /**
+     * 确认收货
+     */
+    public void confirmGoods(int requestId, String orderId) {
+        checkNull();
+        present.getDataByPost(0x4,
+                RequestParamsHelper.Companion.getMEMBER_MODEL(),
+                RequestParamsHelper.Companion.getACT_EDIT_ORDER_STATUS(),
+                RequestParamsHelper.Companion.getEditOrderStatusParam(orderId, "3"));
     }
 
     /**

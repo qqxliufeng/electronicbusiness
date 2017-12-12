@@ -32,7 +32,6 @@ import rx.Subscription
  */
 class MainMineFragment : BaseNetWorkingFragment() {
 
-
     private lateinit var loginSubscribe: Subscription
     private lateinit var qBadgeSubScribe: Subscription
 
@@ -263,45 +262,56 @@ class MainMineFragment : BaseNetWorkingFragment() {
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
+        val json = checkResultCode(result)
         when (requestID) {
             0x0 -> {
-                if (result != null) {
-                    val jsonObject = JSONObject(result.toString())
-                    if ("200" == jsonObject.optString("code")) {
-                        val arrJsonObject = jsonObject.optJSONObject("arr")
-                        val s0 = arrJsonObject.optString("s0")
-                        if ("0" != s0) {
-                            if (badge0 == null) {
-                                badge0 = QBadgeView(mContext)
-                            }
-                            badge0!!.bindTarget(mDFKOrder).badgeNumber = s0.toInt()
-                        }
-                        val s1 = arrJsonObject.optString("s1")
-                        if ("0" != s1) {
-                            if (badge1 == null) {
-                                badge1 = QBadgeView(mContext)
-                            }
-                            badge1!!.bindTarget(mDFHOrder).badgeNumber = s1.toInt()
-                        }
-                        val s2 = arrJsonObject.optString("s2")
-                        if ("0" != s2) {
-                            if (badge2 == null) {
-                                badge2 = QBadgeView(mContext)
-                            }
-                            badge2!!.bindTarget(mWaitingGoods).badgeNumber = s2.toInt()
-                        }
-                        val s3 = arrJsonObject.optString("s3")
-                        if ("0" != s3) {
-                            if (badge3 == null) {
-                                badge3 = QBadgeView(mContext)
-                            }
-                            badge3!!.bindTarget(mSuccessOrder).badgeNumber = s3.toInt()
-                        }
+                val arrJsonObject = json.optJSONObject("arr")
+                val s0 = arrJsonObject.optString("s0")
+                if ("0" != s0) {
+                    if (badge0 == null) {
+                        badge0 = QBadgeView(mContext)
+                    }
+                    badge0!!.bindTarget(mDFKOrder).badgeNumber = s0.toInt()
+                } else {
+                    if (badge0 != null) {
+                        badge0!!.hide(false)
+                    }
+                }
+                val s1 = arrJsonObject.optString("s1")
+                if ("0" != s1) {
+                    if (badge1 == null) {
+                        badge1 = QBadgeView(mContext)
+                    }
+                    badge1!!.bindTarget(mDFHOrder).badgeNumber = s1.toInt()
+                } else {
+                    if (badge1 != null) {
+                        badge1!!.hide(false)
+                    }
+                }
+                val s2 = arrJsonObject.optString("s2")
+                if ("0" != s2) {
+                    if (badge2 == null) {
+                        badge2 = QBadgeView(mContext)
+                    }
+                    badge2!!.bindTarget(mWaitingGoods).badgeNumber = s2.toInt()
+                } else {
+                    if (badge2 != null) {
+                        badge2!!.hide(false)
+                    }
+                }
+                val s3 = arrJsonObject.optString("s3")
+                if ("0" != s3) {
+                    if (badge3 == null) {
+                        badge3 = QBadgeView(mContext)
+                    }
+                    badge3!!.bindTarget(mSuccessOrder).badgeNumber = s3.toInt()
+                } else {
+                    if (badge3 != null) {
+                        badge3!!.hide(false)
                     }
                 }
             }
             0x1 -> {
-                val json = checkResultCode(result)
                 if (json != null) {
                     toast(json.optString("msg"))
                 } else {
@@ -310,6 +320,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
             }
         }
     }
+
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
@@ -342,7 +353,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
         if (!loginSubscribe.isUnsubscribed) {
             loginSubscribe.unsubscribe()
         }
-        if(!qBadgeSubScribe.isUnsubscribed){
+        if (!qBadgeSubScribe.isUnsubscribed) {
             qBadgeSubScribe.unsubscribe()
         }
         super.onDestroyView()

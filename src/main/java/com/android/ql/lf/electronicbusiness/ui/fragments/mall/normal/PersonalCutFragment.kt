@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.TabItemBean
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainCutPrivilegeFragment
@@ -34,7 +35,7 @@ class PersonalCutFragment : BaseNetWorkingFragment() {
         if (userVisibleHint) {
             isMvisible = true
             loadData()
-            MainCutPrivilegeFragment.currentMode = "1"
+            MainCutPrivilegeFragment.currentMode = OrderPresent.GoodsType.PERSONAL_CUT_GOODS
         } else {
             isMvisible = false
         }
@@ -58,7 +59,7 @@ class PersonalCutFragment : BaseNetWorkingFragment() {
     override fun initView(view: View?) {
         mTvClassMore.setOnClickListener {
             val bundle = Bundle()
-            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, "1")
+            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, OrderPresent.GoodsType.PERSONAL_CUT_GOODS)
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, bundle,SearchAndClassifyFragment::class.java)
         }
     }

@@ -9,13 +9,11 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
+import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
-import android.widget.CheckBox
-import android.widget.RelativeLayout
-import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.MyOrderBean
 import com.android.ql.lf.electronicbusiness.data.RefreshData
@@ -23,6 +21,7 @@ import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.OrderListItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.ExpressInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.ui.views.SelectPayTypeView
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
@@ -31,7 +30,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
-import rx.Subscription
 
 /**
  * Created by lf on 2017/11/8 0008.
@@ -72,24 +70,31 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
             OrderListItemAdapter(R.layout.adapter_order_list_item_layout, mArrayList)
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.order_list_search_menu, menu)
-        val menuItem = menu?.findItem(R.id.mOrderListSearch)
-        val searchView = menuItem?.actionView as SearchView
-        searchView.isIconified = true
-        val searchAutoComplete = searchView.findViewById<SearchView.SearchAutoComplete>(android.support.v7.appcompat.R.id.search_src_text)
-        searchAutoComplete.setHintTextColor(Color.WHITE)
-        searchAutoComplete.hint = "输入商品名或首字母"
-        searchAutoComplete.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 4.0f, mContext.resources.displayMetrics)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                toast("$query")
-                return false
-            }
+        if (arguments == null) {
+            inflater?.inflate(R.menu.order_list_search_menu, menu)
+            val menuItem = menu?.findItem(R.id.mOrderListSearch)
+            val searchView = menuItem?.actionView as SearchView
+            searchView.isIconified = true
+            val searchAutoComplete = searchView.findViewById<SearchView.SearchAutoComplete>(android.support.v7.appcompat.R.id.search_src_text)
+            searchAutoComplete.setHintTextColor(Color.WHITE)
+            searchAutoComplete.hint = "输入商品名或首字母"
+            searchAutoComplete.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 4.0f, mContext.resources.displayMetrics)
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    if (!TextUtils.isEmpty(query)) {
+                        mPresent.getDataByPost(0x3,
+                                RequestParamsHelper.MEMBER_MODEL,
+                                RequestParamsHelper.ACT_MYORDER_SEARCH,
+                                RequestParamsHelper.getMyOrderSearchParam(query!!))
+                    }
+                    return false
+                }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    return false
+                }
+            })
+        }
     }
 
     override fun getItemDecoration(): RecyclerView.ItemDecoration {
@@ -124,13 +129,26 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
             progressDialog = MyProgressDialog(mContext, "正在取消订单……")
             progressDialog.show()
         }
+
+        if (requestID == 0x3) {
+            super.onRefresh()
+            mSwipeRefreshLayout.post { mSwipeRefreshLayout.isRefreshing = true }
+        }
+    }
+
+
+    override fun onRequestEnd(requestID: Int) {
+        super.onRequestEnd(requestID)
+        if (requestID == 0x3) {
+            mSwipeRefreshLayout.post { mSwipeRefreshLayout.isRefreshing = false }
+        }
     }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
         when (requestID) {
-            0x0 -> {
+            0x0, 0x3 -> {
                 processList(json, MyOrderBean::class.java)
             }
             0x1 -> { // 取消订单
@@ -140,7 +158,12 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
                 }
             }
             0x2 -> { //付款
-
+            }
+            0x4 -> { //确认收货
+                if (json != null) {
+                    OrderPresent.notifyRefreshOrderNum()
+                    onPostRefresh()
+                }
             }
         }
     }
@@ -168,6 +191,9 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
             OrderPresent.OrderStatus.STATUS_OF_DFH -> {
             }
             OrderPresent.OrderStatus.STATUS_OF_DSH -> {
+                if (!TextUtils.isEmpty(currentOrder.order_tn)) {
+                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "快递信息", true, false, bundleOf(Pair(ExpressInfoFragment.ORDER_BEAN_FLAG, currentOrder)), ExpressInfoFragment::class.java)
+                }
             }
             OrderPresent.OrderStatus.STATUS_OF_DPJ -> {
             }
@@ -192,10 +218,9 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
                     contentView.setShowConfirmView(View.VISIBLE)
                     contentView.setOnConfirmClickListener {
                         bottomPayDialog!!.dismiss()
-                        toast(contentView.payType)
+                        mPresent.getDataByPost(0x2, RequestParamsHelper.ORDER_MODEL, RequestParamsHelper.ACT_PAY,
+                                RequestParamsHelper.getPayParam(currentOrder.order_id, currentOrder.product_id, contentView.payType))
                     }
-//                        mPresent.getDataByPost(0x2, RequestParamsHelper.ORDER_MODEL, RequestParamsHelper.ACT_ADD_ORDER,
-//                                RequestParamsHelper.getAddOrderParams(contentView.payType, ""))
                     bottomPayDialog!!.setContentView(contentView)
                 } else {
                     bottomPayDialog!!.show()
@@ -205,8 +230,16 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "申请退款", true, false, bundleOf(Pair("oid", currentOrder.order_id)), RefundFragment::class.java)
             }
             OrderPresent.OrderStatus.STATUS_OF_DSH -> {
+                AlertDialog.Builder(mContext).setMessage("是否确认收货？").setPositiveButton("是") { _, _ ->
+                    orderPresent.confirmGoods(0x4, currentOrder.order_id)
+                }.setNegativeButton("再等等", null).create().show()
             }
             OrderPresent.OrderStatus.STATUS_OF_DPJ -> {
+                //去评价
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品评价", true, false,
+                        bundleOf(Pair(OrderCommentSubmitFragment.ORDER_ID_FLAG, currentOrder.order_id),
+                                Pair(OrderCommentSubmitFragment.PRODUCT_ID_FLAG, currentOrder.product_id)),
+                        OrderCommentSubmitFragment::class.java)
             }
             OrderPresent.OrderStatus.STATUS_OF_FINISH -> {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext,
