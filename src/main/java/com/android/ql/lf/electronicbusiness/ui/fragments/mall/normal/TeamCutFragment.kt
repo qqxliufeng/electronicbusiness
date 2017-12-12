@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.TabItemBean
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
@@ -36,7 +37,7 @@ class TeamCutFragment : BaseNetWorkingFragment() {
         if (userVisibleHint) {
             isMvisible = true
             loadData()
-            MainCutPrivilegeFragment.currentMode = "2"
+            MainCutPrivilegeFragment.currentMode = OrderPresent.GoodsType.TEAM_CUT_GOODS
         } else {
             isMvisible = false
         }
@@ -60,7 +61,7 @@ class TeamCutFragment : BaseNetWorkingFragment() {
     override fun initView(view: View?) {
         mTvClassMore.setOnClickListener {
             val bundle = Bundle()
-            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, "2")
+            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, OrderPresent.GoodsType.TEAM_CUT_GOODS)
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, bundle,SearchAndClassifyFragment::class.java)
         }
     }

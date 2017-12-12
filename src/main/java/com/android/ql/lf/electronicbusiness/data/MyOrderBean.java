@@ -1,12 +1,15 @@
 package com.android.ql.lf.electronicbusiness.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
  * Created by liufeng on 2017/12/2.
  */
 
-public class MyOrderBean {
+public class MyOrderBean implements Parcelable {
     private String product_id;
     private String product_name;
     private String product_md;
@@ -15,6 +18,7 @@ public class MyOrderBean {
     private String product_price;
     private String product_ktype;
     private String product_mdprice;
+    private String product_endstatus;
     private String order_specification;
     private String order_num;
     private String order_sn;
@@ -26,6 +30,24 @@ public class MyOrderBean {
     private String order_ftime;
     private String order_htime;
     private String order_fintime;
+    private String order_tn;
+
+
+    public String getProduct_endstatus() {
+        return product_endstatus;
+    }
+
+    public void setProduct_endstatus(String product_endstatus) {
+        this.product_endstatus = product_endstatus;
+    }
+
+    public String getOrder_tn() {
+        return order_tn;
+    }
+
+    public void setOrder_tn(String order_tn) {
+        this.order_tn = order_tn;
+    }
 
     public String getProduct_id() {
         return product_id;
@@ -178,4 +200,73 @@ public class MyOrderBean {
     public void setOrder_fintime(String order_fintime) {
         this.order_fintime = order_fintime;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.product_id);
+        dest.writeString(this.product_name);
+        dest.writeString(this.product_md);
+        dest.writeStringList(this.product_pic);
+        dest.writeString(this.product_hname);
+        dest.writeString(this.product_price);
+        dest.writeString(this.product_ktype);
+        dest.writeString(this.product_mdprice);
+        dest.writeString(this.product_endstatus);
+        dest.writeString(this.order_specification);
+        dest.writeString(this.order_num);
+        dest.writeString(this.order_sn);
+        dest.writeString(this.order_oprice);
+        dest.writeString(this.order_fc);
+        dest.writeString(this.order_token);
+        dest.writeString(this.order_id);
+        dest.writeString(this.order_ctime);
+        dest.writeString(this.order_ftime);
+        dest.writeString(this.order_htime);
+        dest.writeString(this.order_fintime);
+        dest.writeString(this.order_tn);
+    }
+
+    public MyOrderBean() {
+    }
+
+    protected MyOrderBean(Parcel in) {
+        this.product_id = in.readString();
+        this.product_name = in.readString();
+        this.product_md = in.readString();
+        this.product_pic = in.createStringArrayList();
+        this.product_hname = in.readString();
+        this.product_price = in.readString();
+        this.product_ktype = in.readString();
+        this.product_mdprice = in.readString();
+        this.product_endstatus = in.readString();
+        this.order_specification = in.readString();
+        this.order_num = in.readString();
+        this.order_sn = in.readString();
+        this.order_oprice = in.readString();
+        this.order_fc = in.readString();
+        this.order_token = in.readString();
+        this.order_id = in.readString();
+        this.order_ctime = in.readString();
+        this.order_ftime = in.readString();
+        this.order_htime = in.readString();
+        this.order_fintime = in.readString();
+        this.order_tn = in.readString();
+    }
+
+    public static final Parcelable.Creator<MyOrderBean> CREATOR = new Parcelable.Creator<MyOrderBean>() {
+        @Override
+        public MyOrderBean createFromParcel(Parcel source) {
+            return new MyOrderBean(source);
+        }
+
+        @Override
+        public MyOrderBean[] newArray(int size) {
+            return new MyOrderBean[size];
+        }
+    };
 }

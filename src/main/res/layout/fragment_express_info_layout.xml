@@ -16,22 +16,21 @@
             android:padding="10dp">
 
             <ImageView
-                android:id="@+id/mGoodsImage"
+                android:id="@+id/mIvExpressGoodsImage"
                 android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:scaleType="center"
-                android:src="@drawable/bg_login" />
+                android:layout_height="100dp"
+                android:scaleType="center"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/dp_10"
-                android:layout_toRightOf="@+id/mGoodsImage">
+                android:layout_toRightOf="@+id/mIvExpressGoodsImage">
 
                 <TextView
+                    android:id="@+id/mTvExpressGoodsName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="商品名称"
                     android:textColor="#282828"
                     android:textSize="@dimen/sp_16" />
 

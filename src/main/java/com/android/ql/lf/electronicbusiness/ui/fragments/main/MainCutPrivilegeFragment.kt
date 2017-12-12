@@ -15,16 +15,18 @@ import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.ProductBannerBean
 import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.PersonalCutFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchGoodsFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.TeamCutFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.CounterHelper
 import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import kotlinx.android.synthetic.main.fragment_main_normal_privilege_layout.*
+import org.jetbrains.anko.bundleOf
 
 /**
  * Created by lf on 2017/11/9 0009.
@@ -36,7 +38,7 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
         val TITLES = listOf("个人砍", "团体砍")
         fun newInstance() = MainCutPrivilegeFragment()
 
-        var currentMode = "1"
+        var currentMode = OrderPresent.GoodsType.PERSONAL_CUT_GOODS
     }
 
 
@@ -58,9 +60,7 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
         mVpMainNormalPrivilege.adapter = MyNormalPrivilegeAdapter(childFragmentManager)
         mTlMainNormalPrivilege.setupWithViewPager(mVpMainNormalPrivilege)
         mLlNormalSearchContainer.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString(SearchGoodsFragment.K_TYPE_FLAG, currentMode)
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true, bundle, SearchGoodsFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true, bundleOf(Pair(SearchFragment.K_TYPE_FLAG, currentMode)), SearchFragment::class.java)
         }
     }
 

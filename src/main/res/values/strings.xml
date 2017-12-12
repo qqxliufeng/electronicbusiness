@@ -3,4 +3,22 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+
+    <string name="order_status_cancel_str">取消订单</string>
+    <string name="order_status_pay_str">付款</string>
+    <string name="order_status_sqtk_str">申请退款</string>
+    <string name="order_status_express_str">查看物流</string>
+    <string name="order_status_confirm_str">确认收货</string>
+    <string name="order_status_go_comment_str">去评价</string>
+
+
+    <string name="order_status_dfk_str">待付款</string>
+    <string name="order_status_dfh_str">待发货</string>
+    <string name="order_status_dsh_str">待收货</string>
+    <string name="order_status_dpj_str">待评价</string>
+    <string name="order_status_dfinish_str">完成</string>
+    <string name="order_status_dcancel_str">已取消</string>
+    <string name="order_status_dback_str">已退款</string>
+
 </resources>

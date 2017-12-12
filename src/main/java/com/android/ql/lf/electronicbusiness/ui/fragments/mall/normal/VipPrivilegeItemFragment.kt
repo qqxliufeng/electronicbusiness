@@ -9,6 +9,7 @@ import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.data.VipGoodsBean
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.VipPrivilegeItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.AbstractLazyLoadFragment
@@ -64,12 +65,12 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT,
-                    RequestParamsHelper.getProductParams("3", "", currentPage))
+                    RequestParamsHelper.getProductParams(OrderPresent.GoodsType.VIP_GOODS, "", currentPage))
         } else {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT_TYPE_SEARCH,
-                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString(ITEM_ID_FLAG), "", "3","", currentPage))
+                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString(ITEM_ID_FLAG), "", OrderPresent.GoodsType.VIP_GOODS,"", currentPage))
         }
     }
 
