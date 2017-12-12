@@ -56,6 +56,7 @@ class PersonalCutFragment : BaseNetWorkingFragment() {
 
     override fun getLayoutId(): Int = R.layout.fragment_personal_cut_layout
 
+
     override fun initView(view: View?) {
         mTvClassMore.setOnClickListener {
             val bundle = Bundle()
