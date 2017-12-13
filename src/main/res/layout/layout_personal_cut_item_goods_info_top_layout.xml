@@ -52,7 +52,7 @@
             android:id="@+id/mTvPersonalCutItemInfoCommentCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="订单评价（21）"
+            android:text="订单评价"
             android:textColor="@color/red_tv_color"
             android:textSize="14sp" />
 

@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.UserInfo
+import com.android.ql.lf.electronicbusiness.data.WXUserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
@@ -14,11 +15,13 @@ import com.android.ql.lf.electronicbusiness.utils.ApiParams
 import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
+import com.google.gson.Gson
 import com.tencent.mm.opensdk.modelbase.BaseResp
 import com.tencent.mm.opensdk.modelmsg.SendAuth
 import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.fragment_login_layout.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
 import rx.Subscription
@@ -32,7 +35,7 @@ import java.util.regex.Pattern
 class LoginFragment : BaseNetWorkingFragment() {
 
     companion object {
-        fun startLogin(context:Context) {
+        fun startLogin(context: Context) {
             FragmentContainerActivity.startFragmentContainerActivity(context, "", true, true, LoginFragment::class.java)
         }
     }
@@ -106,7 +109,7 @@ class LoginFragment : BaseNetWorkingFragment() {
                     val json = JSONObject(result.toString())
                     val code = json.optString("code")
                     if ("200" == code) {
-                        onLoginSuccess(json)
+                        onLoginSuccess(json.optJSONObject("result"))
                     } else {
                         toast(json.optString("msg"))
                     }
@@ -117,24 +120,21 @@ class LoginFragment : BaseNetWorkingFragment() {
             0x1 -> {
                 val json = checkResultCode(result)
                 if (json != null) {
-                    val bundle = Bundle()
-                    val any = json.opt("result")
-                    if (any is String) {
-                        bundle.putString("uid", json.optString("result"))
-                        bundle.putString("nickName", json.optJSONObject("arr").optString("member_name"))
-                        FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, bundle, WXCompleteDataFragment::class.java)
+                    val jsonObject = json.optJSONObject("result")
+                    val memberId = jsonObject.optString("member_id")
+                    if (TextUtils.isEmpty(memberId)) {
+                        val wxUserInfo = Gson().fromJson(jsonObject.toString(), WXUserInfo::class.java)
+                        FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, bundleOf(Pair(WXCompleteDataFragment.WX_USER_INFO_FLAG,wxUserInfo)), WXCompleteDataFragment::class.java)
                         finish()
-                    } else {
-                        onLoginSuccess(json)
+                    }else {
+                        onLoginSuccess(jsonObject)
                     }
                 }
             }
         }
     }
 
-    private fun LoginFragment.onLoginSuccess(json: JSONObject) {
-        toast(json.optString("msg"))
-        val userJson = json.optJSONObject("result")
+    private fun LoginFragment.onLoginSuccess(userJson: JSONObject) {
         parseUserInfo(userJson)
         RxBus.getDefault().post(UserInfo.getInstance())
         finish()

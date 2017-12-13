@@ -14,6 +14,7 @@ import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_integration_mall_goods_info_layout.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 
 /**
@@ -33,10 +34,14 @@ class IntegrationMallGoodsInfoFragment : BaseNetWorkingFragment() {
     override fun initView(view: View?) {
         mIvIntegrationMallDetailExchange.setOnClickListener {
             if (itemBean != null) {
-                if (itemBean!!.jproduct_price.toInt() > UserInfo.getInstance().memberIntegral.toInt()) {
+                if (itemBean!!.jproduct_price.toDouble() > UserInfo.getInstance().memberIntegral.toDouble()) {
                     toast("当前积分不够哦~")
                 } else {
-                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "提交订单", true, false, SubmitIntegrationOrderFragment::class.java)
+                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "提交订单",
+                            true,
+                            false,
+                            bundleOf(Pair(SubmitIntegrationOrderFragment.GOODS_FLAG,itemBean!!)),
+                            SubmitIntegrationOrderFragment::class.java)
                 }
             }
         }

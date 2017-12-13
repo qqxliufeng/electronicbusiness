@@ -5,6 +5,7 @@ import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.CodeBean
 import com.android.ql.lf.electronicbusiness.data.UserInfo
+import com.android.ql.lf.electronicbusiness.data.WXUserInfo
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.CounterHelper
@@ -22,9 +23,19 @@ import java.util.regex.Pattern
  */
 class WXCompleteDataFragment : BaseNetWorkingFragment() {
 
+
+    companion object {
+        val WX_USER_INFO_FLAG = "wx_user_info_flag"
+    }
+
     private var mCode: String = ""
 
     private lateinit var counterHelper: CounterHelper
+
+    private val wxUserInfo: WXUserInfo by lazy {
+        arguments.classLoader = this.javaClass.classLoader
+        arguments.getParcelable<WXUserInfo>(WX_USER_INFO_FLAG)
+    }
 
     override fun getLayoutId() = R.layout.fragment_wx_complete_data_layout
 
@@ -37,9 +48,7 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
             mCodeGet.text = "没有收到验证码？"
             mCodeGet.isEnabled = true
         }
-        val uid = arguments.getString("uid", "")
-        val nickName = arguments.getString("nickName", "")
-        mTvWxCompleteDataTitle.text = "完善资料 - $nickName"
+        mTvWxCompleteDataTitle.text = "完善资料 - ${wxUserInfo.nickname}"
 
         mBack.setOnClickListener { finish() }
         mCodeGet.setOnClickListener {
@@ -51,8 +60,8 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
                 toast("请输入合法的手机号")
                 return@setOnClickListener
             }
-            counterHelper.start()
             mCodeGet.isEnabled = false
+            counterHelper.start()
             mPresent.getDataByPost(0x0, RequestParamsHelper.LOGIN_MODEL, RequestParamsHelper.ACT_CODE,
                     RequestParamsHelper.getCodeParams(mEtPhone.text.toString()))
         }
@@ -77,7 +86,7 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
                 return@setOnClickListener
             }
             mPresent.getDataByPost(0x1, RequestParamsHelper.LOGIN_MODEL, RequestParamsHelper.ACT_WX_PERFECT,
-                    RequestParamsHelper.getWXCompleteDataParam(mEtPhone.text.toString()))
+                    RequestParamsHelper.getWXCompleteDataParam(mEtPhone.text.toString(), wxUserInfo.headimgurl, wxUserInfo.openid, wxUserInfo.nickname))
         }
     }
 
@@ -109,16 +118,15 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
     }
 
     private fun onLoginSuccess(json: JSONObject) {
-        toast(json.optString("msg"))
-        val userJson = json.optJSONObject("result")
-        parseUserInfo(userJson)
+        val memId = json.optString("result")
+        UserInfo.getInstance().memberId = memId
+        parseUserInfo(json.optJSONObject("arr"))
         RxBus.getDefault().post(UserInfo.getInstance())
         finish()
     }
 
     private fun parseUserInfo(userJson: JSONObject?) {
-        UserInfo.getInstance().memberId = userJson!!.optString("member_id")
-        UserInfo.getInstance().memberName = userJson.optString("member_name")
+        UserInfo.getInstance().memberName = userJson!!.optString("member_name")
         UserInfo.getInstance().memberPhone = userJson.optString("member_phone")
         UserInfo.getInstance().memberRank = userJson.optString("member_rank")
         UserInfo.getInstance().memberSex = userJson.optString("member_sex")
@@ -131,7 +139,14 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
-        toast("完善资料失败，请稍后重试……")
+        if (requestID == 0x1) {
+            toast("完善资料失败，请稍后重试……")
+        }else{
+            toast("获取验证码失败")
+            mCodeGet.text = "获取验证码"
+            mCodeGet.isEnabled = true
+            counterHelper.stop()
+        }
     }
 
     override fun onDestroyView() {

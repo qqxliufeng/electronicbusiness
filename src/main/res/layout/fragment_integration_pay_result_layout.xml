@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/mTvPayResultTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:drawablePadding="@dimen/dp_10"
+        android:gravity="center"
+        android:textColor="@color/black_tv_color"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/mBtBack"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/shape_bt_bg1"
+        android:text="查看兑换记录"
+        android:textColor="#fff" />
+</LinearLayout>

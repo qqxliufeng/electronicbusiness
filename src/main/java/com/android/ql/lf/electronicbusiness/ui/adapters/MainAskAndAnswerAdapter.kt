@@ -1,12 +1,10 @@
 package com.android.ql.lf.electronicbusiness.ui.adapters
 
-import android.media.Image
-import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.IndexAskInfoBean
+import com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -38,20 +36,8 @@ class MainAskAndAnswerAdapter(list: ArrayList<IndexAskInfoBean>) : BaseMultiItem
             IndexAskInfoBean.MULTI_IMAGE -> {
                 helper!!.setText(R.id.mTvIndexAskInfoMultiImageTitle, item.quiz_title)
                 helper.setText(R.id.mTvIndexAskInfoMultiImageAskCount, "${item.quiz_num}个回答")
-                val ll_container = helper.getView<LinearLayout>(R.id.mLlIndexAskInfoMultiImageAskImageContainer)
-                ll_container.removeAllViews()
-                item.quiz_pic.forEach {
-                    val image = ImageView(ll_container.context)
-                    val params = LinearLayout.LayoutParams(0, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100.0f, ll_container.context.resources.displayMetrics).toInt())
-                    params.weight = 1.0f
-                    val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, ll_container.context.resources.displayMetrics).toInt()
-                    params.leftMargin = margin
-                    params.rightMargin = margin
-                    image.layoutParams = params
-                    image.scaleType = ImageView.ScaleType.CENTER_CROP
-                    GlideManager.loadImage(ll_container.context, it, image)
-                    ll_container.addView(image)
-                }
+                val ll_container = helper.getView<ImageContainerLinearLayout>(R.id.mLlIndexAskInfoMultiImageAskImageContainer)
+                ll_container.setImages(item.quiz_pic)
             }
         }
     }

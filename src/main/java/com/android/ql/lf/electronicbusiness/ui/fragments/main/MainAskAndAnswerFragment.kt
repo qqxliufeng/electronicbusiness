@@ -29,6 +29,7 @@ import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.listener.OnItemClickListener
 import kotlinx.android.synthetic.main.fragment_main_ask_and_answer_layout.*
 import kotlinx.android.synthetic.main.layout_main_ank_and_answer_top_layout.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.collections.forEachWithIndex
 import org.json.JSONObject
 import rx.Subscription
@@ -54,6 +55,8 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
     private lateinit var loginSubscription: Subscription
     private lateinit var refreshSubscription: Subscription
 
+    private var currentTag: TagBean? = null
+
     override fun createAdapter(): BaseQuickAdapter<IndexAskInfoBean, BaseViewHolder> =
             MainAskAndAnswerAdapter(mArrayList)
 
@@ -73,7 +76,8 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
                 item.isChecked = item.tag_title == it.tag_title
             }
             topRvAdapter.notifyDataSetChanged()
-            onSelectedTag(it)
+            currentTag = it
+            onPostRefresh()
         }
         /**
          * 监听登录
@@ -108,7 +112,8 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
                     item.isChecked = index == position
                 }
                 topRvAdapter.notifyDataSetChanged()
-                onSelectedTag(tagList[position])
+                currentTag = tagList[position]
+                onPostRefresh()
             }
         })
         mRvMainAskAndAnswerContainer.adapter = topRvAdapter
@@ -134,10 +139,11 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         }
     }
 
-    private fun onSelectedTag(it: TagBean) {
-        onPostRefresh()
-        mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_QUIZ_TYPE_SEARCH,
-                RequestParamsHelper.getQuizTypeSearch(if ("全部" == it.tag_title) "" else it.tag_title, page = currentPage))
+    private fun onSelectedTag(it: TagBean?) {
+        if (it != null) {
+            mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_QUIZ_TYPE_SEARCH,
+                    RequestParamsHelper.getQuizTypeSearch(if ("全部" == it.tag_title) "" else it.tag_title, page = currentPage))
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -160,13 +166,7 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
             parseTagJson(json)
         } else if (requestID == 0x1) {
             if (json != null) {
-                val tempList = ListParseHelper<IndexAskInfoBean>().fromJson(json.toString(), IndexAskInfoBean::class.java)
-                if (tempList != null && !tempList.isEmpty()) {
-                    mArrayList.addAll(tempList)
-                } else {
-                    mBaseAdapter.setEmptyView(emptyLayoutId)
-                }
-                mBaseAdapter.notifyDataSetChanged()
+                processList(json, IndexAskInfoBean::class.java)
             }
         }
     }
@@ -190,6 +190,7 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
                 list.add(lastTag)
                 tagList.addAll(list)
                 if (!tagList.isEmpty()) {
+                    currentTag = tagList[0]
                     tagList[0].isChecked = true
                     mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_QUIZ_TYPE_SEARCH,
                             RequestParamsHelper.getQuizTypeSearch(if ("全部" == tagList[0].tag_title) "" else tagList[0].tag_id, page = currentPage))
@@ -209,15 +210,23 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
 
     override fun onRefresh() {
         super.onRefresh()
-        setLoadEnable(false)
-        setRefreshEnable(false)
+        if (currentTag != null) {
+            onSelectedTag(currentTag)
+        }
+    }
+
+    override fun onLoadMore() {
+        super.onLoadMore()
+        if (currentTag != null) {
+            onSelectedTag(currentTag)
+        }
     }
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onMyItemClick(adapter, view, position)
-        val bundle = Bundle()
-        bundle.putString(AnswerInfoFragment.ASK_ID_FLAG, mArrayList[position].quiz_id)
-        FragmentContainerActivity.startFragmentContainerActivity(mContext, "问答详情", true, false, bundle, AnswerInfoFragment::class.java)
+        FragmentContainerActivity.startFragmentContainerActivity(mContext, "问答详情", true, false,
+                bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, mArrayList[position].quiz_id)),
+                AnswerInfoFragment::class.java)
     }
 
     override fun onDestroyView() {

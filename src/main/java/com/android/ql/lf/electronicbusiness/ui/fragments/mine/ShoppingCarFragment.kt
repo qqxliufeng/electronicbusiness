@@ -8,6 +8,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.RefreshData
 import com.android.ql.lf.electronicbusiness.data.ShoppingCarItemBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.ShoppingCarItemAdapter
@@ -16,6 +17,7 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SubmitNewOr
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SubmitOrderFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
+import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.fragment_shopping_car_layout.*
@@ -27,6 +29,11 @@ import java.text.DecimalFormat
  * @author lf on 2017/11/8 0008
  */
 class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
+
+
+    companion object {
+        val REFRESH_SHOPPING_CAR_FLAG = "refresh shopping car"
+    }
 
     private lateinit var currentItem: ShoppingCarItemBean
 
@@ -42,6 +49,11 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
     @SuppressLint("RestrictedApi")
     override fun initView(view: View?) {
         super.initView(view)
+        subscription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
+            if (it.isRefresh && it.any == REFRESH_SHOPPING_CAR_FLAG){
+                onPostRefresh()
+            }
+        }
         mEmptyShoppingCarContainer.visibility = View.GONE
         mShoppingCarContainer.visibility = View.VISIBLE
         mCalculate.isEnabled = false

@@ -13,65 +13,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/mLlSubmitOrderAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="@dimen/dp_10">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/img_icon_address" />
-
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/mTvOrderPersonName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="收货人：王大宝"
-                            android:textColor="@color/black_tv_color"
-                            android:textSize="@dimen/sp_14" />
-
-                        <TextView
-                            android:id="@+id/mTvOrderPersonPhone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:text="188888888885"
-                            android:textColor="@color/black_tv_color"
-                            android:textSize="@dimen/sp_14" />
-                    </RelativeLayout>
-
-                    <TextView
-                        android:id="@+id/mTvOrderPersonDetail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/dp_10"
-                        android:text="收货地址：山东省 泰安市 XX区  建国大门内大街 榆次花园小区15号楼2单元1111室"
-                        android:textSize="@dimen/sp_12" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/icon_inter" />
-            </LinearLayout>
+            <include layout="@layout/layout_submit_new_order_header_layout" />
 
             <View
                 android:layout_width="match_parent"
@@ -93,12 +35,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#fff"
-                    android:drawableLeft="@drawable/img_icon_group"
                     android:drawablePadding="@dimen/dp_10"
                     android:padding="@dimen/dp_10"
-                    android:text="拇指斗价团体砍"
+                    android:text="积分兑换"
                     android:textColor="@color/black_tv_color" />
-
 
                 <View
                     android:layout_width="match_parent"
@@ -112,13 +52,11 @@
                     android:orientation="horizontal"
                     android:padding="@dimen/dp_10">
 
-
                     <ImageView
+                        android:id="@+id/mIvIntegrationSubmitOrderGoodsPic"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/img_icon_test_pic_05" />
-
+                        android:scaleType="centerCrop" />
 
                     <LinearLayout
                         android:id="@+id/mLlShoppingCarItemInfoContainer"
@@ -128,40 +66,21 @@
                         android:paddingLeft="@dimen/dp_10">
 
                         <TextView
+                            android:id="@+id/mTvIntegrationSubmitOrderGoodsName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
-                            android:maxLines="2"
-                            android:text="秋冬换季全棉四件套100%斜纹纯棉亲肤四件套"
+                            android:maxLines="4"
                             android:textColor="@color/black_tv_color" />
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dp_10"
-                            android:text="白色，XXL"
-                            android:textColor="#9C9C9C" />
-
-                        <RelativeLayout
+                            android:id="@+id/mTvIntegrationSubmitOrderGoodsPrice"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:text="￥188.00"
-                                android:textColor="@color/red_tv_color"
-                                android:textSize="@dimen/sp_16" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:layout_alignParentRight="true"
-                                android:text="X1"
-                                android:textColor="#9c9c9c" />
-                        </RelativeLayout>
+                            android:layout_height="match_parent"
+                            android:layout_alignParentBottom="true"
+                            android:gravity="bottom"
+                            android:textColor="@color/red_tv_color"
+                            android:textSize="@dimen/sp_16" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -183,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="普通快递￥10"
+                    android:text="包邮费"
                     android:textColor="@color/black_tv_color"
                     android:textSize="@dimen/sp_14" />
             </RelativeLayout>
@@ -193,7 +112,7 @@
                 android:layout_height="1px"
                 android:background="#E6E6E6" />
 
-            <RelativeLayout
+            <!--<RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#fff"
@@ -214,10 +133,10 @@
                     android:layout_marginLeft="70dp"
                     android:drawableRight="@drawable/icon_inter"
                     android:gravity="center|left"
-                    android:text="不要有损坏哦"
+                    android:text="输入留言内容"
                     android:textColor="@color/black_tv_color"
                     android:textSize="@dimen/sp_14" />
-            </RelativeLayout>
+            </RelativeLayout>-->
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
@@ -245,11 +164,11 @@
             android:textSize="@dimen/sp_14" />
 
         <TextView
+            android:id="@+id/mTvIntegrationSubmitOrderPrice"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="￥406.00"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/sp_14" />
 
@@ -263,8 +182,5 @@
             android:text="提交"
             android:textColor="#fff"
             android:textSize="@dimen/sp_16" />
-
     </LinearLayout>
-
-
 </RelativeLayout>

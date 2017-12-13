@@ -23,7 +23,7 @@ class OrderListItemAdapter(layoutId: Int, list: ArrayList<MyOrderBean>) : BaseQu
         helper.setText(R.id.mTvOrderListItemTitle, item.product_name)
         helper.setText(R.id.mTvOrderListItemPrice, "￥ ${item.product_price}")
         helper.setText(R.id.mIvOrderListItemNum, "X ${item.order_num}")
-        helper.setText(R.id.mTvOrderListItemInfo, "共${item.order_num}件商品 合计 ￥${item.order_oprice} 元（含运费￥${item.product_mdprice}元）")
+        helper.setText(R.id.mTvOrderListItemInfo, "共${item.order_num}件商品 合计 ￥${item.order_oprice} 元（含运费￥${item.order_mdprice}元）")
         helper.setText(R.id.mTvOrderListItemSpecification, item.order_specification)
         val tv_action1 = helper.getView<TextView>(R.id.mBtOrderListItemAction1)
         helper.addOnClickListener(R.id.mBtOrderListItemAction1)

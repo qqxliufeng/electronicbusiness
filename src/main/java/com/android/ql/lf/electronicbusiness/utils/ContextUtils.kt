@@ -5,14 +5,11 @@ import android.content.Context
 /**
  * Created by liufeng on 2017/12/11.
  */
-class ContextUtils{
 
-    fun Context.getScreenWidth():Int{
-        return resources.displayMetrics.widthPixels
-    }
+fun Context.getScreenWidth(): Int {
+    return resources.displayMetrics.widthPixels
+}
 
-    fun Context.getScreenHeight():Int{
-        return resources.displayMetrics.heightPixels
-    }
-
+fun Context.getScreenHeight(): Int {
+    return resources.displayMetrics.heightPixels
 }

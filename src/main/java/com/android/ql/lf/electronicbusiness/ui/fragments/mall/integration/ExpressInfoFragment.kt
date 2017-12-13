@@ -41,7 +41,8 @@ class ExpressInfoFragment : BaseNetWorkingFragment() {
             orderBean.product_pic[0]
         }, mIvExpressGoodsImage)
         mTvExpressGoodsName.text = orderBean.product_name
-        mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_GETLOGISTICS, RequestParamsHelper.getGetlogisticsParam(orderBean.order_tn))
+        mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_GETLOGISTICS,
+                RequestParamsHelper.getGetlogisticsParam(orderBean.order_tn))
     }
 
     private fun setStepData() {

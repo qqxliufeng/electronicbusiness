@@ -89,7 +89,7 @@ class PayResultFragment : BaseFragment() {
                         }
                     }
                 }
-                PAY_FAIL_CODE -> {
+                else -> {
                     mLlPayResultOrderInfoContainer.visibility = View.GONE
                     mTvPayResultTitle.text = "支付失败"
                     mBtBack.text = "立即返回"

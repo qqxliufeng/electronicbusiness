@@ -7,6 +7,8 @@ import android.widget.LinearLayout;
 
 import com.android.ql.lf.electronicbusiness.R;
 import com.android.ql.lf.electronicbusiness.data.CommentForGoodsBean;
+import com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout;
+import com.android.ql.lf.electronicbusiness.utils.ContextUtilsKt;
 import com.android.ql.lf.electronicbusiness.utils.GlideManager;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -33,21 +35,9 @@ public class GoodsInfoCommentAdapter extends BaseQuickAdapter<CommentForGoodsBea
         helper.setText(R.id.mTvGoodsInfoCommentItemName, item.getMember_name());
         helper.setText(R.id.mTvGoodsInfoCommentItemTime, item.getComment_time());
         helper.setText(R.id.mTvGoodsInfoCommentItemContent, item.getComment_content());
-        LinearLayout ll_pic_container = helper.getView(R.id.mLlGoodsInfoCommentItemPicContainer);
+        ImageContainerLinearLayout ll_pic_container = helper.getView(R.id.mLlGoodsInfoCommentItemPicContainer);
         ll_pic_container.removeAllViews();
         ArrayList<String> commentPic = item.getComment_pic();
-        int size = Math.min(commentPic.size(), 3);
-        for (int i = 0; i < size; i++) {
-            ImageView image = new ImageView(ll_pic_container.getContext());
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100.0f, ll_pic_container.getContext().getResources().getDisplayMetrics()));
-            params.weight = 1.0f;
-            int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, ll_pic_container.getContext().getResources().getDisplayMetrics());
-            params.leftMargin = margin;
-            params.rightMargin = margin;
-            image.setLayoutParams(params);
-            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            GlideManager.loadImage(ll_pic_container.getContext(), commentPic.get(i), image);
-            ll_pic_container.addView(image);
-        }
+        ll_pic_container.setImages(commentPic);
     }
 }
