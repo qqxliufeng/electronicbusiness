@@ -43,6 +43,9 @@ class SubmitIntegrationOrderFragment : BaseNetWorkingFragment() {
             if (addressBean != null) {
                 setAddress()
             }
+            //            mTvOrderPersonName.text = it.name
+//            mTvOrderPersonPhone.text = it.phone
+//            mTvOrderPersonDetail.text = it.detail
         }
 
         mTvSubmitOrder.setOnClickListener {
