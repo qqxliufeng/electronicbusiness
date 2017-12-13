@@ -14,7 +14,7 @@
         android:textColor="@color/black_tv_color"
         android:textSize="@dimen/sp_14" />
 
-    <LinearLayout
+    <com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout
         android:id="@+id/mLlIndexAskInfoMultiImageAskImageContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
             android:layout_weight="1"
             android:scaleType="centerCrop"
             android:src="@drawable/img_icon_test_pic_05" />-->
-    </LinearLayout>
+    </com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout>
 
     <TextView
         android:id="@+id/mTvIndexAskInfoMultiImageAskCount"

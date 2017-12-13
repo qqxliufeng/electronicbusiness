@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_fragment_container_layout.*
 import kotlinx.android.synthetic.main.fragment_main_mine_layout.*
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
+import q.rorbin.badgeview.Badge
 import q.rorbin.badgeview.QBadgeView
 import rx.Subscription
 
@@ -93,6 +94,9 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 14 -> {//待评价
                     mSuccessOrder.performClick()
                 }
+                15 -> {//我的砍价
+                    mCutPrice.performClick()
+                }
             }
         }
         qBadgeSubScribe = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
@@ -161,7 +165,12 @@ class MainMineFragment : BaseNetWorkingFragment() {
             }
         }
         mCutPrice.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "我的砍价", true, false, CutPriceListFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "我的砍价", true, false, CutPriceListFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 15
+                LoginFragment.startLogin(mContext)
+            }
         }
         mFeedBack.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {
@@ -271,7 +280,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
                     if (badge0 == null) {
                         badge0 = QBadgeView(mContext)
                     }
-                    badge0!!.bindTarget(mDFKOrder).badgeNumber = s0.toInt()
+                    setBadgeView(mDFKOrder, badge0!!, s0.toInt())
                 } else {
                     if (badge0 != null) {
                         badge0!!.hide(false)
@@ -282,7 +291,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
                     if (badge1 == null) {
                         badge1 = QBadgeView(mContext)
                     }
-                    badge1!!.bindTarget(mDFHOrder).badgeNumber = s1.toInt()
+                    setBadgeView(mDFHOrder, badge1!!, s1.toInt())
                 } else {
                     if (badge1 != null) {
                         badge1!!.hide(false)
@@ -293,7 +302,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
                     if (badge2 == null) {
                         badge2 = QBadgeView(mContext)
                     }
-                    badge2!!.bindTarget(mWaitingGoods).badgeNumber = s2.toInt()
+                    setBadgeView(mWaitingGoods, badge2!!, s2.toInt())
                 } else {
                     if (badge2 != null) {
                         badge2!!.hide(false)
@@ -304,7 +313,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
                     if (badge3 == null) {
                         badge3 = QBadgeView(mContext)
                     }
-                    badge3!!.bindTarget(mSuccessOrder).badgeNumber = s3.toInt()
+                    setBadgeView(mSuccessOrder, badge3!!, s3.toInt())
                 } else {
                     if (badge3 != null) {
                         badge3!!.hide(false)
@@ -321,6 +330,11 @@ class MainMineFragment : BaseNetWorkingFragment() {
         }
     }
 
+    private fun setBadgeView(targetView: View, badge: QBadgeView, count: Int) {
+        val bindTarget = badge.bindTarget(targetView)
+        bindTarget.setGravityOffset(10.0f, 0f, true)
+        bindTarget.badgeNumber = count
+    }
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)

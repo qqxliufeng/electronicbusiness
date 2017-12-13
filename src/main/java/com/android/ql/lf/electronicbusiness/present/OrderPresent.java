@@ -1,5 +1,7 @@
 package com.android.ql.lf.electronicbusiness.present;
 
+import com.android.ql.lf.electronicbusiness.ui.fragments.mine.OrderListFragment;
+import com.android.ql.lf.electronicbusiness.ui.fragments.mine.ShoppingCarFragment;
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper;
 import com.android.ql.lf.electronicbusiness.data.RefreshData;
 import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainMineFragment;
@@ -126,8 +128,23 @@ public class OrderPresent {
      * 通知刷新订单列表
      */
     public static void notifyRefreshOrderList() {
-
+        RefreshData refreshData = RefreshData.INSTANCE;
+        refreshData.setRefresh(true);
+        refreshData.setAny(OrderListFragment.Companion.getREFRESH_ORDER_FLAG());
+        RxBus.getDefault().post(RefreshData.INSTANCE);
     }
+
+
+    /**
+     * 通知刷新购物车列表
+     */
+    public static void notifyRefreshShoppingCarList() {
+        RefreshData refreshData = RefreshData.INSTANCE;
+        refreshData.setRefresh(true);
+        refreshData.setAny(ShoppingCarFragment.Companion.getREFRESH_SHOPPING_CAR_FLAG());
+        RxBus.getDefault().post(RefreshData.INSTANCE);
+    }
+
 
     /**
      * 获取订单状态

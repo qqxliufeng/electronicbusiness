@@ -1,5 +1,8 @@
 package com.android.ql.lf.electronicbusiness.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
@@ -8,7 +11,7 @@ import java.util.ArrayList;
  * @author lf on 2017/11/30 0030
  */
 
-public class IMallGoodsItemBean {
+public class IMallGoodsItemBean implements Parcelable {
     private String jproduct_id;
     private String jproduct_price;
     private ArrayList<String> jproduct_pic;
@@ -117,4 +120,55 @@ public class IMallGoodsItemBean {
     public void setJproduct_yprice(String jproduct_yprice) {
         this.jproduct_yprice = jproduct_yprice;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.jproduct_id);
+        dest.writeString(this.jproduct_price);
+        dest.writeStringList(this.jproduct_pic);
+        dest.writeString(this.jproduct_name);
+        dest.writeString(this.jproduct_content);
+        dest.writeString(this.jproduct_entrepot);
+        dest.writeString(this.jproduct_type);
+        dest.writeString(this.jproduct_time);
+        dest.writeString(this.jproduct_ptype);
+        dest.writeString(this.jproduct_stype);
+        dest.writeString(this.jproduct_token);
+        dest.writeString(this.jproduct_yprice);
+    }
+
+    public IMallGoodsItemBean() {
+    }
+
+    protected IMallGoodsItemBean(Parcel in) {
+        this.jproduct_id = in.readString();
+        this.jproduct_price = in.readString();
+        this.jproduct_pic = in.createStringArrayList();
+        this.jproduct_name = in.readString();
+        this.jproduct_content = in.readString();
+        this.jproduct_entrepot = in.readString();
+        this.jproduct_type = in.readString();
+        this.jproduct_time = in.readString();
+        this.jproduct_ptype = in.readString();
+        this.jproduct_stype = in.readString();
+        this.jproduct_token = in.readString();
+        this.jproduct_yprice = in.readString();
+    }
+
+    public static final Parcelable.Creator<IMallGoodsItemBean> CREATOR = new Parcelable.Creator<IMallGoodsItemBean>() {
+        @Override
+        public IMallGoodsItemBean createFromParcel(Parcel source) {
+            return new IMallGoodsItemBean(source);
+        }
+
+        @Override
+        public IMallGoodsItemBean[] newArray(int size) {
+            return new IMallGoodsItemBean[size];
+        }
+    };
 }

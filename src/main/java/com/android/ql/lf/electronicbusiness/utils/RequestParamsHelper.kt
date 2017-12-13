@@ -67,9 +67,12 @@ class RequestParamsHelper {
         }
 
 
-        fun getWXCompleteDataParam(phone: String): ApiParams {
+        fun getWXCompleteDataParam(phone: String, headimgurl: String, openid: String, nickname: String): ApiParams {
             val params = getBaseParams()
             params.addParam("phone", phone)
+            params.addParam("headimgurl", headimgurl)
+            params.addParam("openid", openid)
+            params.addParam("nickname", nickname)
             return params
         }
 
@@ -289,6 +292,17 @@ class RequestParamsHelper {
             param.addParam("keyword", keyword)
             return param
         }
+
+        //我的砍价
+        val ACT_MBARGAIN = "mbargain"
+
+        fun getMbargainParam(page: Int, pageSize: Int = 10) = getWithPageParams(page, pageSize)
+
+
+        //我的兑换记录
+        val ACT_RECORD = "record"
+
+        fun getRecordParam(page: Int, pageSize: Int = 10) = getWithPageParams(page, pageSize)
 
         /**              member model  end           **/
 
@@ -567,6 +581,19 @@ class RequestParamsHelper {
             param.addParam("oid", oid)
             param.addParam("gid", gid)
             param.addParam("paytype", payType)
+            return param
+        }
+
+        //下积分订单
+        val ACT_ADD_JORDER = "add_jorder"
+
+        fun getAddJorderParam(gid: String, price: String, address: String, num: Int = 1, ktype: Int = 1): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("gid", gid)
+            param.addParam("price", price)
+            param.addParam("address", address)
+            param.addParam("num", num)
+            param.addParam("ktype", ktype)
             return param
         }
 

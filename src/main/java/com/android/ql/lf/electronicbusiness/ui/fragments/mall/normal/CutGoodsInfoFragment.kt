@@ -20,7 +20,7 @@ import com.android.ql.lf.electronicbusiness.data.CutGoodsInfoBean
 import com.android.ql.lf.electronicbusiness.data.GoodsItemBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
-import com.android.ql.lf.electronicbusiness.ui.adapters.RecommedGoodsInfoAdatper
+import com.android.ql.lf.electronicbusiness.ui.adapters.RecommedGoodsInfoAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.EasyCountDownTextureView
@@ -32,7 +32,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.fragment_normal_mall_search_and_classify_layout.*
+import com.hyphenate.helpdesk.easeui.util.IntentBuilder
 import kotlinx.android.synthetic.main.fragment_personal_cut_item_info_layout.*
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
@@ -119,7 +119,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         mRvRecommend.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
         mRvRecommend.isNestedScrollingEnabled = false
 
-        recommendAdapter = RecommedGoodsInfoAdatper(R.layout.layout_personal_cut_item_goods_info_bootom_recommend_item_layout, recommendList)
+        recommendAdapter = RecommedGoodsInfoAdapter(R.layout.layout_personal_cut_item_goods_info_bootom_recommend_item_layout, recommendList)
         mRvRecommend.adapter = recommendAdapter
         mRvRecommend.addOnItemTouchListener(object : OnItemClickListener() {
             override fun onSimpleItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
@@ -142,12 +142,10 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             }
         }
         mTvAskOnline.setOnClickListener {
-            toast("请先登录")
 //            val intent = IntentBuilder(mContext)
 //                    .setServiceIMNumber("kefuchannelimid_866700")
 //                    .build()
 //            startActivity(intent)
-//            startActivity(intentFor<ChatActivity>())
         }
     }
 
@@ -224,7 +222,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
                 }
             }
             2 -> { //团体砍
-                mTvPersonalCutItemInfoEveryOneCut.text = ("距离${cutInfoBean!!.result.kprice}元还差两人")
+                mTvPersonalCutItemInfoEveryOneCut.text = "距离${cutInfoBean!!.result.nextprice}元还差${cutInfoBean!!.result.resnum}人"
                 mTvPersonalCutItemInfoEveryOneCut.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_mark_team_cut, 0, 0, 0)
                 mTvPersonalCutItemInfoBuy.text = "￥${cutInfoBean!!.result.detail.product_price}\n立即购买"
                 mTvPersonalCutItemInfoCut.text = "参与砍价"

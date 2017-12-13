@@ -30,6 +30,4 @@ class CounterHelper(private var millisInFuture: Long = 60 * 1000, private var co
     fun stop() {
         counterTimer.cancel()
     }
-
-
 }

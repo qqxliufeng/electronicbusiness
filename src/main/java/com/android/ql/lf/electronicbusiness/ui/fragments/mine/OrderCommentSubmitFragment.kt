@@ -8,6 +8,7 @@ import android.util.DisplayMetrics
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.SelectImageItemBean
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
@@ -133,7 +134,9 @@ class OrderCommentSubmitFragment : BaseNetWorkingFragment() {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
         if (json != null) {
-            toast("上传成功！")
+            OrderPresent.notifyRefreshOrderList()
+            OrderPresent.notifyRefreshOrderNum()
+            toast("评价成功！")
             finish()
         }
     }

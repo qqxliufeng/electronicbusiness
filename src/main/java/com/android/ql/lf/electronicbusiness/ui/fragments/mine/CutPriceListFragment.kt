@@ -4,8 +4,10 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import com.android.ql.lf.electronicbusiness.R
+import com.android.ql.lf.electronicbusiness.data.MyCutPriceBean
 import com.android.ql.lf.electronicbusiness.ui.adapters.CutPriceListItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
+import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 
@@ -13,9 +15,9 @@ import com.chad.library.adapter.base.BaseViewHolder
  * Created by lf on 2017/11/7 0007.
  * @author lf on 2017/11/7 0007
  */
-class CutPriceListFragment : BaseRecyclerViewFragment<String>() {
+class CutPriceListFragment : BaseRecyclerViewFragment<MyCutPriceBean>() {
 
-    override fun createAdapter(): BaseQuickAdapter<String, BaseViewHolder> =
+    override fun createAdapter(): BaseQuickAdapter<MyCutPriceBean, BaseViewHolder> =
             CutPriceListItemAdapter(R.layout.adapter_cut_price_list_item_layout, mArrayList)
 
 
@@ -26,12 +28,18 @@ class CutPriceListFragment : BaseRecyclerViewFragment<String>() {
     }
 
     override fun onRefresh() {
-        (0..10).forEach { mArrayList.add("") }
-        mBaseAdapter.notifyDataSetChanged()
         super.onRefresh()
-        setLoadEnable(false)
-        setRefreshEnable(false)
-        onRequestEnd(-1)
+        mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_MBARGAIN, RequestParamsHelper.getMbargainParam(currentPage))
+    }
+
+    override fun onLoadMore() {
+        super.onLoadMore()
+        mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_MBARGAIN, RequestParamsHelper.getMbargainParam(currentPage))
+    }
+
+    override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
+        super.onRequestSuccess(requestID, result)
+        processList(checkResultCode(result), MyCutPriceBean::class.java)
     }
 
 }

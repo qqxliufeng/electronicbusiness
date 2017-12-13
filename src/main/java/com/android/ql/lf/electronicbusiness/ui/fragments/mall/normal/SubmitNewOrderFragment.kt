@@ -181,6 +181,8 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
             }
         } else if (requestID == 0x1) {
             if (json != null) {
+                //刷新购物车列表
+                OrderPresent.notifyRefreshShoppingCarList()
                 PreferenceUtils.setPrefString(mContext, PayResultFragment.PAY_ORDER_RESULT_JSON_FLAG, json.optJSONObject("arr").toString())
                 if (payType == SelectPayTypeView.WX_PAY) {
                     val wxBean = Gson().fromJson(json.optJSONObject("result").toString(), WXPayBean::class.java)
@@ -188,6 +190,7 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                 } else {
                     PayManager.aliPay(mContext, handle, json.optString("result"))
                 }
+                finish()
             }
         }
     }
@@ -202,6 +205,8 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
         super.onRequestFail(requestID, e)
         if (requestID == 0x0) {
             showEmptyAddress()
+        } else if (requestID == 0x1) {
+            toast("下单失败")
         }
     }
 

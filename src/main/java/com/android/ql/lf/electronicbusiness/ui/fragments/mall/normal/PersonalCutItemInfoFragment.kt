@@ -18,7 +18,7 @@ import com.android.ql.lf.electronicbusiness.data.GoodsItemBean
 import com.android.ql.lf.electronicbusiness.data.CutGoodsInfoBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
-import com.android.ql.lf.electronicbusiness.ui.adapters.RecommedGoodsInfoAdatper
+import com.android.ql.lf.electronicbusiness.ui.adapters.RecommedGoodsInfoAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
@@ -101,7 +101,7 @@ class PersonalCutItemInfoFragment : BaseNetWorkingFragment() {
         mRvRecommend.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
         mRvRecommend.isNestedScrollingEnabled = false
 
-        recommendAdapter = RecommedGoodsInfoAdatper(R.layout.layout_personal_cut_item_goods_info_bootom_recommend_item_layout, recommendList)
+        recommendAdapter = RecommedGoodsInfoAdapter(R.layout.layout_personal_cut_item_goods_info_bootom_recommend_item_layout, recommendList)
         mRvRecommend.adapter = recommendAdapter
         adapter.addFooterView(bottomRecommendView, LinearLayoutManager.HORIZONTAL)
 

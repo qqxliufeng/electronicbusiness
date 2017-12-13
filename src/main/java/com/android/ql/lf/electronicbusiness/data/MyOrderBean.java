@@ -31,7 +31,15 @@ public class MyOrderBean implements Parcelable {
     private String order_htime;
     private String order_fintime;
     private String order_tn;
+    private String order_mdprice;
 
+    public String getOrder_mdprice() {
+        return order_mdprice;
+    }
+
+    public void setOrder_mdprice(String order_mdprice) {
+        this.order_mdprice = order_mdprice;
+    }
 
     public String getProduct_endstatus() {
         return product_endstatus;

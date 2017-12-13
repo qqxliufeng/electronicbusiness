@@ -11,7 +11,7 @@ import com.chad.library.adapter.base.BaseViewHolder
  * Created by lf on 2017/12/8 0008.
  * @author lf on 2017/12/8 0008
  */
-class RecommedGoodsInfoAdatper(layout:Int,list: ArrayList<GoodsItemBean>): BaseQuickAdapter<GoodsItemBean, BaseViewHolder>(layout,list) {
+class RecommedGoodsInfoAdapter(layout:Int, list: ArrayList<GoodsItemBean>): BaseQuickAdapter<GoodsItemBean, BaseViewHolder>(layout,list) {
     override fun convert(helper: BaseViewHolder?, item: GoodsItemBean?) {
         val iv_pic = helper!!.getView<ImageView>(R.id.mIvGoodsInfoRecommendPic)
         GlideManager.loadImage(iv_pic.context, if (item!!.product_pic.isEmpty()) {
