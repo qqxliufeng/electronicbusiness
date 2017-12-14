@@ -21,6 +21,9 @@ public class Constants {
     private static final String APP_SEC = "37b082a279e3b7a9403a16b4bb15073b";
 
     public static final String WX_APP_ID = "wx6d1db840e54fcafc";
+    public static final String WB_APP_ID = "3237027949";
+    public static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
+    public static final String SCOPE = "";
 
     public static final String BASE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
     public static final String APP_PATH = BASE_PATH + "/mzdj/";

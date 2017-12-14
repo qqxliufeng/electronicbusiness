@@ -24,7 +24,6 @@ import kotlinx.android.synthetic.main.fragment_login_layout.*
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
-import rx.Subscription
 import java.util.regex.Pattern
 
 

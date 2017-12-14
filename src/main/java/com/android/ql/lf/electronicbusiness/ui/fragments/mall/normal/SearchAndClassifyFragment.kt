@@ -15,6 +15,7 @@ import com.android.ql.lf.electronicbusiness.data.IClassifyItemEntity
 import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainCutPrivilegeFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
@@ -48,6 +49,10 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
     private lateinit var contentAdapter: ContentAdapter
 
     override fun initView(view: View?) {
+        mLlSearchAndClassifySearch.setOnClickListener {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true,
+                    bundleOf(Pair(SearchFragment.K_TYPE_FLAG, arguments.getString(SearchGoodsFragment.K_TYPE_FLAG, ""))), SearchFragment::class.java)
+        }
         val gridLayoutManager = GridLayoutManager(mContext, 3)
         mRcContent.layoutManager = gridLayoutManager
         contentAdapter = ContentAdapter(R.layout.adapter_search_and_classify_content_item_layout,

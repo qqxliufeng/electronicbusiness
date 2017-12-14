@@ -80,7 +80,16 @@ public class CutGoodsInfoBean {
         private String nextprice;
         private String resnum;
         private String endtime;
+        private ShareBean share;
         private List<GoodsItemBean> kind;
+
+        public ShareBean getShare() {
+            return share;
+        }
+
+        public void setShare(ShareBean share) {
+            this.share = share;
+        }
 
         public DetailBean getDetail() {
             return detail;
@@ -492,6 +501,45 @@ public class CutGoodsInfoBean {
 
             public void setProduct_specification(ArrayList<SpecificationBean> product_specification) {
                 this.product_specification = product_specification;
+            }
+        }
+
+        public static class ShareBean {
+            private String url;
+            private String pic;
+            private String ms;
+            private String title;
+
+            public String getUrl() {
+                return url;
+            }
+
+            public void setUrl(String url) {
+                this.url = url;
+            }
+
+            public String getPic() {
+                return pic;
+            }
+
+            public void setPic(String pic) {
+                this.pic = pic;
+            }
+
+            public String getMs() {
+                return ms;
+            }
+
+            public void setMs(String ms) {
+                this.ms = ms;
+            }
+
+            public String getTitle() {
+                return title;
+            }
+
+            public void setTitle(String title) {
+                this.title = title;
             }
         }
     }

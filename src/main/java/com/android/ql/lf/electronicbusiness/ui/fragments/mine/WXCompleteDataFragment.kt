@@ -105,6 +105,8 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
             if ("200" == codeBean.status) {
                 mCode = codeBean.code
                 toast("验证码已经发送，请注意查收")
+            }else{
+                getCodeFailed()
             }
         } else if (requestID == 0x1) {
             val json = JSONObject(result.toString())
@@ -113,6 +115,9 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
                 onLoginSuccess(json)
             } else {
                 toast(json.optString("msg"))
+                counterHelper.stop()
+                mCodeGet.isEnabled = true
+                mCodeGet.text = "获取验证码"
             }
         }
     }
@@ -141,12 +146,16 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
         super.onRequestFail(requestID, e)
         if (requestID == 0x1) {
             toast("完善资料失败，请稍后重试……")
-        }else{
-            toast("获取验证码失败")
-            mCodeGet.text = "获取验证码"
-            mCodeGet.isEnabled = true
+        } else {
+            getCodeFailed()
             counterHelper.stop()
         }
+    }
+
+    private fun getCodeFailed() {
+        toast("获取验证码失败")
+        mCodeGet.text = "获取验证码"
+        mCodeGet.isEnabled = true
     }
 
     override fun onDestroyView() {

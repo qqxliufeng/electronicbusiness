@@ -52,6 +52,7 @@ class IntegrationMallGoodsInfoFragment : BaseNetWorkingFragment() {
         mPresent.getDataByPost(0x0, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_JPRODUCT_DETAIL, RequestParamsHelper.getJproductDetail(arguments.getString(GOODS_ID_FLAG, "")))
     }
 
+
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
         progressDialog = MyProgressDialog(mContext, "正在加载详情……")
