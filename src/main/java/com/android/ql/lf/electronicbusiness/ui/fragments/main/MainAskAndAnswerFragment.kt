@@ -44,6 +44,7 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
 
     private val DEFAULT_MAX_ITEM = 9
     val tagList = ArrayList<TagBean>()
+
     val topRvAdapter = object : BaseQuickAdapter<TagBean, BaseViewHolder>(R.layout.adapter_main_top_ask_and_answer_item_layout, tagList) {
         override fun convert(helper: BaseViewHolder?, item: TagBean?) {
             helper?.setText(R.id.mTvMainTopAskAndAnswerTopItemName, item!!.tag_title)
@@ -146,19 +147,6 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        mPresent.getDataByPost(0x0, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_TAG)
-    }
-
-    override fun onRequestStart(requestID: Int) {
-        super.onRequestStart(requestID)
-        if (requestID == 0x0) {
-            progressDialog = MyProgressDialog(mContext)
-            progressDialog.show()
-        }
-    }
-
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
@@ -212,6 +200,9 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         super.onRefresh()
         if (currentTag != null) {
             onSelectedTag(currentTag)
+        } else {
+            mPresent.getDataByPost(0x0, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_TAG)
+            onRequestFail(-1, NullPointerException())
         }
     }
 
