@@ -203,5 +203,6 @@
     <orderEntry type="library" name="junit-4.12" level="project" />
     <orderEntry type="library" name="dagger-2.12" level="project" />
     <orderEntry type="library" name="multidex-1.0.2" level="project" />
+    <orderEntry type="library" name="open_sdk_r5923_lite" level="project" />
   </component>
 </module>

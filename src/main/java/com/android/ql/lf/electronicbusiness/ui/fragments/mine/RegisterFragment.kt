@@ -98,6 +98,8 @@ class RegisterFragment : BaseNetWorkingFragment() {
             if ("200" == codeBean.status) {
                 mCode = codeBean.code
                 toast("验证码已经发送，请注意查收")
+            }else{
+                getCodeFailed()
             }
         } else if (requestID == 0x1) {
             val json = JSONObject(result.toString())
@@ -114,9 +116,19 @@ class RegisterFragment : BaseNetWorkingFragment() {
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
-        toast("注册失败，请稍后重试……")
+        if (requestID == 0x1) {
+            toast("完善资料失败，请稍后重试……")
+        } else {
+            getCodeFailed()
+            counterHelper.stop()
+        }
     }
 
+    private fun getCodeFailed() {
+        toast("获取验证码失败")
+        mCodeGet.text = "获取验证码"
+        mCodeGet.isEnabled = true
+    }
 
     override fun onDestroyView() {
         counterHelper.stop()

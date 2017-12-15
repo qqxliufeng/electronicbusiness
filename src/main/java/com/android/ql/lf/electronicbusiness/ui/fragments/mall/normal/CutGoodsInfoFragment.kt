@@ -1,6 +1,8 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
@@ -28,10 +30,7 @@ import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.EasyCountDownTextureView
 import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
-import com.android.ql.lf.electronicbusiness.utils.Constants
-import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
-import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
-import com.android.ql.lf.electronicbusiness.utils.ShareManager
+import com.android.ql.lf.electronicbusiness.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.animation.GlideAnimation
@@ -40,21 +39,26 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.google.gson.Gson
+import com.hyphenate.helpdesk.easeui.util.IntentBuilder
+import com.sina.weibo.sdk.share.WbShareCallback
+import com.sina.weibo.sdk.share.WbShareHandler
+import com.tencent.mm.opensdk.constants.ConstantsAPI
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
-import com.tencent.mm.opensdk.modelmsg.WXMediaMessage
-import com.tencent.mm.opensdk.modelmsg.WXWebpageObject
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
+import com.tencent.tauth.IUiListener
+import com.tencent.tauth.Tencent
+import com.tencent.tauth.UiError
 import kotlinx.android.synthetic.main.fragment_personal_cut_item_info_layout.*
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by lf on 2017/11/13 0013.
  * @author lf on 2017/11/13 0013
  */
-class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefreshListener {
+class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefreshListener, WbShareCallback, IUiListener {
 
 
     companion object {
@@ -91,8 +95,25 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
     // 0 代表添加到购物车   1 代表立即购买
     private var bottomDialogActionType = 0
 
+    /**
+     * 微信api
+     */
     private val api by lazy {
         WXAPIFactory.createWXAPI(mContext, Constants.WX_APP_ID)
+    }
+
+    /**
+     * 微博api
+     */
+    private val shareHandler by lazy {
+        WbShareHandler(mContext as Activity)
+    }
+
+    /**
+     * qq api
+     */
+    private val tencent by lazy {
+        Tencent.createInstance(Constants.QQ_APP_ID, mContext)
     }
 
     override fun onAttach(context: Context?) {
@@ -112,6 +133,15 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
 //        mAlCutItemInfo.addOnOffsetChangedListener { _, verticalOffset ->
 //            mSrfCutItemInfo.isEnabled = verticalOffset >= 0
 //        }
+
+        subscription = RxBus.getDefault().toObservable(Intent::class.java).subscribe {
+            val requestCode = it.getIntExtra("requestCode", 0)
+            if (requestCode == com.tencent.connect.common.Constants.REQUEST_QQ_SHARE) {
+                Tencent.handleResultData(it, this@CutGoodsInfoFragment)
+            } else if (requestCode == -1) {
+                shareHandler.doResultIntent(it, this@CutGoodsInfoFragment)
+            }
+        }
 
         mTvPersonalCutItemInfoOldPrice.paint.flags = TextPaint.ANTI_ALIAS_FLAG
         mTvPersonalCutItemInfoOldPrice.paint.flags = TextPaint.STRIKE_THRU_TEXT_FLAG
@@ -168,10 +198,10 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             }
         }
         mTvAskOnline.setOnClickListener {
-            //            val intent = IntentBuilder(mContext)
-//                    .setServiceIMNumber("kefuchannelimid_866700")
-//                    .build()
-//            startActivity(intent)
+            val intent = IntentBuilder(mContext)
+                    .setServiceIMNumber("kefuchannelimid_176941")
+                    .build()
+            startActivity(intent)
         }
     }
 
@@ -399,10 +429,27 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
                         }
                         shareDialog!!.dismiss()
                     }
-                    shareContentView.findViewById<TextView>(R.id.mTvShareQQ).setOnClickListener { shareDialog!!.dismiss() }
+                    shareContentView.findViewById<TextView>(R.id.mTvShareQQ).setOnClickListener {
+                        ShareManager.shareToQQ(mContext, tencent, cutInfoBean!!.result.detail.product_name,
+                                Html.fromHtml(cutInfoBean!!.result.share.ms).toString(),
+                                "${Constants.BASE_IP}${cutInfoBean!!.result.share.url}",
+                                Constants.BASE_IP + cutInfoBean!!.result.share.pic,
+                                this@CutGoodsInfoFragment)
+                        shareDialog!!.dismiss()
+                    }
                     shareContentView.findViewById<TextView>(R.id.mTvShareWB).setOnClickListener {
-                        ShareManager.shareToWBWebPager(mContext)
-                        shareDialog!!.dismiss() }
+                        if (shareBitmapPic == null) {
+                            Glide.with(mContext).load("${Constants.BASE_IP}${cutInfoBean!!.result.share.pic}").asBitmap().diskCacheStrategy(DiskCacheStrategy.NONE).into(object : SimpleTarget<Bitmap>() {
+                                override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
+                                    shareBitmapPic = resource
+                                    shareToWb()
+                                }
+                            })
+                        } else {
+                            shareToWb()
+                        }
+                        shareDialog!!.dismiss()
+                    }
                     shareContentView.findViewById<TextView>(R.id.mTvShareCircle).setOnClickListener {
                         if (shareBitmapPic == null) {
                             Glide.with(mContext).
@@ -439,6 +486,44 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
                 shareBitmapPic!!
         )
     }
+
+    /**
+     * 分享到微博
+     */
+    private fun shareToWb() {
+        ShareManager.shareToWBWebPager(shareHandler,
+                cutInfoBean!!.result.detail.product_name,
+                Html.fromHtml(cutInfoBean!!.result.share.ms).toString(),
+                "${Constants.BASE_IP}${cutInfoBean!!.result.share.url}",
+                shareBitmapPic, cutInfoBean!!.result.detail.product_name)
+    }
+
+
+    override fun onWbShareFail() {
+        toast("分享失败")
+    }
+
+    override fun onWbShareCancel() {
+        toast("分享取消")
+    }
+
+    override fun onWbShareSuccess() {
+        toast("分享成功")
+    }
+
+
+    override fun onComplete(p0: Any?) {
+        toast("分享成功")
+    }
+
+    override fun onCancel() {
+        toast("分享取消")
+    }
+
+    override fun onError(p0: UiError?) {
+        toast("分享失败")
+    }
+
 
     /**          个人砍            **/
 

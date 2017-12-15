@@ -19,9 +19,15 @@ import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
+import com.hyphenate.chat.ChatClient
+import com.hyphenate.chat.ChatManager
+import com.hyphenate.chat.Message
+import com.hyphenate.helpdesk.callback.Callback
 import kotlinx.android.synthetic.main.activity_fragment_container_layout.*
 import kotlinx.android.synthetic.main.fragment_main_mine_layout.*
+import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
+import org.jetbrains.anko.toast
 import org.json.JSONObject
 import q.rorbin.badgeview.Badge
 import q.rorbin.badgeview.QBadgeView
@@ -347,6 +353,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
         if (UserInfo.getInstance().isLogin) {
             GlideManager.loadFaceCircleImage(mContext, Constants.BASE_IP + UserInfo.getInstance().memberPic, mIvMainMineFace)
             mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_PERSONAL, RequestParamsHelper.getPersonal())
+            loginHX()
         } else {
             badge0?.hide(true)
             mIvMainMineFace.setImageResource(R.drawable.pic_headportrait)
@@ -362,6 +369,75 @@ class MainMineFragment : BaseNetWorkingFragment() {
                         0
                 )
     }
+
+
+    private fun loginHX() {
+        ChatClient.getInstance().chatManager().addMessageListener(object : ChatManager.MessageListener {
+            override fun onMessage(p0: MutableList<Message>?) {
+            }
+
+            override fun onMessageSent() {
+            }
+
+            override fun onCmdMessage(p0: MutableList<Message>?) {
+            }
+
+            override fun onMessageStatusUpdate() {
+            }
+        })
+        if (ChatClient.getInstance().isLoggedInBefore) {
+            val message = Message.createTxtSendMessage("hello123", "kefuchannelimid_176941")
+            ChatClient.getInstance().chatManager().sendMessage(message, object : Callback {
+                override fun onSuccess() {
+                    mContext.runOnUiThread {
+                        toast("发送成功")
+                    }
+                }
+
+                override fun onProgress(p0: Int, p1: String?) {
+                }
+
+                override fun onError(p0: Int, p1: String?) {
+                    mContext.runOnUiThread {
+                        Log.e("TAG", p1)
+                        toast("发送失败$p0  $p1")
+                    }
+                }
+            })
+        }else {
+            ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
+                override fun onSuccess() {
+                    val message = Message.createTxtSendMessage("hello123", "kefuchannelimid_176941")
+                    ChatClient.getInstance().chatManager().sendMessage(message, object : Callback {
+                        override fun onSuccess() {
+                            mContext.runOnUiThread {
+                                toast("发送成功")
+                            }
+                        }
+
+                        override fun onProgress(p0: Int, p1: String?) {
+                        }
+
+                        override fun onError(p0: Int, p1: String?) {
+                            mContext.runOnUiThread {
+                                Log.e("TAG", p1)
+                                toast("发送失败$p0  $p1")
+                            }
+                        }
+                    })
+
+                }
+
+                override fun onProgress(p0: Int, p1: String?) {
+                }
+
+                override fun onError(p0: Int, p1: String?) {
+                    Log.e("TAG", "login result -->  " + p1)
+                }
+            })
+        }
+    }
+
 
     override fun onDestroyView() {
         if (!loginSubscribe.isUnsubscribed) {

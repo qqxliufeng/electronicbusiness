@@ -38,6 +38,24 @@ public class UserInfo {
     private String memberAddress;
     private String memberSex;
     private String memberPic;
+    private String member_hxname;
+    private String member_hxpw;
+
+    public String getMember_hxname() {
+        return member_hxname;
+    }
+
+    public void setMember_hxname(String member_hxname) {
+        this.member_hxname = member_hxname;
+    }
+
+    public String getMember_hxpw() {
+        return member_hxpw;
+    }
+
+    public void setMember_hxpw(String member_hxpw) {
+        this.member_hxpw = member_hxpw;
+    }
 
     public String getMemberPic() {
         return memberPic;

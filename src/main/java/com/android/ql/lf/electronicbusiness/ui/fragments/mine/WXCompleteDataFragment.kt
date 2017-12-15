@@ -140,6 +140,8 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
         UserInfo.getInstance().memberForm = userJson.optString("member_form")
         UserInfo.getInstance().memberAddress = userJson.optString("member_address")
         UserInfo.getInstance().memberPic = userJson.optString("member_pic")
+        UserInfo.getInstance().member_hxname = userJson.optString("member_hxname")
+        UserInfo.getInstance().member_hxpw = userJson.optString("member_hxpw")
     }
 
     override fun onRequestFail(requestID: Int, e: Throwable) {

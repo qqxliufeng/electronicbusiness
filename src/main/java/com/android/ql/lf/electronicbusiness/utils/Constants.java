@@ -25,6 +25,9 @@ public class Constants {
     public static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
     public static final String SCOPE = "";
 
+    public static final String QQ_APP_ID = "1106535595";
+
+
     public static final String BASE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
     public static final String APP_PATH = BASE_PATH + "/mzdj/";
     public static final String IMAGE_PATH = APP_PATH + "/image/";

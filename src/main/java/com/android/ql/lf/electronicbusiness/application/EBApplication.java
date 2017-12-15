@@ -29,7 +29,7 @@ public class EBApplication extends MultiDexApplication {
         super.onCreate();
         application = this;
         appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
-        if (!ChatClient.getInstance().init(this, new ChatClient.Options().setAppkey("1402171117061450#kefuchannelapp49918").setTenantId("49918"))) {
+        if (!ChatClient.getInstance().init(this, new ChatClient.Options().setAppkey("1478171215068304#kefuchannelapp50947").setTenantId("50947"))) {
             return;
         }
         UIProvider.getInstance().init(this);
