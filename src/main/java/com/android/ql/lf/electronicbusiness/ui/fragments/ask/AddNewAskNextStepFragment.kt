@@ -153,7 +153,6 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
                         val builder = ImageUploadHelper.createMultipartBody()
                         builder.addFormDataPart("title", title)
                         builder.addFormDataPart("content", content)
-                        builder.addFormDataPart("type", tags.toString())
                         builder.addFormDataPart("type", addTags())
                         paths.forEachIndexed { index, s ->
                             val file = File(s)

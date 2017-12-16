@@ -20,6 +20,8 @@ import java.util.ArrayList;
 
 public class ImageContainerLinearLayout extends LinearLayout {
 
+    private ArrayList<String> paths;
+
     public ImageContainerLinearLayout(Context context) {
         this(context, null);
     }
@@ -38,13 +40,20 @@ public class ImageContainerLinearLayout extends LinearLayout {
     }
 
     public void setImages(ArrayList<String> images) {
-        if (images != null && !images.isEmpty()) {
+        paths = images;
+        requestLayout();
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (paths != null && !paths.isEmpty()) {
             removeAllViews();
             int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10.0f, getContext().getResources().getDisplayMetrics());
             int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, getContext().getResources().getDisplayMetrics());
-            int imageWidth = (ExtensionUtilsKt.getScreenWidth(getContext()) - padding * 4) / 3;
-            int imageHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100.0f, getContext().getResources().getDisplayMetrics());
-            for (String path : images) {
+            int imageWidth = (getMeasuredWidth() - padding * 4) / 3;
+            int imageHeight = imageWidth;
+            for (String path : paths) {
                 ImageView image = new ImageView(getContext());
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageWidth, imageHeight);
                 params.leftMargin = margin;
