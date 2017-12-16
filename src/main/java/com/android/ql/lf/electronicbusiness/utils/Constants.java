@@ -27,6 +27,10 @@ public class Constants {
 
     public static final String QQ_APP_ID = "1106535595";
 
+    public static final String HX_IM_SERVICE_NUM = "kefuchannelimid_176941";
+    public static final String HX_APP_ID = "1478171215068304#kefuchannelapp50947";
+    public static final String HX_TENANT_ID = "50947";
+
 
     public static final String BASE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
     public static final String APP_PATH = BASE_PATH + "/mzdj/";

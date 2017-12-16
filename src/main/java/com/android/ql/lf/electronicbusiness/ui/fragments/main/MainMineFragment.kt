@@ -353,7 +353,6 @@ class MainMineFragment : BaseNetWorkingFragment() {
         if (UserInfo.getInstance().isLogin) {
             GlideManager.loadFaceCircleImage(mContext, Constants.BASE_IP + UserInfo.getInstance().memberPic, mIvMainMineFace)
             mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_PERSONAL, RequestParamsHelper.getPersonal())
-            loginHX()
         } else {
             badge0?.hide(true)
             mIvMainMineFace.setImageResource(R.drawable.pic_headportrait)
@@ -361,83 +360,8 @@ class MainMineFragment : BaseNetWorkingFragment() {
         mTvMainMineIntegration.text = if (UserInfo.getInstance().isLogin && !TextUtils.isEmpty(UserInfo.getInstance().memberIntegral) && "null" != UserInfo.getInstance().memberIntegral) UserInfo.getInstance().memberIntegral else "0"
         mTvMainMineNickName.text = if (UserInfo.getInstance().isLogin) UserInfo.getInstance().memberName else "登录/注册"
         //1 代表会员  0 代表非会员
-        mTvMainMineNickName
-                .setCompoundDrawablesWithIntrinsicBounds(
-                        0,
-                        0,
-                        if (UserInfo.getInstance().isLogin && "1" == UserInfo.getInstance().memberRank) R.drawable.img_icon_vip_s else 0,
-                        0
-                )
+        mTvMainMineNickName.setCompoundDrawablesWithIntrinsicBounds(0, 0, if (UserInfo.getInstance().isLogin && "1" == UserInfo.getInstance().memberRank) R.drawable.img_icon_vip_s else 0, 0)
     }
-
-
-    private fun loginHX() {
-        ChatClient.getInstance().chatManager().addMessageListener(object : ChatManager.MessageListener {
-            override fun onMessage(p0: MutableList<Message>?) {
-            }
-
-            override fun onMessageSent() {
-            }
-
-            override fun onCmdMessage(p0: MutableList<Message>?) {
-            }
-
-            override fun onMessageStatusUpdate() {
-            }
-        })
-        if (ChatClient.getInstance().isLoggedInBefore) {
-            val message = Message.createTxtSendMessage("hello123", "kefuchannelimid_176941")
-            ChatClient.getInstance().chatManager().sendMessage(message, object : Callback {
-                override fun onSuccess() {
-                    mContext.runOnUiThread {
-                        toast("发送成功")
-                    }
-                }
-
-                override fun onProgress(p0: Int, p1: String?) {
-                }
-
-                override fun onError(p0: Int, p1: String?) {
-                    mContext.runOnUiThread {
-                        Log.e("TAG", p1)
-                        toast("发送失败$p0  $p1")
-                    }
-                }
-            })
-        }else {
-            ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
-                override fun onSuccess() {
-                    val message = Message.createTxtSendMessage("hello123", "kefuchannelimid_176941")
-                    ChatClient.getInstance().chatManager().sendMessage(message, object : Callback {
-                        override fun onSuccess() {
-                            mContext.runOnUiThread {
-                                toast("发送成功")
-                            }
-                        }
-
-                        override fun onProgress(p0: Int, p1: String?) {
-                        }
-
-                        override fun onError(p0: Int, p1: String?) {
-                            mContext.runOnUiThread {
-                                Log.e("TAG", p1)
-                                toast("发送失败$p0  $p1")
-                            }
-                        }
-                    })
-
-                }
-
-                override fun onProgress(p0: Int, p1: String?) {
-                }
-
-                override fun onError(p0: Int, p1: String?) {
-                    Log.e("TAG", "login result -->  " + p1)
-                }
-            })
-        }
-    }
-
 
     override fun onDestroyView() {
         if (!loginSubscribe.isUnsubscribed) {

@@ -1,6 +1,7 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.CodeBean
@@ -12,6 +13,8 @@ import com.android.ql.lf.electronicbusiness.utils.CounterHelper
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.google.gson.Gson
+import com.hyphenate.chat.ChatClient
+import com.hyphenate.helpdesk.callback.Callback
 import kotlinx.android.synthetic.main.fragment_wx_complete_data_layout.*
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
@@ -127,7 +130,32 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
         UserInfo.getInstance().memberId = memId
         parseUserInfo(json.optJSONObject("arr"))
         RxBus.getDefault().post(UserInfo.getInstance())
+        if (ChatClient.getInstance().isLoggedInBefore) {
+            ChatClient.getInstance().logout(true, object : Callback {
+                override fun onSuccess() {
+                    loginHx()
+                }
+                override fun onProgress(p0: Int, p1: String?) {
+                }
+                override fun onError(p0: Int, p1: String?) {
+                    Log.e("TAG", "logout --> "+p1)
+                }
+            })
+        }else{
+            loginHx()
+        }
         finish()
+    }
+
+    private fun loginHx(){
+        ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
+            override fun onSuccess() {
+            }
+            override fun onProgress(p0: Int, p1: String?) {
+            }
+            override fun onError(p0: Int, p1: String?) {
+            }
+        })
     }
 
     private fun parseUserInfo(userJson: JSONObject?) {

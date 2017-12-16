@@ -7,7 +7,7 @@ import android.util.TypedValue;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.android.ql.lf.electronicbusiness.utils.ContextUtilsKt;
+import com.android.ql.lf.electronicbusiness.utils.ExtensionUtilsKt;
 import com.android.ql.lf.electronicbusiness.utils.GlideManager;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class ImageContainerLinearLayout extends LinearLayout {
             removeAllViews();
             int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10.0f, getContext().getResources().getDisplayMetrics());
             int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, getContext().getResources().getDisplayMetrics());
-            int imageWidth = (ContextUtilsKt.getScreenWidth(getContext()) - padding * 4) / 3;
+            int imageWidth = (ExtensionUtilsKt.getScreenWidth(getContext()) - padding * 4) / 3;
             int imageHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100.0f, getContext().getResources().getDisplayMetrics());
             for (String path : images) {
                 ImageView image = new ImageView(getContext());

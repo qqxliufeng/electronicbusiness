@@ -18,10 +18,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
-import com.android.ql.lf.electronicbusiness.data.CommentForGoodsBean
-import com.android.ql.lf.electronicbusiness.data.CutGoodsInfoBean
-import com.android.ql.lf.electronicbusiness.data.GoodsItemBean
-import com.android.ql.lf.electronicbusiness.data.ShoppingCarItemBean
+import com.android.ql.lf.electronicbusiness.data.*
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.adapters.RecommedGoodsInfoAdapter
@@ -39,6 +36,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.google.gson.Gson
+import com.hyphenate.chat.ChatClient
 import com.hyphenate.helpdesk.easeui.util.IntentBuilder
 import com.sina.weibo.sdk.share.WbShareCallback
 import com.sina.weibo.sdk.share.WbShareHandler
@@ -198,10 +196,12 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             }
         }
         mTvAskOnline.setOnClickListener {
-            val intent = IntentBuilder(mContext)
-                    .setServiceIMNumber("kefuchannelimid_176941")
-                    .build()
-            startActivity(intent)
+            if (cutInfoBean != null && ChatClient.getInstance().isLoggedInBefore) {
+                val intent = IntentBuilder(mContext)
+                        .setServiceIMNumber(Constants.HX_IM_SERVICE_NUM)
+                        .build()
+                startActivity(intent)
+            }
         }
     }
 
@@ -261,6 +261,8 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             0x0 -> {
                 if (json != null) {
                     bindData(json)
+                }else{
+                    setEmptyView()
                 }
             }
             0x1 -> {//个人砍
@@ -289,6 +291,16 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
                 }
             }
         }
+    }
+
+    override fun onRequestFail(requestID: Int, e: Throwable) {
+        super.onRequestFail(requestID, e)
+        setEmptyView()
+    }
+
+    private fun setEmptyView(){
+        mClCutInfoContainer.visibility = View.GONE
+        mTvCutItemInfoEmpty.visibility = View.VISIBLE
     }
 
 
@@ -499,6 +511,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
     }
 
 
+    //========================微博分享回调========================//
     override fun onWbShareFail() {
         toast("分享失败")
     }
@@ -512,6 +525,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
     }
 
 
+    //========================QQ分享回调========================//
     override fun onComplete(p0: Any?) {
         toast("分享成功")
     }

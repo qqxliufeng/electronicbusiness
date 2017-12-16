@@ -20,9 +20,13 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
+import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.google.gson.Gson
+import com.hyphenate.chat.ChatClient
+import com.hyphenate.helpdesk.easeui.util.IntentBuilder
+import com.hyphenate.helpdesk.model.ContentFactory
 import com.xiao.nicevideoplayer.NiceVideoPlayer
 import com.xiao.nicevideoplayer.NiceVideoPlayerManager
 import com.xiao.nicevideoplayer.TxVideoPlayerController
@@ -112,8 +116,8 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         tv_goods_content = topView.findViewById(R.id.mTvVipPrivilegeGoodsInfoTopContent)
         tv_comment_num = topView.findViewById(R.id.mTvVipPrivilegeGoodsInfoTopAllCommentNum)
         topView.findViewById<TextView>(R.id.mTvVipPrivilegeGoodsInfoTopAllComment).setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext,"全部评价",true,false,
-                    bundleOf(Pair(AllCommentFragment.GOODS_ID_FLAG,goodsId!!)),AllCommentFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "全部评价", true, false,
+                    bundleOf(Pair(AllCommentFragment.GOODS_ID_FLAG, goodsId!!)), AllCommentFragment::class.java)
         }
 
         adapter.addHeaderView(topView)
@@ -189,17 +193,38 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                         LoginFragment.startLogin(context)
                     }
                 }
+                mTvVipInfoOnlineAsk.setOnClickListener {
+                    if (ChatClient.getInstance().isLoggedInBefore) {
+                        val intent = IntentBuilder(mContext)
+                                .setServiceIMNumber("kefuchannelimid_872049")
+                                .setScheduleQueue(ContentFactory.createQueueIdentityInfo("砍价产品"))
+                                .build()
+                        startActivity(intent)
+                    }
+                }
                 mNiceVideoPlayer.setUp(detailJson.optString("product_video"), null)
                 val detailHtml = detailJson.optString("product_content")
                 wb_detail.loadData(detailHtml, "text/html; charset=UTF-8", null)
 
 
+            } else {
+                setEmptyView()
             }
         } else if (requestID == 0x1) {
             if (json != null) {
                 toast("加入购物车成功")
             }
         }
+    }
+
+    override fun onRequestFail(requestID: Int, e: Throwable) {
+        super.onRequestFail(requestID, e)
+        setEmptyView()
+    }
+
+    private fun setEmptyView() {
+        mClVipItemInfoContainer.visibility = View.GONE
+        mTvVipItemInfoEmpty.visibility = View.VISIBLE
     }
 
     private fun loadComment(json: JSONObject) {
@@ -216,11 +241,12 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
 
     override fun onRequestEnd(requestID: Int) {
         super.onRequestEnd(requestID)
+        setEmptyView()
     }
 
     private fun showBottomParamDialog(picJsonArray: JSONArray, specifications: ArrayList<SpecificationBean>) {
         if (bottomParamDialog == null) {
-            val defaultPicPath = if (picJsonArray != null && picJsonArray.length() > 0) {
+            val defaultPicPath = if (picJsonArray.length() > 0) {
                 picJsonArray.optString(0)
             } else {
                 ""

@@ -1,6 +1,5 @@
 package com.android.ql.lf.electronicbusiness.application;
 
-import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
 import com.android.ql.lf.electronicbusiness.component.AppComponent;
@@ -29,7 +28,7 @@ public class EBApplication extends MultiDexApplication {
         super.onCreate();
         application = this;
         appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
-        if (!ChatClient.getInstance().init(this, new ChatClient.Options().setAppkey("1478171215068304#kefuchannelapp50947").setTenantId("50947"))) {
+        if (!ChatClient.getInstance().init(this, new ChatClient.Options().setAppkey(Constants.HX_APP_ID).setTenantId(Constants.HX_TENANT_ID))) {
             return;
         }
         UIProvider.getInstance().init(this);

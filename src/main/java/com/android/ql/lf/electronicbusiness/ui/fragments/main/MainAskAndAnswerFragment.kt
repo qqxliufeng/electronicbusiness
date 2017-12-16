@@ -21,7 +21,6 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.ask.AnswerInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.ask.AnswerListFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.AskAndAnswerFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
-import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -177,13 +176,13 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
                 lastTag.tag_title = "………"
                 list.add(lastTag)
                 tagList.addAll(list)
+                topRvAdapter.notifyDataSetChanged()
                 if (!tagList.isEmpty()) {
                     currentTag = tagList[0]
                     tagList[0].isChecked = true
                     mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_QUIZ_TYPE_SEARCH,
                             RequestParamsHelper.getQuizTypeSearch(if ("全部" == tagList[0].tag_title) "" else tagList[0].tag_id, page = currentPage))
                 }
-                topRvAdapter.notifyDataSetChanged()
             } else {
                 mBaseAdapter.setEmptyView(emptyLayoutId)
             }
@@ -202,7 +201,6 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
             onSelectedTag(currentTag)
         } else {
             mPresent.getDataByPost(0x0, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_TAG)
-            onRequestFail(-1, NullPointerException())
         }
     }
 

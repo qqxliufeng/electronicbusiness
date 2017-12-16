@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.UserInfo
@@ -11,6 +12,8 @@ import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActiv
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.*
+import com.hyphenate.chat.ChatClient
+import com.hyphenate.helpdesk.callback.Callback
 import com.lzy.imagepicker.ImagePicker
 import com.lzy.imagepicker.bean.ImageItem
 import com.lzy.imagepicker.ui.ImageGridActivity
@@ -72,6 +75,7 @@ class PersonalInfoFragment : BaseNetWorkingFragment() {
             build.setPositiveButton("退出") { _, _ ->
                 UserInfo.getInstance().loginOut()
                 UserInfo.getInstance().loginTag = -1
+                ChatClient.getInstance().logout(true, null)
                 RxBus.getDefault().post(UserInfo.getInstance())
                 finish()
             }
