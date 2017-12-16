@@ -82,14 +82,14 @@
             android:textColor="@color/black_tv_color"
             android:textSize="@dimen/sp_14" />
 
-        <LinearLayout
+        <com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout
             android:id="@+id/mLlAnswerInfoItemImageContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/dp_10"
             android:layout_marginTop="@dimen/dp_10"
             android:orientation="horizontal">
-        </LinearLayout>
+        </com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout>
 
         <TextView
             android:id="@+id/mTvAnswerInfoItemTime"

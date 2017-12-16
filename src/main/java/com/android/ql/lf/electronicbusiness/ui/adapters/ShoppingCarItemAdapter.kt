@@ -47,11 +47,11 @@ class ShoppingCarItemAdapter(layoutId: Int, list: ArrayList<ShoppingCarItemBean>
         helper.setText(R.id.mTvShoppingCarItemName, item.shopcart_name)
         val tv_k_type = helper.getView<TextView>(R.id.mTvShoppingCarItemKType)
         tv_k_type.text = when (item.shopcart_ktype) {
-            "1" -> {
+            "2" -> {
                 tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_group, 0, 0, 0)
                 "拇指斗价团体砍"
             }
-            "2" -> {
+            "1" -> {
                 tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_presonal, 0, 0, 0)
                 "拇指斗价个人砍"
             }

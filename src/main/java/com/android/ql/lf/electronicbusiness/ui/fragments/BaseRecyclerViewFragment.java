@@ -159,6 +159,14 @@ public abstract class BaseRecyclerViewFragment<T> extends BaseNetWorkingFragment
     @Override
     public void onRequestFail(int requestID, @NotNull Throwable e) {
         super.onRequestFail(requestID, e);
+        if (mSwipeRefreshLayout.isRefreshing()){
+            mSwipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+            });
+        }
         setEmptyView();
     }
 

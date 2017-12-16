@@ -118,7 +118,8 @@ public class BottomGoodsParamDialog extends BottomSheetDialog {
         GlideManager.loadRoundImage(getContext(), defaultPicPath, iv_goods_pic, 15);
         if (items != null && !items.isEmpty()) {
             mSpecificationList = items;
-            for (final SpecificationBean item : items) {
+            llContainer.removeAllViews();
+            for (final SpecificationBean item : mSpecificationList) {
                 MyFlexboxLayout myFlexboxLayout = new MyFlexboxLayout(getContext());
 
                 flexboxLayouts.add(myFlexboxLayout);

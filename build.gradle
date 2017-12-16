@@ -23,6 +23,7 @@ android {
         }
     }
 
+
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
@@ -91,4 +92,6 @@ dependencies {
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
     implementation 'com.youth.banner:banner:1.4.10'
     implementation files('libs/alipaySdk-20170922.jar')
+    implementation 'com.sina.weibo.sdk:core:4.1.0:openDefaultRelease@aar'
+    implementation files('libs/open_sdk_r5923_lite.jar')
 }

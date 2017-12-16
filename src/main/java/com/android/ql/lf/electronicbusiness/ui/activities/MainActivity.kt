@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
+import android.util.Log
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainAskAndAnswerFragment
@@ -35,7 +36,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         mMainViewPager.adapter = MyInnerViewPagerAdapter(supportFragmentManager)
         mMainViewPager.offscreenPageLimit = 4
 //        testBadgeView()
-//        loginHX()
     }
 
     private fun testBadgeView() {
@@ -46,79 +46,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
             bindTarget.setGravityOffset(5.0f, 5.0f, true)
             bindTarget.badgeNumber = it - 1
         }
-    }
-
-    private fun loginHX() {
-        ChatClient.getInstance().chatManager().addMessageListener(object : ChatManager.MessageListener {
-            override fun onMessage(p0: MutableList<Message>?) {
-            }
-
-            override fun onMessageSent() {
-            }
-
-            override fun onCmdMessage(p0: MutableList<Message>?) {
-            }
-
-            override fun onMessageStatusUpdate() {
-            }
-        })
-        ChatClient.getInstance().register("test", "123456", object : Callback {
-
-            override fun onSuccess() {
-                toast("注册成功")
-            }
-
-            override fun onProgress(p0: Int, p1: String?) {
-            }
-
-            override fun onError(errorCode: Int, p1: String?) {
-                when (errorCode) {
-                    Error.NETWORK_ERROR -> {
-                        toast("网络联接错误")
-                    }
-                    Error.USER_ALREADY_EXIST -> {
-                        ChatClient.getInstance().login("test", "123456", object : Callback {
-                            override fun onSuccess() {
-                                runOnUiThread {
-                                    val message = Message.createTxtSendMessage("hello", "kefuchannelimid_866700")
-                                    ChatClient.getInstance().chatManager().sendMessage(message, object : Callback {
-                                        override fun onSuccess() {
-                                            runOnUiThread {
-                                                toast("发送成功")
-                                            }
-                                        }
-
-                                        override fun onProgress(p0: Int, p1: String?) {
-                                        }
-
-                                        override fun onError(p0: Int, p1: String?) {
-                                            runOnUiThread {
-                                                toast("发送失败$p0  $p1")
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-
-                            override fun onProgress(p0: Int, p1: String?) {
-                            }
-
-                            override fun onError(p0: Int, p1: String?) {
-                            }
-                        })
-                    }
-                    Error.USER_AUTHENTICATION_FAILED -> {
-                        toast("无开放注册权限")
-                    }
-                    Error.USER_ILLEGAL_ARGUMENT -> {
-                        toast("用户名非法")
-                    }
-                    else -> {
-                        toast("其它错误$errorCode")
-                    }
-                }
-            }
-        })
     }
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->

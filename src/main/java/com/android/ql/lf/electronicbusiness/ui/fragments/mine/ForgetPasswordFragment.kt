@@ -95,17 +95,30 @@ class ForgetPasswordFragment : BaseNetWorkingFragment() {
     }
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
-        toast("修改失败，请稍后重试")
+        super.onRequestFail(requestID, e)
+        if (requestID == 0x1) {
+            toast("完善资料失败，请稍后重试……")
+        } else {
+            getCodeFailed()
+            counterHelper.stop()
+        }
+    }
+
+    private fun getCodeFailed() {
+        toast("获取验证码失败")
+        mCodeGet.text = "获取验证码"
+        mCodeGet.isEnabled = true
     }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         if (requestID == 0x0) {
-            Log.e("TAG", result.toString())
             val codeBean: CodeBean = Gson().fromJson(result.toString(), CodeBean::class.java)
             if ("200" == codeBean.status) {
                 mCode = codeBean.code
                 toast("验证码已经发送，请注意查收")
+            }else{
+                getCodeFailed()
             }
         } else if (requestID == 0x1) {
             val json = JSONObject(result.toString())

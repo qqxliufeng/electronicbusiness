@@ -3,6 +3,7 @@ package com.android.ql.lf.electronicbusiness.ui.adapters
 import android.widget.ImageView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.AnswerBean
+import com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout
 import com.android.ql.lf.electronicbusiness.ui.views.PraiseView
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -22,5 +23,7 @@ class AnswerInfoListAdapter(layoutId: Int, list: ArrayList<AnswerBean>) : BaseQu
         helper.setText(R.id.mTvAnswerInfoItemContent, item.answer_content)
         helper.setText(R.id.mTvAnswerInfoItemTime, item.answer_time)
         helper.setText(R.id.mTvPraiseText, if ("暂无" == item.answer_click) PraiseView.PRAISE_TEXT else item.answer_click)
+        val imageContainer = helper.getView<ImageContainerLinearLayout>(R.id.mLlAnswerInfoItemImageContainer)
+        imageContainer.setImages(item.answer_pic)
     }
 }

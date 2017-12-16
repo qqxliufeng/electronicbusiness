@@ -41,10 +41,47 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
         var currentMode = OrderPresent.GoodsType.PERSONAL_CUT_GOODS
     }
 
+    private var isVisiable = false
+    private var isPrepared = false
+    private var isLoad = false
+
+    private var isInitFragment = false
 
     private var ruleContent: String? = null
 
     override fun getLayoutId(): Int = R.layout.fragment_main_normal_privilege_layout
+
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (userVisibleHint) {
+            isVisiable = true
+            loadData()
+        } else {
+            isVisiable = false
+        }
+    }
+
+    private fun loadData() {
+        if (isVisiable && isPrepared) {
+            if (!isLoad) {
+                mPresent.getDataByPost(0x1, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_LUNBO, RequestParamsHelper.getLunBoParam("1"))
+            }
+            if (!isInitFragment) {
+                initFragment()
+            }
+        }
+    }
+
+    private fun initFragment() {
+        isInitFragment = true
+        mVpMainNormalPrivilege.offscreenPageLimit = 2
+        mVpMainNormalPrivilege.adapter = MyNormalPrivilegeAdapter(childFragmentManager)
+        mTlMainNormalPrivilege.setupWithViewPager(mVpMainNormalPrivilege)
+        mLlNormalSearchContainer.setOnClickListener {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true, bundleOf(Pair(SearchFragment.K_TYPE_FLAG, currentMode)), SearchFragment::class.java)
+        }
+    }
 
 
     @SuppressLint("RestrictedApi")
@@ -56,24 +93,20 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
                 showRuleDialog()
             }
         }
-        mVpMainNormalPrivilege.offscreenPageLimit = 2
-        mVpMainNormalPrivilege.adapter = MyNormalPrivilegeAdapter(childFragmentManager)
-        mTlMainNormalPrivilege.setupWithViewPager(mVpMainNormalPrivilege)
-        mLlNormalSearchContainer.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true, bundleOf(Pair(SearchFragment.K_TYPE_FLAG, currentMode)), SearchFragment::class.java)
-        }
     }
-
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mPresent.getDataByPost(0x1, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_LUNBO, RequestParamsHelper.getLunBoParam("1"))
+        isPrepared = true
+        loadData()
     }
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
-        progressDialog = MyProgressDialog(mContext)
-        progressDialog.show()
+        if (requestID == 0x0) {
+            progressDialog = MyProgressDialog(mContext)
+            progressDialog.show()
+        }
     }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
@@ -86,6 +119,7 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
             }
         } else if (requestID == 0x1) {
             if (json != null) {
+                isLoad = true
                 val tempPics = arrayListOf<String>()
                 ListParseHelper<ProductBannerBean>().fromJson(json.toString(), ProductBannerBean::class.java).forEach {
                     tempPics.add(it.lunbo_pic)

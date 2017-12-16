@@ -5,8 +5,11 @@ import android.support.multidex.MultiDexApplication;
 import com.android.ql.lf.electronicbusiness.component.AppComponent;
 import com.android.ql.lf.electronicbusiness.component.AppModule;
 import com.android.ql.lf.electronicbusiness.component.DaggerAppComponent;
+import com.android.ql.lf.electronicbusiness.utils.Constants;
 import com.hyphenate.chat.ChatClient;
 import com.hyphenate.helpdesk.easeui.UIProvider;
+import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.auth.AuthInfo;
 
 /**
  * @author lf
@@ -25,10 +28,11 @@ public class EBApplication extends MultiDexApplication {
         super.onCreate();
         application = this;
         appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
-        if (!ChatClient.getInstance().init(this, new ChatClient.Options().setAppkey("1402171117061450#kefuchannelapp49918").setTenantId("49918"))) {
+        if (!ChatClient.getInstance().init(this, new ChatClient.Options().setAppkey(Constants.HX_APP_ID).setTenantId(Constants.HX_TENANT_ID))) {
             return;
         }
         UIProvider.getInstance().init(this);
+        WbSdk.install(this,new AuthInfo(this,Constants.WB_APP_ID,Constants.REDIRECT_URL,Constants.SCOPE));
     }
 
 

@@ -33,11 +33,11 @@ class OrderListItemAdapter(layoutId: Int, list: ArrayList<MyOrderBean>) : BaseQu
         when (item.product_ktype) {
             OrderPresent.GoodsType.PERSONAL_CUT_GOODS -> { //个人砍
                 tv_k_type.text = "拇指斗价个人砍"
-                tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_group, 0, 0, 0)
+                tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_presonal, 0, 0, 0)
             }
             OrderPresent.GoodsType.TEAM_CUT_GOODS -> { //团体砍
                 tv_k_type.text = "拇指斗价团体砍"
-                tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_presonal, 0, 0, 0)
+                tv_k_type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_group, 0, 0, 0)
             }
             OrderPresent.GoodsType.VIP_GOODS -> { //会员专享
                 tv_k_type.text = "拇指斗价会员专享"

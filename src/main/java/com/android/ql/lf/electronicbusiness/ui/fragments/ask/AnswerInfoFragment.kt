@@ -10,6 +10,7 @@ import android.widget.*
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.AnswerBean
 import com.android.ql.lf.electronicbusiness.data.IndexAskInfoBean
+import com.android.ql.lf.electronicbusiness.data.RefreshData
 import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.AnswerInfoListAdapter
@@ -24,7 +25,9 @@ import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_fragment_container_layout.*
 import kotlinx.android.synthetic.main.fragment_answer_info_layout.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription
 
@@ -39,6 +42,8 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
     }
 
     private var askInfoBean: IndexAskInfoBean? = null
+
+    private lateinit var replySubscription: Subscription
 
     override fun getLayoutId() = R.layout.fragment_answer_info_layout
 
@@ -56,6 +61,10 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                 }
             }
         }
+        replySubscription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
+            if (it.any == "回复成功")
+                onPostRefresh()
+        }
         mLlAnswerInfoReply.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {
                 showReplyDialog()
@@ -67,33 +76,25 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
         mLlAnswerInfoAsk.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "提问", true, false, AddNewAskFragment::class.java)
         }
-        mTvAnswerInfoFocus.setOnClickListener {
-            if (askInfoBean != null) {
-                if (UserInfo.getInstance().isLogin) {
-                    focusAsk()
-                } else {
-                    UserInfo.getInstance().loginTag = 0x23
-                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
-                }
-            }
-        }
+
     }
 
     private fun showReplyDialog() {
         if (askInfoBean != null) {
-            val contentView = LayoutInflater.from(context).inflate(R.layout.layout_answer_info_repay_layout, null)
-            val et_content = contentView.findViewById<EditText>(R.id.mEtReplyContent)
-            et_content.hint = "回复："
-            val bt_send = contentView.findViewById<Button>(R.id.mBtReplaySend)
-            val popupWindow = PopupWindowDialog.showReplyDialog(mContext, contentView)
-            bt_send.setOnClickListener {
-                if (TextUtils.isEmpty(et_content.text.toString())) {
-                    toast("请输入评论内容")
-                    return@setOnClickListener
-                }
-                mPresent.getDataByPost(0x3, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_ADD_ANSWER, RequestParamsHelper.getAddAnswerParams(askInfoBean!!.quiz_id, et_content.text.toString()))
-                popupWindow.dismiss()
-            }
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "回答问题", true, false, bundleOf(Pair("qid", askInfoBean!!.quiz_id), Pair("title", askInfoBean!!.quiz_title)), ReplyQuestionFragment::class.java)
+//            val contentView = LayoutInflater.from(context).inflate(R.layout.layout_answer_info_repay_layout, null)
+//            val et_content = contentView.findViewById<EditText>(R.id.mEtReplyContent)
+//            et_content.hint = "回复："
+//            val bt_send = contentView.findViewById<Button>(R.id.mBtReplaySend)
+//            val popupWindow = PopupWindowDialog.showReplyDialog(mContext, contentView)
+//            bt_send.setOnClickListener {
+//                if (TextUtils.isEmpty(et_content.text.toString())) {
+//                    toast("请输入评论内容")
+//                    return@setOnClickListener
+//                }
+//                mPresent.getDataByPost(0x3, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_ADD_ANSWER, RequestParamsHelper.getAddAnswerParams(askInfoBean!!.quiz_id, et_content.text.toString()))
+//                popupWindow.dismiss()
+//            }
         }
     }
 
@@ -127,6 +128,23 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                 if (json != null) {
                     if (currentPage == 0) {
                         askInfoBean = Gson().fromJson(json.optJSONObject("result").toString(), IndexAskInfoBean::class.java)
+                        if (askInfoBean != null && askInfoBean!!.quiz_concerm == "0") {
+                            mTvAnswerInfoFocus.text = "点击关注"
+                            mTvAnswerInfoFocus.isEnabled = true
+                            mTvAnswerInfoFocus.setOnClickListener {
+                                if (askInfoBean != null) {
+                                    if (UserInfo.getInstance().isLogin) {
+                                        focusAsk()
+                                    } else {
+                                        UserInfo.getInstance().loginTag = 0x23
+                                        FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
+                                    }
+                                }
+                            }
+                        }else{
+                            mTvAnswerInfoFocus.text = "已关注"
+                            mTvAnswerInfoFocus.isEnabled = false
+                        }
                         mTvAnswerInfoTitle.text = askInfoBean?.quiz_title
                         mLlAnswerInfoImageContainer.removeAllViews()
                         mLlAnswerInfoTagsContainer.removeAllViews()

@@ -19,9 +19,15 @@ import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
+import com.hyphenate.chat.ChatClient
+import com.hyphenate.chat.ChatManager
+import com.hyphenate.chat.Message
+import com.hyphenate.helpdesk.callback.Callback
 import kotlinx.android.synthetic.main.activity_fragment_container_layout.*
 import kotlinx.android.synthetic.main.fragment_main_mine_layout.*
+import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
+import org.jetbrains.anko.toast
 import org.json.JSONObject
 import q.rorbin.badgeview.Badge
 import q.rorbin.badgeview.QBadgeView
@@ -354,13 +360,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
         mTvMainMineIntegration.text = if (UserInfo.getInstance().isLogin && !TextUtils.isEmpty(UserInfo.getInstance().memberIntegral) && "null" != UserInfo.getInstance().memberIntegral) UserInfo.getInstance().memberIntegral else "0"
         mTvMainMineNickName.text = if (UserInfo.getInstance().isLogin) UserInfo.getInstance().memberName else "登录/注册"
         //1 代表会员  0 代表非会员
-        mTvMainMineNickName
-                .setCompoundDrawablesWithIntrinsicBounds(
-                        0,
-                        0,
-                        if (UserInfo.getInstance().isLogin && "1" == UserInfo.getInstance().memberRank) R.drawable.img_icon_vip_s else 0,
-                        0
-                )
+        mTvMainMineNickName.setCompoundDrawablesWithIntrinsicBounds(0, 0, if (UserInfo.getInstance().isLogin && "1" == UserInfo.getInstance().memberRank) R.drawable.img_icon_vip_s else 0, 0)
     }
 
     override fun onDestroyView() {

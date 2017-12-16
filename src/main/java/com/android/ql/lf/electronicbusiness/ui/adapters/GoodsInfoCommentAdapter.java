@@ -1,14 +1,11 @@
 package com.android.ql.lf.electronicbusiness.ui.adapters;
 
 import android.support.annotation.Nullable;
-import android.util.TypedValue;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.android.ql.lf.electronicbusiness.R;
 import com.android.ql.lf.electronicbusiness.data.CommentForGoodsBean;
 import com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout;
-import com.android.ql.lf.electronicbusiness.utils.ContextUtilsKt;
 import com.android.ql.lf.electronicbusiness.utils.GlideManager;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;

@@ -11,6 +11,7 @@ import com.android.ql.lf.electronicbusiness.utils.RxBus;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -47,6 +48,8 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                     String code = newResp.code;
                     RxBus.getDefault().post(baseResp);
                     Log.e("WXTest", "onResp code = " + code);
+                } else if (baseResp instanceof SendMessageToWX.Resp) {
+                    Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:

@@ -13,3 +13,7 @@ fun Context.getScreenWidth(): Int {
 fun Context.getScreenHeight(): Int {
     return resources.displayMetrics.heightPixels
 }
+
+fun ArrayList<String>.getFirstPic(): String {
+    return if (isEmpty()) "" else get(0)
+}

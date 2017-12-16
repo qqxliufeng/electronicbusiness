@@ -7,7 +7,7 @@ import android.util.TypedValue;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.android.ql.lf.electronicbusiness.utils.ContextUtilsKt;
+import com.android.ql.lf.electronicbusiness.utils.ExtensionUtilsKt;
 import com.android.ql.lf.electronicbusiness.utils.GlideManager;
 
 import java.util.ArrayList;
@@ -37,23 +37,28 @@ public class ImageContainerLinearLayout extends LinearLayout {
         setOrientation(LinearLayout.HORIZONTAL);
     }
 
-    public void setImages(ArrayList<String> images) {
-        if (images != null && !images.isEmpty()) {
-            removeAllViews();
-            int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10.0f, getContext().getResources().getDisplayMetrics());
-            int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, getContext().getResources().getDisplayMetrics());
-            int imageWidth = (ContextUtilsKt.getScreenWidth(getContext()) - padding * 4) / 3;
-            int imageHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100.0f, getContext().getResources().getDisplayMetrics());
-            for (String path : images) {
-                ImageView image = new ImageView(getContext());
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageWidth, imageHeight);
-                params.leftMargin = margin;
-                params.rightMargin = margin;
-                image.setLayoutParams(params);
-                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                GlideManager.loadImage(getContext(), path, image);
-                addView(image);
+    public void setImages(final ArrayList<String> images) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                if (images != null && !images.isEmpty()) {
+                    removeAllViews();
+                    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10.0f, getContext().getResources().getDisplayMetrics());
+                    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, getContext().getResources().getDisplayMetrics());
+                    int imageWidth = (getMeasuredWidth() - padding * 4) / 3;
+                    int imageHeight = imageWidth;
+                    for (String path : images) {
+                        ImageView image = new ImageView(getContext());
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageWidth, imageHeight);
+                        params.leftMargin = margin;
+                        params.rightMargin = margin;
+                        image.setLayoutParams(params);
+                        image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        GlideManager.loadImage(getContext(), path, image);
+                        addView(image);
+                    }
+                }
             }
-        }
+        });
     }
 }

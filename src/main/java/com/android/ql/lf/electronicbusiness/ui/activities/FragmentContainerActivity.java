@@ -114,6 +114,15 @@ public class FragmentContainerActivity extends BaseActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent!=null) {
+            intent.putExtra("requestCode",-1);
+            RxBus.getDefault().post(intent);
+        }
+    }
+
+    @Override
     public void initView() {
         parseExtraInfo();
     }
@@ -153,6 +162,11 @@ public class FragmentContainerActivity extends BaseActivity {
                 imageList = new ArrayList();
                 imageList.addAll((ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS));
                 RxBus.getDefault().post(imageList);
+            }
+        } else if (requestCode == com.tencent.connect.common.Constants.REQUEST_QQ_SHARE) {
+            if (data != null) {
+                data.putExtra("requestCode",com.tencent.connect.common.Constants.REQUEST_QQ_SHARE);
+                RxBus.getDefault().post(data);
             }
         }
     }

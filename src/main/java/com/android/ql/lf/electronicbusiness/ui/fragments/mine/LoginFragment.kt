@@ -16,15 +16,20 @@ import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.google.gson.Gson
+import com.hyphenate.chat.ChatClient
+import com.hyphenate.chat.Message
+import com.hyphenate.chat.adapter.EMAChatManager
+import com.hyphenate.helpdesk.callback.Callback
 import com.tencent.mm.opensdk.modelbase.BaseResp
 import com.tencent.mm.opensdk.modelmsg.SendAuth
 import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.fragment_login_layout.*
 import org.jetbrains.anko.bundleOf
+import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
+import org.jetbrains.anko.toast
 import org.json.JSONObject
-import rx.Subscription
 import java.util.regex.Pattern
 
 
@@ -124,9 +129,9 @@ class LoginFragment : BaseNetWorkingFragment() {
                     val memberId = jsonObject.optString("member_id")
                     if (TextUtils.isEmpty(memberId)) {
                         val wxUserInfo = Gson().fromJson(jsonObject.toString(), WXUserInfo::class.java)
-                        FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, bundleOf(Pair(WXCompleteDataFragment.WX_USER_INFO_FLAG,wxUserInfo)), WXCompleteDataFragment::class.java)
+                        FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, bundleOf(Pair(WXCompleteDataFragment.WX_USER_INFO_FLAG, wxUserInfo)), WXCompleteDataFragment::class.java)
                         finish()
-                    }else {
+                    } else {
                         onLoginSuccess(jsonObject)
                     }
                 }
@@ -137,7 +142,32 @@ class LoginFragment : BaseNetWorkingFragment() {
     private fun LoginFragment.onLoginSuccess(userJson: JSONObject) {
         parseUserInfo(userJson)
         RxBus.getDefault().post(UserInfo.getInstance())
+        if (ChatClient.getInstance().isLoggedInBefore) {
+            ChatClient.getInstance().logout(true, object : Callback {
+                override fun onSuccess() {
+                    loginHx()
+                }
+                override fun onProgress(p0: Int, p1: String?) {
+                }
+                override fun onError(p0: Int, p1: String?) {
+                    Log.e("TAG", "logout --> "+p1)
+                }
+            })
+        }else{
+            loginHx()
+        }
         finish()
+    }
+
+    private fun loginHx(){
+        ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
+            override fun onSuccess() {
+            }
+            override fun onProgress(p0: Int, p1: String?) {
+            }
+            override fun onError(p0: Int, p1: String?) {
+            }
+        })
     }
 
     private fun parseUserInfo(userJson: JSONObject?) {
@@ -151,5 +181,7 @@ class LoginFragment : BaseNetWorkingFragment() {
         UserInfo.getInstance().memberForm = userJson.optString("member_form")
         UserInfo.getInstance().memberAddress = userJson.optString("member_address")
         UserInfo.getInstance().memberPic = userJson.optString("member_pic")
+        UserInfo.getInstance().member_hxname = userJson.optString("member_hxname")
+        UserInfo.getInstance().member_hxpw = userJson.optString("member_hxpw")
     }
 }

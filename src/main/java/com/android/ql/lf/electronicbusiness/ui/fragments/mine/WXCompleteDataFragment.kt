@@ -1,6 +1,7 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.CodeBean
@@ -12,6 +13,8 @@ import com.android.ql.lf.electronicbusiness.utils.CounterHelper
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.google.gson.Gson
+import com.hyphenate.chat.ChatClient
+import com.hyphenate.helpdesk.callback.Callback
 import kotlinx.android.synthetic.main.fragment_wx_complete_data_layout.*
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
@@ -105,6 +108,8 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
             if ("200" == codeBean.status) {
                 mCode = codeBean.code
                 toast("验证码已经发送，请注意查收")
+            }else{
+                getCodeFailed()
             }
         } else if (requestID == 0x1) {
             val json = JSONObject(result.toString())
@@ -113,6 +118,9 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
                 onLoginSuccess(json)
             } else {
                 toast(json.optString("msg"))
+                counterHelper.stop()
+                mCodeGet.isEnabled = true
+                mCodeGet.text = "获取验证码"
             }
         }
     }
@@ -122,7 +130,32 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
         UserInfo.getInstance().memberId = memId
         parseUserInfo(json.optJSONObject("arr"))
         RxBus.getDefault().post(UserInfo.getInstance())
+        if (ChatClient.getInstance().isLoggedInBefore) {
+            ChatClient.getInstance().logout(true, object : Callback {
+                override fun onSuccess() {
+                    loginHx()
+                }
+                override fun onProgress(p0: Int, p1: String?) {
+                }
+                override fun onError(p0: Int, p1: String?) {
+                    Log.e("TAG", "logout --> "+p1)
+                }
+            })
+        }else{
+            loginHx()
+        }
         finish()
+    }
+
+    private fun loginHx(){
+        ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
+            override fun onSuccess() {
+            }
+            override fun onProgress(p0: Int, p1: String?) {
+            }
+            override fun onError(p0: Int, p1: String?) {
+            }
+        })
     }
 
     private fun parseUserInfo(userJson: JSONObject?) {
@@ -135,18 +168,24 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
         UserInfo.getInstance().memberForm = userJson.optString("member_form")
         UserInfo.getInstance().memberAddress = userJson.optString("member_address")
         UserInfo.getInstance().memberPic = userJson.optString("member_pic")
+        UserInfo.getInstance().member_hxname = userJson.optString("member_hxname")
+        UserInfo.getInstance().member_hxpw = userJson.optString("member_hxpw")
     }
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
         if (requestID == 0x1) {
             toast("完善资料失败，请稍后重试……")
-        }else{
-            toast("获取验证码失败")
-            mCodeGet.text = "获取验证码"
-            mCodeGet.isEnabled = true
+        } else {
+            getCodeFailed()
             counterHelper.stop()
         }
+    }
+
+    private fun getCodeFailed() {
+        toast("获取验证码失败")
+        mCodeGet.text = "获取验证码"
+        mCodeGet.isEnabled = true
     }
 
     override fun onDestroyView() {

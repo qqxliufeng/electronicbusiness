@@ -27,6 +27,7 @@ class IndexAskInfoBean : MultiItemEntity {
     lateinit var quiz_time: String
     lateinit var quiz_num: String
     lateinit var quiz_pic: ArrayList<String>
+    lateinit var quiz_concerm:String
 
     var isExpand:Boolean = false
     var maxLines = 3

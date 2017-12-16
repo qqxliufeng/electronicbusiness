@@ -21,7 +21,6 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.ask.AnswerInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.ask.AnswerListFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.AskAndAnswerFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
-import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -44,6 +43,7 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
 
     private val DEFAULT_MAX_ITEM = 9
     val tagList = ArrayList<TagBean>()
+
     val topRvAdapter = object : BaseQuickAdapter<TagBean, BaseViewHolder>(R.layout.adapter_main_top_ask_and_answer_item_layout, tagList) {
         override fun convert(helper: BaseViewHolder?, item: TagBean?) {
             helper?.setText(R.id.mTvMainTopAskAndAnswerTopItemName, item!!.tag_title)
@@ -54,6 +54,8 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
     private lateinit var tabSubscription: Subscription
     private lateinit var loginSubscription: Subscription
     private lateinit var refreshSubscription: Subscription
+
+    private lateinit var currentItem:IndexAskInfoBean
 
     private var currentTag: TagBean? = null
 
@@ -89,6 +91,10 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
             } else if (UserInfo.getInstance().loginTag == 0x22) {//提问
                 UserInfo.getInstance().loginTag = UserInfo.DEFAULT_LOGIN_TAG
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "提问", true, false, AddNewAskFragment::class.java)
+            } else if (UserInfo.getInstance().loginTag == 0x23) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "问答详情", true, false,
+                        bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, currentItem.quiz_id)),
+                        AnswerInfoFragment::class.java)
             }
         }
         refreshSubscription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
@@ -146,19 +152,6 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        mPresent.getDataByPost(0x0, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_TAG)
-    }
-
-    override fun onRequestStart(requestID: Int) {
-        super.onRequestStart(requestID)
-        if (requestID == 0x0) {
-            progressDialog = MyProgressDialog(mContext)
-            progressDialog.show()
-        }
-    }
-
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
@@ -189,13 +182,13 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
                 lastTag.tag_title = "………"
                 list.add(lastTag)
                 tagList.addAll(list)
+                topRvAdapter.notifyDataSetChanged()
                 if (!tagList.isEmpty()) {
                     currentTag = tagList[0]
                     tagList[0].isChecked = true
                     mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_QUIZ_TYPE_SEARCH,
                             RequestParamsHelper.getQuizTypeSearch(if ("全部" == tagList[0].tag_title) "" else tagList[0].tag_id, page = currentPage))
                 }
-                topRvAdapter.notifyDataSetChanged()
             } else {
                 mBaseAdapter.setEmptyView(emptyLayoutId)
             }
@@ -212,6 +205,8 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         super.onRefresh()
         if (currentTag != null) {
             onSelectedTag(currentTag)
+        } else {
+            mPresent.getDataByPost(0x0, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_TAG)
         }
     }
 
@@ -224,9 +219,15 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onMyItemClick(adapter, view, position)
-        FragmentContainerActivity.startFragmentContainerActivity(mContext, "问答详情", true, false,
-                bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, mArrayList[position].quiz_id)),
-                AnswerInfoFragment::class.java)
+        currentItem = mArrayList[position]
+        if (UserInfo.getInstance().isLogin) {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "问答详情", true, false,
+                    bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, currentItem.quiz_id)),
+                    AnswerInfoFragment::class.java)
+        } else {
+            UserInfo.getInstance().loginTag = 0x23
+            LoginFragment.startLogin(mContext)
+        }
     }
 
     override fun onDestroyView() {
