@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.ui.adapters.SearchGoodsAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
@@ -122,6 +123,10 @@ class SearchGoodsFragment : BaseRecyclerViewFragment<GoodsItemBean>() {
                 sort = "sv2"
             }
             onPostRefresh()
+        }
+        mEtSearchGoodsContent.setOnClickListener {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true,
+                    bundleOf(Pair(SearchFragment.K_TYPE_FLAG,currentKType)), SearchFragment::class.java)
         }
     }
 

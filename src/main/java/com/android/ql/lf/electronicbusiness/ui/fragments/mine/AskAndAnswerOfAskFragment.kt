@@ -8,12 +8,15 @@ import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.IndexAskInfoBean
 import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.AskAndAnswerOfAskAdapter
 import com.android.ql.lf.electronicbusiness.ui.adapters.AskAndAnswerOfFocusAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.ask.AnswerInfoFragment
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import org.jetbrains.anko.bundleOf
 
 /**
  * Created by lf on 2017/11/9 0009.
@@ -25,6 +28,8 @@ class AskAndAnswerOfAskFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         fun newInstance() = AskAndAnswerOfAskFragment()
     }
 
+    private lateinit var headerView: TextView
+
     override fun createAdapter(): BaseQuickAdapter<IndexAskInfoBean, BaseViewHolder> =
             AskAndAnswerOfAskAdapter(R.layout.adapter_ask_and_aswer_of_ask_item_layout, mArrayList)
 
@@ -32,6 +37,13 @@ class AskAndAnswerOfAskFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         val itemDecoration = super.getItemDecoration() as DividerItemDecoration
         itemDecoration.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.recycler_view_height_divider))
         return itemDecoration
+    }
+
+    override fun initView(view: View?) {
+        super.initView(view)
+        mBaseAdapter.setHeaderAndEmpty(true)
+        headerView = View.inflate(mContext, android.R.layout.simple_list_item_1, null) as TextView
+        mBaseAdapter.addHeaderView(headerView)
     }
 
     override fun onRefresh() {
@@ -49,6 +61,9 @@ class AskAndAnswerOfAskFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
         processList(json, IndexAskInfoBean::class.java)
+        if (json != null) {
+            headerView.text = "我的提问（${json.optString("arr")}）"
+        }
     }
 
     override fun onMyItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
@@ -57,8 +72,14 @@ class AskAndAnswerOfAskFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
             R.id.mTvAnswerItemExpand -> {
                 askBean.isExpand = !askBean.isExpand
                 askBean.maxLines = if (askBean.isExpand) Int.MAX_VALUE else 3
-                mBaseAdapter.notifyItemChanged(position)
+                mBaseAdapter.notifyItemChanged(position + 1)
             }
         }
     }
+
+    override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onMyItemClick(adapter, view, position)
+        FragmentContainerActivity.startFragmentContainerActivity(mContext, "问答详情", true, false, bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, mArrayList[position].quiz_id)), AnswerInfoFragment::class.java)
+    }
+
 }

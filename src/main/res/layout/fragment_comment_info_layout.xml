@@ -38,7 +38,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dp_10"
-                        android:text="有人说卧室床头不能朝西？"
                         android:textColor="@color/black_tv_color"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -85,8 +84,7 @@
                     <ImageView
                         android:id="@+id/mIvCommentInfoFace"
                         android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/img_test_face" />
+                        android:layout_height="40dp"/>
 
                     <TextView
                         android:id="@+id/mTvCommentInfoNickName"
@@ -95,7 +93,6 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="@dimen/dp_10"
                         android:layout_toRightOf="@id/mIvCommentInfoFace"
-                        android:text="王大宝"
                         android:textColor="@color/black_tv_color"
                         android:textSize="@dimen/sp_14" />
 
@@ -107,7 +104,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_10"
                     android:lineSpacingExtra="3dp"
-                    android:text="澎湃新闻获悉，11月17日，中华全国工商业联合会官网发布《关于对第十二届全国工商联（中国民间商会）非公有制经济代表人士兼职副主席（副会长）提名人选公示的公告》"
                     android:textColor="@color/black_tv_color"
                     android:textSize="@dimen/sp_14" />
 
@@ -120,7 +116,6 @@
                         android:id="@+id/mTvCommentInfoTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="回答于2017.10.11"
                         android:textColor="#A4A4A4"
                         android:textSize="@dimen/sp_12" />
 
@@ -129,7 +124,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:text="15回复"
                         android:textColor="#A4A4A4"
                         android:textSize="@dimen/sp_12" />
                 </RelativeLayout>

@@ -20,23 +20,18 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
-import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.google.gson.Gson
 import com.hyphenate.chat.ChatClient
 import com.hyphenate.helpdesk.easeui.util.IntentBuilder
 import com.hyphenate.helpdesk.model.ContentFactory
-import com.xiao.nicevideoplayer.NiceVideoPlayer
-import com.xiao.nicevideoplayer.NiceVideoPlayerManager
-import com.xiao.nicevideoplayer.TxVideoPlayerController
 import kotlinx.android.synthetic.main.vip_privilege_item_info_layout.*
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONArray
 import org.json.JSONObject
-import rx.Subscription
 
 
 /**
@@ -61,7 +56,6 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
     private lateinit var tv_comment_num: TextView
     private lateinit var wb_detail: WebView
 
-    private lateinit var controller: TxVideoPlayerController
 
     private var bottomParamDialog: BottomGoodsParamDialog? = null
 
@@ -87,21 +81,10 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                 }
             }
         }
-        controller = TxVideoPlayerController(mContext)
-        controller.setTitle("")
-        val shareField = controller.javaClass.getDeclaredField("mShare")
-        val fullScreenField = controller.javaClass.getDeclaredField("mFullScreen")
-        shareField.isAccessible = true
-        fullScreenField.isAccessible = true
-        val tv_share = shareField.get(controller) as TextView
-        val iv_full_screen = fullScreenField.get(controller) as ImageView
-        tv_share.visibility = View.GONE
-        iv_full_screen.visibility = View.GONE
-        mNiceVideoPlayer.setPlayerType(NiceVideoPlayer.TYPE_NATIVE)
-        mNiceVideoPlayer.setController(controller)
-        mNiceVideoPlayer.backgroundColor = Color.WHITE
 
-
+        mNiceVideoPlayer.fullscreenButton.visibility = View.GONE
+        mNiceVideoPlayer.titleTextView.visibility = View.GONE
+        mNiceVideoPlayer.backButton.visibility = View.GONE
         adapter = GoodsInfoCommentAdapter(R.layout.adapter_vip_privilege_item_goods_info_item_layout, list)
         mRvVipPrivilegeItemGoodsInfo.layoutManager = LinearLayoutManager(mContext)
         mRvVipPrivilegeItemGoodsInfo.adapter = adapter
@@ -138,7 +121,6 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
 
     override fun onStop() {
         super.onStop()
-        NiceVideoPlayerManager.instance().releaseNiceVideoPlayer()
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -202,11 +184,9 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                         startActivity(intent)
                     }
                 }
-                mNiceVideoPlayer.setUp(detailJson.optString("product_video"), null)
+                mNiceVideoPlayer.setUp(detailJson.optString("product_video"), true, "")
                 val detailHtml = detailJson.optString("product_content")
                 wb_detail.loadData(detailHtml, "text/html; charset=UTF-8", null)
-
-
             } else {
                 setEmptyView()
             }

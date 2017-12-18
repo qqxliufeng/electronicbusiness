@@ -98,10 +98,11 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
             }
         }
         refreshSubscription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
-            if (it.isRefresh && it.any is String && "提问问题" == it.any) {
+            if (it.isRefresh && "提问问题" == it.any) {
                 tagList[0].isChecked = true
                 topRvAdapter.notifyItemChanged(0)
-                onSelectedTag(tagList[0])
+                currentTag = tagList[0]
+                onPostRefresh()
             }
         }
         setDividerDecoration()

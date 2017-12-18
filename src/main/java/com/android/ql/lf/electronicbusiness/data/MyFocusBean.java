@@ -18,6 +18,15 @@ public class MyFocusBean {
     private String quiz_token;
     private String quiz_title;
     private String quiz_click;
+    private String answer_num;
+
+    public String getAnswer_num() {
+        return answer_num;
+    }
+
+    public void setAnswer_num(String answer_num) {
+        this.answer_num = answer_num;
+    }
 
     public String getQuiz_click() {
         return quiz_click;

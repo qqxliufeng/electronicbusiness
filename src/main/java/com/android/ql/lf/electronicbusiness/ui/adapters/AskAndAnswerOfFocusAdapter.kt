@@ -13,6 +13,6 @@ class AskAndAnswerOfFocusAdapter(layoutId: Int, list: ArrayList<MyFocusBean>) : 
 
     override fun convert(helper: BaseViewHolder?, item: MyFocusBean?) {
         helper!!.setText(R.id.mTvMyAskFocusItemTitle, item!!.quiz_title)
-        helper.setText(R.id.mTvMyAskFocusItemCount, "回答数：${item.quiz_click}")
+        helper.setText(R.id.mTvMyAskFocusItemCount, "回答数：${item.answer_num}")
     }
 }

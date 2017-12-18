@@ -1,9 +1,13 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,7 +31,6 @@ import butterknife.OnTextChanged;
 import rx.functions.Action1;
 
 /**
- *
  * @author liufeng
  * @date 2017/12/11
  */
@@ -42,8 +45,12 @@ public class SearchFragment extends BaseRecyclerViewFragment<GoodsItemBean> {
         return fragment;
     }
 
+    @BindView(R.id.mEtSearchContent)
+    EditText et_content;
+
     private String keyword = "";
     private String kType = "";
+
 
     private Object currentFlag = this.hashCode() + this.toString();
 
@@ -74,6 +81,13 @@ public class SearchFragment extends BaseRecyclerViewFragment<GoodsItemBean> {
         kType = getArguments().getString(K_TYPE_FLAG, "");
         setRefreshEnable(false);
         setEmpty();
+        et_content.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.showSoftInput(et_content, 0);
+            }
+        }, 100);
     }
 
     private void setEmpty() {
@@ -104,24 +118,22 @@ public class SearchFragment extends BaseRecyclerViewFragment<GoodsItemBean> {
                 finish();
                 break;
             case R.id.mTvSearchSubmit:
+                keyword = et_content.getText().toString();
+                if (!TextUtils.isEmpty(keyword)) {
+                    ((SearchAdapter) mBaseAdapter).setSearchContent(keyword);
+                    InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(et_content.getWindowToken(), 0);
+                    onPostRefresh();
+                } else {
+                    mArrayList.clear();
+                    setEmpty();
+                }
                 break;
             default:
                 break;
         }
     }
 
-
-    @OnTextChanged(value = R.id.mEtSearchContent, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    public void onAfterTextChange(Editable s) {
-        keyword = s.toString();
-        if (!TextUtils.isEmpty(keyword)) {
-            ((SearchAdapter) mBaseAdapter).setSearchContent(keyword);
-            onPostRefresh();
-        } else {
-            mArrayList.clear();
-            setEmpty();
-        }
-    }
 
     @Override
     public <T> void onRequestSuccess(int requestID, T result) {
@@ -146,7 +158,7 @@ public class SearchFragment extends BaseRecyclerViewFragment<GoodsItemBean> {
         bundle.putString(VipPrivilegeItemInfoFragment.Companion.getGOODS_ID_FLAG(), selectGoodsItem.getProduct_id());
         if (OrderPresent.GoodsType.VIP_GOODS.equals(kType)) {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, VipPrivilegeItemInfoFragment.class);
-        }else {
+        } else {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, CutGoodsInfoFragment.class);
         }
         finish();

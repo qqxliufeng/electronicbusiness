@@ -44,40 +44,23 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
             CommentInfoItemAdapter(R.layout.adapter_comment_info_item_layout, mArrayList)
 
     override fun initView(view: View?) {
-        subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
-            when (UserInfo.getInstance().loginTag) {
-                0x25 -> {
-                    showReplyDialog(0x25)
-                }
-                0x26 -> {
-                    showReplyDialog(0x26)
-                }
-            }
-        }
         arguments.classLoader = this.javaClass.classLoader
         answerBean = arguments.getParcelable(ANSWER_BEAN_FLAG)
         super.initView(view)
-        mTvCommentInfoTitle.text = answerBean.ask_title
-        mTvCommentInfoAskCount.text = "${answerBean.ask_num}个回答"
         mTvCommentInfoNickName.text = answerBean.member_name
         GlideManager.loadFaceCircleImage(mContext, answerBean.member_pic, mIvCommentInfoFace)
         mTvCommentInfoContent.text = answerBean.answer_content
-        mTvCommentInfoTime.text = "回答于 ${answerBean.answer_time}"
-        mTvCommentInfoReplyCount.text = "${answerBean.answer_num} 回复"
         mRlCommentInfoReply.setOnClickListener {
-            if (UserInfo.getInstance().isLogin) {
-                showReplyDialog(0x26)
-            } else {
-                UserInfo.getInstance().loginTag = 0x26
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
-            }
+            showReplyDialog(0x26)
         }
     }
 
     private fun showReplyDialog(tag: Int) {
         val contentView = LayoutInflater.from(context).inflate(R.layout.layout_answer_info_repay_layout, null)
         val et_content = contentView.findViewById<EditText>(R.id.mEtReplyContent)
-        et_content.hint = if (tag == 0x25) { "回复：${replyAnswerBean!!.member_name}"} else "回复："
+        et_content.hint = if (tag == 0x25) {
+            "回复：${replyAnswerBean!!.member_name}"
+        } else "回复："
         val bt_send = contentView.findViewById<Button>(R.id.mBtReplaySend)
         val popupWindow = PopupWindowDialog.showReplyDialog(mContext, contentView)
         bt_send.setOnClickListener {
@@ -109,6 +92,11 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
         when (requestID) {
             0x0 -> {
                 if (json != null) {
+                    val jsonResult = json.optJSONObject("result")
+                    mTvCommentInfoTitle.text = jsonResult.optString("answer_qtitle")
+                    mTvCommentInfoAskCount.text =  "${jsonResult.optString("answer_qnum")}个回答"
+                    mTvCommentInfoTime.text = "回答于 ${jsonResult.optString("answer_time")}"
+                    mTvCommentInfoReplyCount.text = "${jsonResult.optString("answer_num")} 回复"
                     val jsonArray = json.optJSONArray("arr")
                     if (jsonArray.length() == 0) {
                         if (currentPage == 0) {
@@ -136,16 +124,8 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
     override fun onMyItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         replyAnswerBean = mArrayList[position]
         when (view?.id) {
-            R.id.mPraiseView -> {
-                (view as PraiseView).toggle()
-            }
             R.id.mTvReplyInfoItemReply -> {
-                if (UserInfo.getInstance().isLogin) {
-                    showReplyDialog(0x25)
-                } else {
-                    UserInfo.getInstance().loginTag = 0x25
-                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
-                }
+                showReplyDialog(0x25)
             }
         }
     }

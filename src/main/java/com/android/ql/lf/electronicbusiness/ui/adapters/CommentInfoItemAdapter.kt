@@ -18,12 +18,10 @@ import com.chad.library.adapter.base.BaseViewHolder
  */
 class CommentInfoItemAdapter(layoutId: Int, list: ArrayList<ReplyAnswerBean>) : BaseQuickAdapter<ReplyAnswerBean, BaseViewHolder>(layoutId, list) {
     override fun convert(helper: BaseViewHolder?, item: ReplyAnswerBean?) {
-        helper!!.addOnClickListener(R.id.mPraiseView)
-        helper.addOnClickListener(R.id.mTvReplyInfoItemReply)
+        helper!!.addOnClickListener(R.id.mTvReplyInfoItemReply)
         val iv_face = helper.getView<ImageView>(R.id.mIvReplyInfoItemFace)
         GlideManager.loadFaceCircleImage(iv_face.context, item!!.member_pic, iv_face)
         helper.setText(R.id.mTvReplyInfoItemNickName, item.member_name)
-        helper.setText(R.id.mTvPraiseText, item.reply_click)
         helper.setText(R.id.mTvReplyInfoItemTime, item.reply_time)
         if (TextUtils.isEmpty(item.name)) {
             helper.setText(R.id.mTvReplyInfoItemContent, item.reply_content)

@@ -5,13 +5,17 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.MyFocusBean
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.AskAndAnswerOfFocusAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.ask.AnswerInfoFragment
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import org.jetbrains.anko.bundleOf
 
 /**
  * Created by lf on 2017/11/9 0009.
@@ -23,6 +27,8 @@ class AskAndAnswerOfFocusFragment : BaseRecyclerViewFragment<MyFocusBean>() {
         fun newInstance() = AskAndAnswerOfFocusFragment()
     }
 
+    private lateinit var headerView:TextView
+
     override fun createAdapter(): BaseQuickAdapter<MyFocusBean, BaseViewHolder> =
             AskAndAnswerOfFocusAdapter(R.layout.adapter_ask_and_aswer_of_focus_item_layout, mArrayList)
 
@@ -32,6 +38,12 @@ class AskAndAnswerOfFocusFragment : BaseRecyclerViewFragment<MyFocusBean>() {
         return itemDecoration
     }
 
+    override fun initView(view: View?) {
+        super.initView(view)
+        mBaseAdapter.setHeaderAndEmpty(true)
+        headerView = View.inflate(mContext, android.R.layout.simple_list_item_1, null) as TextView
+        mBaseAdapter.addHeaderView(headerView)
+    }
 
     override fun onRefresh() {
         super.onRefresh()
@@ -48,5 +60,14 @@ class AskAndAnswerOfFocusFragment : BaseRecyclerViewFragment<MyFocusBean>() {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
         processList(json, MyFocusBean::class.java)
+        if (json != null) {
+            headerView.text = "我的关注（${json.optString("arr")}）"
+        }
     }
+
+    override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        FragmentContainerActivity.startFragmentContainerActivity(mContext, "问答详情", true, false, bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, mArrayList[position].quiz_id)), AnswerInfoFragment::class.java)
+    }
+
+
 }

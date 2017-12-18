@@ -411,6 +411,16 @@ class RequestParamsHelper {
             return param
         }
 
+        //问题搜索
+        val ACT_QUIZ_SEARCH = "quiz_search"
+
+        fun getQuizSearchParam(keyword: String, page: Int, pageSize: Int = 10):ApiParams {
+            val param = getWithPageParams(page, pageSize)
+            param.addParam("keyword", keyword)
+            return param
+        }
+
+
         /**              qaa model  end           **/
 
         /**              product model  end           **/

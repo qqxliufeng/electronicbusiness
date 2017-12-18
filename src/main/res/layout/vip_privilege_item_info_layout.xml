@@ -9,7 +9,7 @@
         android:layout_gravity="center"
         android:visibility="gone"
         android:text="加载详情失败……" />
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.design.widget.CoordinatorLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/mClVipItemInfoContainer"
         android:layout_width="match_parent"
@@ -28,10 +28,10 @@
                 app:contentScrim="@android:color/transparent"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                <com.xiao.nicevideoplayer.NiceVideoPlayer
+                <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
                     android:id="@+id/mNiceVideoPlayer"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="250dp"
                     app:layout_collapseMode="parallax" />
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>

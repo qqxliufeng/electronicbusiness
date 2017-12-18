@@ -1,8 +1,12 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.ask
 
+import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.IndexAskInfoBean
@@ -25,6 +29,10 @@ class AnswerListFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
 
     private lateinit var currentItem:IndexAskInfoBean
 
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        setHasOptionsMenu(true)
+    }
 
     override fun createAdapter(): BaseQuickAdapter<IndexAskInfoBean, BaseViewHolder> =
             AnswerListAdapter(R.layout.adapter_answer_list_item_layout, mArrayList)
@@ -33,6 +41,18 @@ class AnswerListFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         val itemDecoration = super.getItemDecoration() as DividerItemDecoration
         itemDecoration.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.recycler_view_height_divider))
         return itemDecoration
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.search_qustion_menu,menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == R.id.action_search) {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext,"",true,true,QuestionSearchFragment::class.java)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun initView(view: View?) {
@@ -58,7 +78,6 @@ class AnswerListFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         mPresent.getDataByPost(0x0, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_QUIZ_TYPE_SEARCH,
                 RequestParamsHelper.getQuizTypeSearch("", page = currentPage))
     }
-
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
