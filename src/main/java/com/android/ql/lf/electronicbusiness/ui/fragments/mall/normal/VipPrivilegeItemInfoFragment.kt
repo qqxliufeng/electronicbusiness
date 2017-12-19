@@ -1,7 +1,7 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal
 
-import android.graphics.Color
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Html
 import android.text.TextPaint
@@ -18,8 +18,11 @@ import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActiv
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mine.VipInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
+import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
+import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.google.gson.Gson
@@ -27,7 +30,6 @@ import com.hyphenate.chat.ChatClient
 import com.hyphenate.helpdesk.easeui.util.IntentBuilder
 import com.hyphenate.helpdesk.model.ContentFactory
 import kotlinx.android.synthetic.main.vip_privilege_item_info_layout.*
-import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONArray
@@ -54,8 +56,7 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
     private lateinit var tv_goods_name: TextView
     private lateinit var tv_goods_content: TextView
     private lateinit var tv_comment_num: TextView
-    private lateinit var wb_detail: WebView
-
+    private lateinit var htv_content_info: HtmlTextView
 
     private var bottomParamDialog: BottomGoodsParamDialog? = null
 
@@ -67,20 +68,16 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
     override fun getLayoutId() = R.layout.vip_privilege_item_info_layout
 
     override fun initView(view: View?) {
-        subscription = RxBus.getDefault().toObservable(UserInfo::class.java).subscribe {
-            when (UserInfo.getInstance().loginTag) {
-                0x50 -> {
-                    if (picJsonArray != null && specifications != null) {
-                        showBottomParamDialog(picJsonArray!!, specifications!!)
-                    }
-                }
-                0x51 -> {
-                    if (picJsonArray != null && specifications != null) {
-                        showBottomParamDialog(picJsonArray!!, specifications!!)
-                    }
-                }
-            }
-        }
+//        subscription = RxBus.getDefault().toObservable(UserInfo::class.java).subscribe {
+//            when (UserInfo.getInstance().loginTag) {
+//                0x50 -> {
+//                    mTvVipPrivilegeGoodsInfoCollection.performClick()
+//                }
+//                0x51 -> {
+//                    mTvVipPrivilegeGoodsInfoBuy.performClick()
+//                }
+//            }
+//        }
 
         mNiceVideoPlayer.fullscreenButton.visibility = View.GONE
         mNiceVideoPlayer.titleTextView.visibility = View.GONE
@@ -105,23 +102,15 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
 
         adapter.addHeaderView(topView)
         val bottomView = View.inflate(mContext, R.layout.layout_vip_privilege_item_goods_info_bottom_layout, null)
-        wb_detail = bottomView.findViewById(R.id.mTvVipPrivilegeGoodsInfoBottomDetail)
-        wb_detail.webViewClient = object : WebViewClient() {
-
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                super.shouldOverrideUrlLoading(view, url)
-                view.loadUrl(url)
-                return true
-            }
-        }
-        wb_detail.settings.javaScriptEnabled = true
-        wb_detail.isFocusable = false
+        htv_content_info = bottomView.findViewById(R.id.mHTvPersonalCutItemGoodsInfo)
         adapter.addFooterView(bottomView)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
+        mNiceVideoPlayer.onVideoPause()
     }
+
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -140,9 +129,7 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         val json = checkResultCode(result)
         if (requestID == 0x0) {
             if (json != null) {
-
                 loadComment(json)
-
                 val detailJson = json.optJSONObject("result").optJSONObject("detail")
                 goodsId = detailJson.optString("product_id")
                 tv_sell.text = "${detailJson.optString("product_sv")}人购买"
@@ -151,7 +138,6 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                 tv_old_price.text = "￥ ${detailJson.optString("product_yprice")}"
                 tv_goods_name.text = detailJson.optString("product_name")
                 tv_goods_content.text = Html.fromHtml(detailJson.optString("product_ms"))
-
                 picJsonArray = detailJson.optJSONArray("product_pic")
                 val specificationJsonArray = detailJson.optJSONArray("product_specification")
                 specifications = arrayListOf()
@@ -160,20 +146,36 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                     specifications!!.add(specification)
                 }
                 mTvVipPrivilegeGoodsInfoCollection.setOnClickListener {
-                    if (UserInfo.getInstance().isLogin) {
-                        showBottomParamDialog(picJsonArray!!, specifications!!)
+                    if (UserInfo.getInstance().memberRank == "1") {
+                        if (picJsonArray != null && picJsonArray!!.length() > 0) {
+                            showBottomParamDialog(picJsonArray!!, specifications!!)
+                        }
                     } else {
-                        UserInfo.getInstance().loginTag = 0x50 //加入购物车
-                        LoginFragment.startLogin(context)
+                        //开通会员
+                        openVip()
                     }
+//                    if (UserInfo.getInstance().isLogin) {
+//
+//                    } else {
+//                        UserInfo.getInstance().loginTag = 0x50 //加入购物车
+//                        LoginFragment.startLogin(context)
+//                    }
                 }
                 mTvVipPrivilegeGoodsInfoBuy.setOnClickListener {
-                    if (UserInfo.getInstance().isLogin) {
-                        showBottomParamDialog(picJsonArray!!, specifications!!)
+                    if (UserInfo.getInstance().memberRank == "1") {
+                        if (picJsonArray != null && picJsonArray!!.length() > 0) {
+                            showBottomParamDialog(picJsonArray!!, specifications!!)
+                        }
                     } else {
-                        UserInfo.getInstance().loginTag = 0x51 //立即购买
-                        LoginFragment.startLogin(context)
+                        //开通会员
+                        openVip()
                     }
+//                    if (UserInfo.getInstance().isLogin) {
+//
+//                    } else {
+//                        UserInfo.getInstance().loginTag = 0x51 //立即购买
+//                        LoginFragment.startLogin(context)
+//                    }
                 }
                 mTvVipInfoOnlineAsk.setOnClickListener {
                     if (ChatClient.getInstance().isLoggedInBefore) {
@@ -184,9 +186,15 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                         startActivity(intent)
                     }
                 }
+                if (picJsonArray != null && picJsonArray!!.length() > 0) {
+                    val thumbImageView = ImageView(mContext)
+                    thumbImageView.scaleType = ImageView.ScaleType.CENTER_CROP
+                    GlideManager.loadImage(mContext, picJsonArray!!.optString(0), thumbImageView)
+                    mNiceVideoPlayer.thumbImageView = thumbImageView
+                }
                 mNiceVideoPlayer.setUp(detailJson.optString("product_video"), true, "")
                 val detailHtml = detailJson.optString("product_content")
-                wb_detail.loadData(detailHtml, "text/html; charset=UTF-8", null)
+                htv_content_info.setHtmlFromString(detailHtml, false)
             } else {
                 setEmptyView()
             }
@@ -197,9 +205,23 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         }
     }
 
+    private fun openVip() {
+        val build = AlertDialog.Builder(mContext)
+        build.setMessage("您当前还不是VIP会员")
+        build.setNegativeButton("暂不开通", null)
+        build.setPositiveButton("立即开通") { _, _ ->
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "会员中心", true, false, VipInfoFragment::class.java)
+            finish()
+        }
+        build.create().show()
+    }
+
+
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
-        setEmptyView()
+        if (requestID == 0x0) {
+            setEmptyView()
+        }
     }
 
     private fun setEmptyView() {
@@ -217,11 +239,6 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
             }
             adapter.notifyDataSetChanged()
         }
-    }
-
-    override fun onRequestEnd(requestID: Int) {
-        super.onRequestEnd(requestID)
-        setEmptyView()
     }
 
     private fun showBottomParamDialog(picJsonArray: JSONArray, specifications: ArrayList<SpecificationBean>) {
@@ -242,4 +259,10 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         }
         bottomParamDialog!!.show()
     }
+
+    override fun onDestroyView() {
+        mNiceVideoPlayer.release()
+        super.onDestroyView()
+    }
+
 }

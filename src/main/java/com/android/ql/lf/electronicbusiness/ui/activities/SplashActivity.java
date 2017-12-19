@@ -7,11 +7,13 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.widget.ImageView;
 
 import com.android.ql.lf.electronicbusiness.R;
 
 import java.util.List;
 
+import butterknife.BindView;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -38,6 +40,9 @@ public class SplashActivity extends BaseActivity implements EasyPermissions.Perm
 
     private static final String[] REQUEST_PERMISSIONS_DESCRIPTION = new String[]{"相机", "读取SD卡"};
 
+    @BindView(R.id.mIvSplash)
+    ImageView iv_splash;
+
     @Override
     public int getLayoutId() {
         return R.layout.activity_splash_layout;
@@ -46,7 +51,12 @@ public class SplashActivity extends BaseActivity implements EasyPermissions.Perm
     @Override
     public void initView() {
         if (hasPermissions()) {
-            startMainActivity();
+            iv_splash.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startMainActivity();
+                }
+            }, 2500);
         } else {
             requestPermission();
         }

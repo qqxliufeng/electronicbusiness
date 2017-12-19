@@ -24,6 +24,7 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.TeamCutFrag
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.CounterHelper
 import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
+import com.android.ql.lf.electronicbusiness.utils.PreferenceUtils
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import kotlinx.android.synthetic.main.fragment_main_normal_privilege_layout.*
 import org.jetbrains.anko.bundleOf
@@ -101,14 +102,6 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
         loadData()
     }
 
-    override fun onRequestStart(requestID: Int) {
-        super.onRequestStart(requestID)
-        if (requestID == 0x0) {
-            progressDialog = MyProgressDialog(mContext)
-            progressDialog.show()
-        }
-    }
-
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
@@ -120,6 +113,10 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
         } else if (requestID == 0x1) {
             if (json != null) {
                 isLoad = true
+                //加载规则
+                if (!PreferenceUtils.getPrefBoolean(mContext, "no_show_rule_cut_dialog", false)) {
+                    mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_PTGG, RequestParamsHelper.getPtggParam("2"))
+                }
                 val tempPics = arrayListOf<String>()
                 ListParseHelper<ProductBannerBean>().fromJson(json.toString(), ProductBannerBean::class.java).forEach {
                     tempPics.add(it.lunbo_pic)
@@ -141,16 +138,19 @@ class MainCutPrivilegeFragment : BaseNetWorkingFragment() {
         mBannerProductCut.stopAutoPlay()
     }
 
-
     private fun showRuleDialog() {
         val dialog = Dialog(mContext)
+        dialog.window.setWindowAnimations(R.style.dialog_show_animation)
         val ruleDialogContent = View.inflate(mContext, R.layout.dialog_rule_layout, null)
         val content = ruleDialogContent.findViewById<TextView>(R.id.mTvRuleDialogContent)
         val btKnow = ruleDialogContent.findViewById<Button>(R.id.mBtRuleDialogKnow)
         val btNoTip = ruleDialogContent.findViewById<Button>(R.id.mBtRuleDialogNoTip)
         content.text = Html.fromHtml(ruleContent!!)
         btKnow.setOnClickListener { dialog.dismiss() }
-        btNoTip.setOnClickListener { dialog.dismiss() }
+        btNoTip.setOnClickListener {
+            PreferenceUtils.setPrefBoolean(mContext, "no_show_rule_cut_dialog", true)
+            dialog.dismiss()
+        }
         btKnow.isEnabled = false
         btNoTip.isEnabled = false
         dialog.setContentView(ruleDialogContent)

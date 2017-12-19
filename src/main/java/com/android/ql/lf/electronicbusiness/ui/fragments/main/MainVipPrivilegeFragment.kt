@@ -1,11 +1,18 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.main
 
 import android.annotation.SuppressLint
+import android.app.Dialog
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.content.ContextCompat
+import android.text.Html
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import com.a.WebViewContentFragment
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.ProductBannerBean
 import com.android.ql.lf.electronicbusiness.data.TabItemBean
@@ -14,12 +21,9 @@ import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActiv
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchAndClassifyFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SearchGoodsFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.VipPrivilegeItemFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
-import com.android.ql.lf.electronicbusiness.utils.Constants
-import com.android.ql.lf.electronicbusiness.utils.GlideImageLoader
-import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
+import com.android.ql.lf.electronicbusiness.utils.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_vip_privilege_layout.*
 import org.jetbrains.anko.bundleOf
@@ -37,6 +41,8 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
     private var isMvisible: Boolean = false
     private var isPrepared: Boolean = false
     private var isLoaded: Boolean = false
+
+    private var ruleContent:String? = null
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
@@ -66,18 +72,20 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
     @SuppressLint("ResourceType")
     override fun initView(view: View?) {
         mTvVipPrivilegeRule.setOnClickListener {
-            //            val dialog = Dialog(mContext)
-//            dialog.setContentView(R.layout.dialog_notify_layout)
-//            dialog.window.setBackgroundDrawableResource(android.R.color.transparent)
-//            dialog.show()
+            if(ruleContent!=null){
+                FragmentContainerActivity.startFragmentContainerActivity(mContext,"会员规则",true,false, bundleOf(Pair(WebViewContentFragment.PATH_FLAG,ruleContent!!)),WebViewContentFragment::class.java)
+            }else {
+                mPresent.getDataByPost(0x3, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_PTGG, RequestParamsHelper.getPtggParam("3"))
+            }
         }
         mLlSearchContainer.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true, bundleOf(Pair(SearchFragment.K_TYPE_FLAG,"3")), SearchFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, true, bundleOf(Pair(SearchFragment.K_TYPE_FLAG, "3")), SearchFragment::class.java)
         }
         mTvClassMore.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, bundleOf(Pair(SearchAndClassifyFragment.K_TYPE_FLAG,"3")), SearchAndClassifyFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "搜索", true, false, bundleOf(Pair(SearchAndClassifyFragment.K_TYPE_FLAG, "3")), SearchAndClassifyFragment::class.java)
         }
     }
+
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
@@ -107,7 +115,7 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
                 mVipPrivilegeViewPager.offscreenPageLimit = 5
                 mVipPrivilegeTabLayout.setupWithViewPager(mVipPrivilegeViewPager)
             }
-        }else if (requestID == 0x1){
+        } else if (requestID == 0x1) {
             if (json != null) {
                 val tempPics = arrayListOf<String>()
                 ListParseHelper<ProductBannerBean>().fromJson(json.toString(), ProductBannerBean::class.java).forEach {
@@ -116,6 +124,11 @@ class MainVipPrivilegeFragment : BaseNetWorkingFragment() {
                 if (!tempPics.isEmpty()) {
                     mBannerProductCut.setImageLoader(GlideImageLoader()).setImages(tempPics).setDelayTime(5000).start()
                 }
+            }
+        } else if (requestID == 0x3) {
+            if (json != null) {
+                ruleContent = json.optJSONObject("result").optString("ptgg_content")
+                FragmentContainerActivity.startFragmentContainerActivity(mContext,"会员规则",true,false, bundleOf(Pair(WebViewContentFragment.PATH_FLAG,ruleContent!!)),WebViewContentFragment::class.java)
             }
         }
     }

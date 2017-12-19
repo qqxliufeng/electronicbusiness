@@ -87,6 +87,9 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
                 }
             }
         })
+        mLlSearchAndClassifySearch.setOnClickListener {
+
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

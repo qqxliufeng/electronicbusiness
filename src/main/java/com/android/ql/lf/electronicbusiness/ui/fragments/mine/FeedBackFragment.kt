@@ -8,6 +8,7 @@ import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import kotlinx.android.synthetic.main.fragment_feed_back_layout.*
 import org.jetbrains.anko.support.v4.toast
+import org.json.JSONObject
 
 /**
  * Created by lf on 2017/11/7 0007.
@@ -28,27 +29,47 @@ class FeedBackFragment : BaseNetWorkingFragment() {
                     RequestParamsHelper.ACT_ADD_IDEA,
                     RequestParamsHelper.getAddIdeaParam(mEtFeedBackContent.text.toString(), mEtFeedBackPhone.text.toString()))
         }
+        mTvFeedBackKFPhone.text = "客服电话：加载中……"
+        mTvFeedBackKFPhone.isEnabled = false
+        mPresent.getDataByPost(0x1, "t", "kf_tel", RequestParamsHelper.getKeFuTelParams())
     }
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
-        progressDialog = MyProgressDialog(context, "正在提交……")
-        progressDialog.show()
+        if (requestID == 0x0) {
+            progressDialog = MyProgressDialog(context, "正在提交……")
+            progressDialog.show()
+        }
     }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
-        val json = checkResultCode(result)
-        if (json != null) {
-            toast("提交成功，感谢您给我们留下宝贵意见")
-            finish()
+        if (requestID == 0x0) {
+            val json = checkResultCode(result)
+            if (json != null) {
+                toast("提交成功，感谢您给我们留下宝贵意见")
+                finish()
+            } else {
+                toast("提交失败")
+            }
         } else {
-            toast("提交失败")
+            val json = JSONObject(result.toString())
+            if ("请求成功" == json.optString("msg")) {
+                mTvFeedBackKFPhone.isEnabled = true
+                mTvFeedBackKFPhone.text = "客服电话：${json.optString("code")}"
+            } else {
+                mTvFeedBackKFPhone.text = "客服电话：加载失败"
+            }
         }
     }
 
+
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
-        toast("提交失败")
+        if (requestID == 0x0) {
+            toast("提交失败")
+        }else{
+            mTvFeedBackKFPhone.text = "客服电话：加载失败"
+        }
     }
 }

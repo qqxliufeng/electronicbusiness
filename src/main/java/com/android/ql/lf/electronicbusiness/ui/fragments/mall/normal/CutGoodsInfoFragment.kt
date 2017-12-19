@@ -122,16 +122,6 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
     override fun getLayoutId(): Int = R.layout.fragment_personal_cut_item_info_layout
 
     override fun initView(view: View?) {
-
-//        mSrfCutItemInfo.setColorSchemeColors(ContextCompat.getColor(mContext, android.R.color.holo_blue_dark),
-//                ContextCompat.getColor(mContext, android.R.color.holo_green_dark),
-//                ContextCompat.getColor(mContext, android.R.color.holo_orange_dark))
-//        mSrfCutItemInfo.setOnRefreshListener(this)
-//
-//        mAlCutItemInfo.addOnOffsetChangedListener { _, verticalOffset ->
-//            mSrfCutItemInfo.isEnabled = verticalOffset >= 0
-//        }
-
         subscription = RxBus.getDefault().toObservable(Intent::class.java).subscribe {
             val requestCode = it.getIntExtra("requestCode", 0)
             if (requestCode == com.tencent.connect.common.Constants.REQUEST_QQ_SHARE) {
@@ -261,7 +251,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             0x0 -> {
                 if (json != null) {
                     bindData(json)
-                }else{
+                } else {
                     setEmptyView()
                 }
             }
@@ -298,7 +288,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         setEmptyView()
     }
 
-    private fun setEmptyView(){
+    private fun setEmptyView() {
         mClCutInfoContainer.visibility = View.GONE
         mTvCutItemInfoEmpty.visibility = View.VISIBLE
     }
@@ -348,7 +338,27 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             mTvPersonalCutItemInfoDownTime.setTimeSecond(0)
             mTvPersonalCutItemInfoDownTime.stop()
         } else if (TextUtils.equals("0", status)) { // 0 是正在进行
-            mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_personal_cut_bg)
+            if (currentMode == 1) { //个人砍
+                mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_personal_cut_bg)
+            } else { //团体砍
+                when (cutInfoBean!!.result.detail.product_jtoken) {
+                    "0" -> {
+                        mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_personal_cut_bg)
+                    }
+                    "1" -> {
+                        mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_one)
+                    }
+                    "2" -> {
+                        mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_two)
+                    }
+                    "3" -> {
+                        mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_three)
+                    }
+                    else -> {
+                        mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_bg)
+                    }
+                }
+            }
             mTvPersonalCutItemInfoDownTimeTitle.text = "距结束还剩："
             mTvPersonalCutItemInfoBuy.isEnabled = true
             mTvPersonalCutItemInfoCollection.isEnabled = true
@@ -595,6 +605,10 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
      * 绑定团体砍数据
      */
     private fun reBindTeamData() {
+
+        mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_bg)
+
+
         mTvPersonalCutItemInfoEveryOneCut.text = "距离${cutInfoBean!!.result.nextprice}元还差${cutInfoBean!!.result.resnum}人"
         mTvPersonalCutItemInfoHasCutNum.text = "已参砍人数${cutInfoBean!!.result.detail.product_knum}人"
         mTvPersonalCutItemInfoEveryOneCut.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_mark_team_cut, 0, 0, 0)

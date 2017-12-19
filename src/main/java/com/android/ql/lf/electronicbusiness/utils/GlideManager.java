@@ -30,6 +30,8 @@ public class GlideManager {
     public static void loadRoundImage(Context context, String path, ImageView imageView,int rounded) {
         Glide.with(context)
                 .load(Constants.BASE_IP + path)
+                .error(R.drawable.img_glide_load_default)
+                .placeholder(R.drawable.img_glide_load_default)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .bitmapTransform(new CenterCrop(context), new RoundedCornersTransformation(context, rounded, 0))
                 .into(imageView);

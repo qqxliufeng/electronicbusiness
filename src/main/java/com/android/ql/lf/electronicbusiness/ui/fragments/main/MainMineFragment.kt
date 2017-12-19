@@ -103,6 +103,9 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 15 -> {//我的砍价
                     mCutPrice.performClick()
                 }
+                16 -> { //会员充值
+                    mVipContainer.performClick()
+                }
             }
         }
         qBadgeSubScribe = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
@@ -125,7 +128,12 @@ class MainMineFragment : BaseNetWorkingFragment() {
             }
         }
         mVipContainer.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "VIP会员", true, false, VipInfoFragment::class.java)
+            if (UserInfo.getInstance().isLogin) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "VIP会员", true, false, VipInfoFragment::class.java)
+            } else {
+                UserInfo.getInstance().loginTag = 16
+                LoginFragment.startLogin(mContext)
+            }
         }
         mIntegrationDetailContainer.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {

@@ -9,6 +9,10 @@
 
     <style name="AppFragmentContainerTheme" parent="AppTheme"></style>
 
+    <style name="SplashAppTheme" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="TextInputLayoutStyle">
         <item name="colorControlNormal">@color/colorControlNormal</item>
         <item name="colorControlActivated">@color/colorControlActivated</item>
@@ -87,6 +91,12 @@
         <item name="android:textColor">@color/text_sub</item>
         <item name="android:textSize">@dimen/text_body</item>
     </style>
+
     <!--            IM    -->
+
+    <style name="dialog_show_animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_show_anim</item>
+        <item name="android:windowExitAnimation">@anim/activity_close</item>
+    </style>
 
 </resources>

@@ -304,6 +304,12 @@ class RequestParamsHelper {
 
         fun getRecordParam(page: Int, pageSize: Int = 10) = getWithPageParams(page, pageSize)
 
+
+        //获取VIP信息
+        val ACT_M_P = "m_p"
+
+        fun getVipInfoParam() = getBaseParams()
+
         /**              member model  end           **/
 
 
@@ -414,7 +420,7 @@ class RequestParamsHelper {
         //问题搜索
         val ACT_QUIZ_SEARCH = "quiz_search"
 
-        fun getQuizSearchParam(keyword: String, page: Int, pageSize: Int = 10):ApiParams {
+        fun getQuizSearchParam(keyword: String, page: Int, pageSize: Int = 10): ApiParams {
             val param = getWithPageParams(page, pageSize)
             param.addParam("keyword", keyword)
             return param
@@ -608,6 +614,10 @@ class RequestParamsHelper {
         }
 
         /**              order model  end           **/
+
+        val ACT_KF_TEL = "kf_tel"
+
+        fun getKeFuTelParams() = getBaseParams()
 
     }
 
