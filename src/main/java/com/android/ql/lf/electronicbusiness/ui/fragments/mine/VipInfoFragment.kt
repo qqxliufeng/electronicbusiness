@@ -108,12 +108,12 @@ class VipInfoFragment : BaseNetWorkingFragment() {
         progressDialog.show()
     }
 
-
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
         if (requestID == 0x0) {
             if (json != null) {
+                PreferenceUtils.setPrefString(mContext, PayResultFragment.PAY_ORDER_RESULT_JSON_FLAG, "")
                 if (mSptvContainer.payType == SelectPayTypeView.WX_PAY) {
                     val wxBean = Gson().fromJson(json.optJSONObject("result").toString(), WXPayBean::class.java)
                     PayManager.wxPay(mContext, wxBean)

@@ -48,17 +48,18 @@ class PayResultFragment : BaseFragment() {
             OrderPresent.notifyRefreshOrderNum()
             when (arguments.getInt(PAY_CODE_FLAG)) {
                 PAY_SUCCESS_CODE -> {
-                    mLlPayResultOrderInfoContainer.visibility = View.VISIBLE
+                    mLlPayResultOrderInfoContainer.visibility = View.GONE
                     mTvPayResultTitle.text = "支付成功"
-                    mBtBack.text = "查看订单详情"
+                    mBtBack.text = "立即返回"
                     mTvPayResultTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_pitchon_pay_success, 0, 0, 0)
                     val json = PreferenceUtils.getPrefString(mContext, PAY_ORDER_RESULT_JSON_FLAG, "")
                     if (!TextUtils.isEmpty(json)) {
+                        mLlPayResultOrderInfoContainer.visibility = View.VISIBLE
                         val createOrderSuccessBean = Gson().fromJson(json, CreateOrderSuccessBean::class.java)
                         mBtBack.setOnClickListener {
-                            val bundle = Bundle()
-                            bundle.putString(OrderInfoFragment.ORDER_INFO_ID_FLAG, createOrderSuccessBean.osn)
-                            FragmentContainerActivity.startFragmentContainerActivity(mContext, "支付结果", true, false, bundle, OrderInfoFragment::class.java)
+//                            val bundle = Bundle()
+//                            bundle.putString(OrderInfoFragment.ORDER_INFO_ID_FLAG, createOrderSuccessBean.osn)
+//                            FragmentContainerActivity.startFragmentContainerActivity(mContext, "支付结果", true, false, bundle, OrderInfoFragment::class.java)
                             finish()
                         }
                         mTvPayResultOrderSn.text = createOrderSuccessBean.osn

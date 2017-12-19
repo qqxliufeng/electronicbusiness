@@ -63,14 +63,16 @@ public class GlideManager {
             } else {
                 tempPath = Constants.BASE_IP + path;
             }
-            Glide.with(context)
-                    .load(tempPath)
-                    .error(R.drawable.img_glide_circle_load_default)
-                    .placeholder(R.drawable.img_glide_circle_load_default)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .bitmapTransform(new CropCircleTransformation(context), new CenterCrop(context))
-                    .into(imageView);
+        }else {
+            tempPath = "";
         }
+        Glide.with(context)
+                .load(tempPath)
+                .error(R.drawable.img_glide_circle_load_default)
+                .placeholder(R.drawable.img_glide_circle_load_default)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .bitmapTransform(new CropCircleTransformation(context), new CenterCrop(context))
+                .into(imageView);
     }
 
     public static void downImage(Context context, String src) {

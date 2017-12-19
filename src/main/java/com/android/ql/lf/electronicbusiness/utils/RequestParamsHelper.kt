@@ -450,9 +450,10 @@ class RequestParamsHelper {
         //商品分类
         val ACT_JPRODUCT_SEARCH = "jproduct_search"
 
-        fun getJproductSearchParam(type_id: String, page: Int, pageSize: Int = 10): ApiParams {
+        fun getJproductSearchParam(type_id: String, stype_id:String = "",page: Int, pageSize: Int = 10): ApiParams {
             val param = getWithPageParams(page, pageSize)
             param.addParam("type_id", type_id)
+            param.addParam("stype_id",stype_id)
             return param
         }
 

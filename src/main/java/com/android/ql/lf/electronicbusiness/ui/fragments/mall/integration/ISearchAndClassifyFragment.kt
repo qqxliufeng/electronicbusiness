@@ -11,6 +11,7 @@ import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.IClassifyBean
 import com.android.ql.lf.electronicbusiness.data.IClassifyItemEntity
 import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
@@ -20,6 +21,7 @@ import com.chad.library.adapter.base.BaseSectionQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.listener.OnItemClickListener
 import kotlinx.android.synthetic.main.fragment_normal_mall_search_and_classify_layout.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 
 /**
@@ -30,6 +32,9 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
 
     private val mMenuArrayList = arrayListOf<IClassifyBean>()
     private val mItemArrayList = arrayListOf<IClassifyItemEntity>()
+
+    private lateinit var menuItem:IClassifyBean
+    private lateinit var itemEntity:IClassifyItemEntity
 
     override fun getLayoutId(): Int = R.layout.fragment_normal_mall_search_and_classify_layout
 
@@ -47,6 +52,7 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
         mRcMenu.adapter = menuAdapter
         mRcMenu.addOnItemTouchListener(object : OnItemClickListener() {
             override fun onSimpleItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+                menuItem = mMenuArrayList[position]
                 mMenuArrayList.forEachIndexed { index, searchMenuItemBean ->
                     searchMenuItemBean.isChecked = index == position
                 }
@@ -59,6 +65,21 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
                     }
                 }
                 gridLayoutManager.scrollToPositionWithOffset(contentItemIndex, 0)
+            }
+        })
+        mRcContent.addOnItemTouchListener(object : OnItemClickListener() {
+            override fun onSimpleItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+                itemEntity = mItemArrayList[position]
+                if (itemEntity.isHeader){
+                    return
+                }
+                FragmentContainerActivity.startFragmentContainerActivity(mContext,
+                        itemEntity.t.jclassify_title,
+                        true,false,
+                        bundleOf(Pair(IntegrationTypeSearchResultFragment.TYPE_PARAM_FLAG,menuItem.jclassify_id),
+                                Pair(IntegrationTypeSearchResultFragment.STYPE_PARAM_FLAG,itemEntity.t.jclassify_id)
+                        ),
+                        IntegrationTypeSearchResultFragment::class.java)
             }
         })
         mRcContent.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -74,14 +95,16 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
                             index = mMenuArrayList.indexOf(searchMenuItemBean)
                         }
                     }
-                    mMenuArrayList[index].isChecked = true
+                    menuItem = mMenuArrayList[index]
+                    menuItem.isChecked = true
                     menuAdapter.notifyDataSetChanged()
                     mRcMenu.smoothScrollToPosition(index)
                 } else if (!mRcContent.canScrollVertically(1)) {
                     mMenuArrayList.forEachIndexed { _, searchMenuItemBean ->
                         searchMenuItemBean.isChecked = false
                     }
-                    mMenuArrayList[mMenuArrayList.size - 1].isChecked = true
+                    menuItem = mMenuArrayList[mMenuArrayList.size - 1]
+                    menuItem.isChecked = true
                     menuAdapter.notifyDataSetChanged()
                     mRcMenu.smoothScrollToPosition(mMenuArrayList.size - 1)
                 }
@@ -90,6 +113,9 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
         mLlSearchAndClassifySearch.setOnClickListener {
 
         }
+
+
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -117,6 +143,7 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
                 }
             }
             if (!mMenuArrayList.isEmpty()) {
+                menuItem = mMenuArrayList[0]
                 mMenuArrayList[0].isChecked = true
             }
             menuAdapter.notifyDataSetChanged()

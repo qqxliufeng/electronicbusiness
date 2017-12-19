@@ -24,6 +24,7 @@ class IntegrationMallItemFragment : AbstractLazyLoadFragment<IMallGoodsItemBean>
     companion object {
         val ACT_TYPE_FLAG = "act_type_flag"
         val TYPE_PARAM_FLAG = "type_param_flag"
+        val STYPE_PARAM_FLAG = "stype_param_flag"
 
         fun newInstance(bundle: Bundle): IntegrationMallItemFragment {
             val integrationMallItemFragment = IntegrationMallItemFragment()
@@ -50,7 +51,10 @@ class IntegrationMallItemFragment : AbstractLazyLoadFragment<IMallGoodsItemBean>
                 if (TextUtils.isEmpty(arguments.getString(TYPE_PARAM_FLAG))) {
                     RequestParamsHelper.getJproductParam(currentPage)
                 } else {
-                    RequestParamsHelper.getJproductSearchParam(arguments.getString(TYPE_PARAM_FLAG), currentPage)
+                    RequestParamsHelper.getJproductSearchParam(
+                            arguments.getString(TYPE_PARAM_FLAG),
+                            arguments.getString(STYPE_PARAM_FLAG,"") ,
+                            page = currentPage)
                 }
         )
     }
