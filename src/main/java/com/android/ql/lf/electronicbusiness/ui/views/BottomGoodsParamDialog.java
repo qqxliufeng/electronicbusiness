@@ -85,6 +85,7 @@ public class BottomGoodsParamDialog extends BottomSheetDialog {
                             }
                         }
                     }
+                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
                     onGoodsConfirmClickListener.onGoodsConfirmClick(stringBuilder.toString(), tv_goods_num.getText().toString());
                     dismiss();
                 }

@@ -28,6 +28,7 @@ import com.android.ql.lf.electronicbusiness.utils.*
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_fragment_container_layout.*
 import kotlinx.android.synthetic.main.fragment_submit_order_layout.*
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription
@@ -129,6 +130,10 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
         val bottomView = View.inflate(mContext, R.layout.layout_submit_new_order_bottom_layout, null)
         val payView = bottomView.findViewById<SelectPayTypeView>(R.id.mStvPay)
         mTvSubmitOrder.setOnClickListener {
+            if (addressBean == null){
+                toast("请先选择收货地址")
+                return@setOnClickListener
+            }
             mArrayList.forEach {
                 val orderBean = OrderBean()
                 orderBean.address = addressBean!!.address_id

@@ -169,19 +169,13 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
             }
             R.id.mIvShoppingCarItemSelector -> {
                 currentItem.isSelector = !currentItem.isSelector
-                var money = 0.00f
-                val isAllSelected = mArrayList.filter { it.isSelector }.size == mArrayList.size
-                money = calculatePrice(money)
-                mTvShoppingCarAllSelectMoney.text = "￥${DecimalFormat("0.00").format(money)}"
-                if (isAllSelected) {
-                    mCivShoppingCarAllSelect.isChecked = true
-                    mBaseAdapter.notifyDataSetChanged()
-                    return
-                } else {
-                    mCivShoppingCarAllSelect.isChecked = false
-                }
-                mCalculate.isEnabled = money != 0.00f
                 mBaseAdapter.notifyItemChanged(position)
+
+                var money = 0.00f
+                mCivShoppingCarAllSelect.isChecked  = mArrayList.filter { it.isSelector }.size == mArrayList.size
+                money = calculatePrice(money)
+                mCalculate.isEnabled = money != 0.00f
+                mTvShoppingCarAllSelectMoney.text = "￥${DecimalFormat("0.00").format(money)}"
             }
             R.id.mTvShoppingCarItemEditDel -> {
                 val builder = AlertDialog.Builder(context)

@@ -6,25 +6,19 @@ import android.support.v7.widget.LinearLayoutManager
 import android.text.Html
 import android.text.TextPaint
 import android.view.View
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
-import com.android.ql.lf.electronicbusiness.data.CommentForGoodsBean
-import com.android.ql.lf.electronicbusiness.data.SpecificationBean
-import com.android.ql.lf.electronicbusiness.data.UserInfo
+import com.android.ql.lf.electronicbusiness.data.*
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.VipInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
-import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.google.gson.Gson
 import com.hyphenate.chat.ChatClient
 import com.hyphenate.helpdesk.easeui.util.IntentBuilder
@@ -60,25 +54,20 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
 
     private var bottomParamDialog: BottomGoodsParamDialog? = null
 
-    private var picJsonArray: JSONArray? = null
-    private var specifications: ArrayList<SpecificationBean>? = null
+    private var picJsonArray: ArrayList<String>? = null
+    private lateinit var specifications: ArrayList<SpecificationBean>
 
     private var goodsId: String? = null
+
+    //0加入购物车  1立即购买
+    private var currentMode = 0
+
+    private var vipGoodsInfoBean:VipGoodsInfoBean? = null
+
 
     override fun getLayoutId() = R.layout.vip_privilege_item_info_layout
 
     override fun initView(view: View?) {
-//        subscription = RxBus.getDefault().toObservable(UserInfo::class.java).subscribe {
-//            when (UserInfo.getInstance().loginTag) {
-//                0x50 -> {
-//                    mTvVipPrivilegeGoodsInfoCollection.performClick()
-//                }
-//                0x51 -> {
-//                    mTvVipPrivilegeGoodsInfoBuy.performClick()
-//                }
-//            }
-//        }
-
         mNiceVideoPlayer.fullscreenButton.visibility = View.GONE
         mNiceVideoPlayer.titleTextView.visibility = View.GONE
         mNiceVideoPlayer.backButton.visibility = View.GONE
@@ -129,53 +118,38 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         val json = checkResultCode(result)
         if (requestID == 0x0) {
             if (json != null) {
-                loadComment(json)
-                val detailJson = json.optJSONObject("result").optJSONObject("detail")
-                goodsId = detailJson.optString("product_id")
-                tv_sell.text = "${detailJson.optString("product_sv")}人购买"
-                tv_release_count.text = "库存${detailJson.optString("product_entrepot")}"
-                tv_price.text = "￥ ${detailJson.optString("product_price")}"
-                tv_old_price.text = "￥ ${detailJson.optString("product_yprice")}"
-                tv_goods_name.text = detailJson.optString("product_name")
-                tv_goods_content.text = Html.fromHtml(detailJson.optString("product_ms"))
-                picJsonArray = detailJson.optJSONArray("product_pic")
-                val specificationJsonArray = detailJson.optJSONArray("product_specification")
-                specifications = arrayListOf()
-                (0 until specificationJsonArray.length()).forEach {
-                    val specification = Gson().fromJson(specificationJsonArray.optJSONObject(it).toString(), SpecificationBean::class.java)
-                    specifications!!.add(specification)
-                }
+                vipGoodsInfoBean = Gson().fromJson(json.toString(),VipGoodsInfoBean::class.java)
+                loadComment()
+                goodsId = vipGoodsInfoBean!!.result.detail.product_id
+                tv_sell.text = "${vipGoodsInfoBean!!.result.detail.product_sv}人购买"
+                tv_release_count.text = "库存${vipGoodsInfoBean!!.result.detail.product_entrepot}"
+                tv_price.text = "￥ ${vipGoodsInfoBean!!.result.detail.product_price}"
+                tv_old_price.text = "￥ ${vipGoodsInfoBean!!.result.detail.product_yprice}"
+                tv_goods_name.text = vipGoodsInfoBean!!.result.detail.product_name
+                tv_goods_content.text = Html.fromHtml(vipGoodsInfoBean!!.result.detail.product_ms)
+                picJsonArray = vipGoodsInfoBean!!.result.detail.product_pic
+                specifications = vipGoodsInfoBean!!.result.detail.product_specification
                 mTvVipPrivilegeGoodsInfoCollection.setOnClickListener {
                     if (UserInfo.getInstance().memberRank == "1") {
-                        if (picJsonArray != null && picJsonArray!!.length() > 0) {
+                        if (picJsonArray != null && picJsonArray!!.size > 0) {
+                            currentMode = 0
                             showBottomParamDialog(picJsonArray!!, specifications!!)
                         }
                     } else {
                         //开通会员
                         openVip()
                     }
-//                    if (UserInfo.getInstance().isLogin) {
-//
-//                    } else {
-//                        UserInfo.getInstance().loginTag = 0x50 //加入购物车
-//                        LoginFragment.startLogin(context)
-//                    }
                 }
                 mTvVipPrivilegeGoodsInfoBuy.setOnClickListener {
                     if (UserInfo.getInstance().memberRank == "1") {
-                        if (picJsonArray != null && picJsonArray!!.length() > 0) {
+                        if (picJsonArray != null && picJsonArray!!.size > 0) {
+                            currentMode = 1
                             showBottomParamDialog(picJsonArray!!, specifications!!)
                         }
                     } else {
                         //开通会员
                         openVip()
                     }
-//                    if (UserInfo.getInstance().isLogin) {
-//
-//                    } else {
-//                        UserInfo.getInstance().loginTag = 0x51 //立即购买
-//                        LoginFragment.startLogin(context)
-//                    }
                 }
                 mTvVipInfoOnlineAsk.setOnClickListener {
                     if (ChatClient.getInstance().isLoggedInBefore) {
@@ -186,14 +160,14 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                         startActivity(intent)
                     }
                 }
-                if (picJsonArray != null && picJsonArray!!.length() > 0) {
+                if (picJsonArray != null && picJsonArray!!.size > 0) {
                     val thumbImageView = ImageView(mContext)
                     thumbImageView.scaleType = ImageView.ScaleType.CENTER_CROP
-                    GlideManager.loadImage(mContext, picJsonArray!!.optString(0), thumbImageView)
+                    GlideManager.loadImage(mContext, picJsonArray!![0], thumbImageView)
                     mNiceVideoPlayer.thumbImageView = thumbImageView
                 }
-                mNiceVideoPlayer.setUp(detailJson.optString("product_video"), true, "")
-                val detailHtml = detailJson.optString("product_content")
+                mNiceVideoPlayer.setUp(vipGoodsInfoBean!!.result.detail.product_video, true, "")
+                val detailHtml = vipGoodsInfoBean!!.result.detail.product_content
                 htv_content_info.setHtmlFromString(detailHtml, false)
             } else {
                 setEmptyView()
@@ -229,22 +203,16 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         mTvVipItemInfoEmpty.visibility = View.VISIBLE
     }
 
-    private fun loadComment(json: JSONObject) {
-        val optJSONObject = json.optJSONObject("arr")
-        val commentJsonArray = optJSONObject.optJSONArray("list")
-        tv_comment_num.text = "订单评价(${optJSONObject.optString("count")})"
-        if (commentJsonArray != null && commentJsonArray.length() > 0) {
-            (0 until commentJsonArray.length()).forEach {
-                list.add(Gson().fromJson(commentJsonArray.optJSONObject(it).toString(), CommentForGoodsBean::class.java))
-            }
-            adapter.notifyDataSetChanged()
-        }
+    private fun loadComment() {
+        tv_comment_num.text = "订单评价(${vipGoodsInfoBean!!.arr.count})"
+        list.addAll(vipGoodsInfoBean!!.arr.list)
+        adapter.notifyDataSetChanged()
     }
 
-    private fun showBottomParamDialog(picJsonArray: JSONArray, specifications: ArrayList<SpecificationBean>) {
+    private fun showBottomParamDialog(picJsonArray: ArrayList<String>, specifications: ArrayList<SpecificationBean>) {
         if (bottomParamDialog == null) {
-            val defaultPicPath = if (picJsonArray.length() > 0) {
-                picJsonArray.optString(0)
+            val defaultPicPath = if (picJsonArray.size > 0) {
+                picJsonArray[0]
             } else {
                 ""
             }
@@ -254,7 +222,23 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                     tv_goods_name.text.toString(),
                     defaultPicPath, specifications)
             bottomParamDialog!!.setOnGoodsConfirmClickListener { specification, num ->
-                mPresent.getDataByPost(0x1, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_ADD_SHOPCART, RequestParamsHelper.getAddShopCartParam(goodsId!!, specification, num))
+                if (currentMode == 0) { //加入购物车
+                    mPresent.getDataByPost(0x1, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_ADD_SHOPCART, RequestParamsHelper.getAddShopCartParam(goodsId!!, specification, num))
+                }else{ // 立即购买
+                    val shoppingCarItem = ShoppingCarItemBean()
+                    shoppingCarItem.shopcart_mdprice = vipGoodsInfoBean!!.result.detail.product_mdprice
+                    shoppingCarItem.shopcart_num = num
+                    shoppingCarItem.shopcart_price = vipGoodsInfoBean!!.result.detail.product_price
+                    shoppingCarItem.shopcart_name = vipGoodsInfoBean!!.result.detail.product_name
+                    shoppingCarItem.shopcart_gid = vipGoodsInfoBean!!.result.detail.product_id
+                    shoppingCarItem.shopcart_id = ""
+                    shoppingCarItem.shopcart_ktype = vipGoodsInfoBean!!.result.detail.product_ktype
+                    shoppingCarItem.shopcart_pic = vipGoodsInfoBean!!.result.detail.product_pic
+                    shoppingCarItem.shopcart_specification = specification
+                    val bundle = Bundle()
+                    bundle.putParcelableArrayList(SubmitNewOrderFragment.GOODS_ID_FLAG, arrayListOf(shoppingCarItem))
+                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "确认订单", true, false, bundle, SubmitNewOrderFragment::class.java)
+                }
             }
         }
         bottomParamDialog!!.show()
