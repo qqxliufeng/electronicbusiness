@@ -16,7 +16,6 @@ import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.data.VipSelectPayTimeBean
 import com.android.ql.lf.electronicbusiness.data.WXPayBean
-import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.PayResultFragment
@@ -25,7 +24,6 @@ import com.android.ql.lf.electronicbusiness.ui.views.SelectPayTypeView
 import com.android.ql.lf.electronicbusiness.ui.views.VipPayTypeView
 import com.android.ql.lf.electronicbusiness.utils.*
 import com.google.gson.Gson
-import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.fragment_vip_info_layout.*
 import org.jetbrains.anko.support.v4.toast
@@ -35,8 +33,6 @@ import org.jetbrains.anko.support.v4.toast
  * @author lf on 2017/11/4 0004
  */
 class VipInfoFragment : BaseNetWorkingFragment() {
-
-    private lateinit var wxApi: IWXAPI
 
     override fun getLayoutId(): Int = R.layout.fragment_vip_info_layout
 
@@ -69,7 +65,6 @@ class VipInfoFragment : BaseNetWorkingFragment() {
     }
 
     override fun initView(view: View?) {
-        wxApi = WXAPIFactory.createWXAPI(mContext, Constants.WX_APP_ID, true)
         GlideManager.loadFaceCircleImage(mContext, UserInfo.getInstance().memberPic, mVipFace)
         mVipName.text = UserInfo.getInstance().memberName
         mVipTime.movementMethod = LinkMovementMethod.getInstance()
