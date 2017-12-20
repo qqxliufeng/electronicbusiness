@@ -4,6 +4,7 @@ import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.AddressBean
 import com.android.ql.lf.electronicbusiness.data.IMallGoodsItemBean
+import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.AddressSelectFragment
@@ -43,9 +44,6 @@ class SubmitIntegrationOrderFragment : BaseNetWorkingFragment() {
             if (addressBean != null) {
                 setAddress()
             }
-            //            mTvOrderPersonName.text = it.name
-//            mTvOrderPersonPhone.text = it.phone
-//            mTvOrderPersonDetail.text = it.detail
         }
 
         mTvSubmitOrder.setOnClickListener {
@@ -57,6 +55,10 @@ class SubmitIntegrationOrderFragment : BaseNetWorkingFragment() {
             } else {
                 toast("请先选择地址")
             }
+        }
+
+        mBtSubmitOrderHeaderNoAddress.setOnClickListener {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "选择地址", true, false, AddressSelectFragment::class.java)
         }
         mLlSubmitOrderAddress.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "选择地址", true, false, AddressSelectFragment::class.java)
@@ -93,6 +95,7 @@ class SubmitIntegrationOrderFragment : BaseNetWorkingFragment() {
         } else if (requestID == 0x1) {
             if (json != null) {
                 toast("恭喜，兑换成功")
+                UserInfo.getInstance().memberIntegral = json.optString("arr")
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "兑换完成", true, false, bundleOf(Pair(IntegrationMallGoodsInfoFragment.GOODS_ID_FLAG, 0)), IntegrationPayResultFragment::class.java)
                 finish()
             } else {
@@ -118,6 +121,7 @@ class SubmitIntegrationOrderFragment : BaseNetWorkingFragment() {
     private fun showEmptyAddress() {
         mLlSubmitOrderAddress.visibility = View.GONE
         mBtSubmitOrderHeaderNoAddress.visibility = View.VISIBLE
+
     }
 
     private fun setAddress() {

@@ -1,8 +1,11 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
+import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.support.design.widget.BottomSheetDialog
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -10,16 +13,18 @@ import android.text.TextUtils
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.MyOrderBean
+import com.android.ql.lf.electronicbusiness.data.RefreshData
+import com.android.ql.lf.electronicbusiness.data.WXPayBean
 import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.ExpressInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.CutGoodsInfoFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.PayResultFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.TeamCutItemInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.ui.views.SelectPayTypeView
-import com.android.ql.lf.electronicbusiness.utils.GlideManager
-import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
+import com.android.ql.lf.electronicbusiness.utils.*
 import com.google.gson.Gson
 import com.hyphenate.helpdesk.model.OrderInfo
 import kotlinx.android.synthetic.main.fragment_order_info_layout.*
@@ -36,6 +41,34 @@ class OrderInfoFragment : BaseNetWorkingFragment() {
         val ORDER_INFO_ID_FLAG = "order_info_id_flag"
     }
 
+    private var payType: String = SelectPayTypeView.WX_PAY
+
+
+    private val handle = @SuppressLint("HandlerLeak")
+    object : Handler() {
+        override fun handleMessage(msg: Message?) {
+            super.handleMessage(msg)
+            when (msg!!.what) {
+                PayManager.SDK_PAY_FLAG -> {
+                    val payResult = PayResult(msg.obj as Map<String, String>)
+                    val resultInfo = payResult.result// 同步返回需要验证的信息
+                    val resultStatus = payResult.resultStatus
+                    val bundle = Bundle()
+                    if (TextUtils.equals(resultStatus, "9000")) {
+                        //支付成功
+                        bundle.putInt(PayResultFragment.PAY_CODE_FLAG, PayResultFragment.PAY_SUCCESS_CODE)
+                    } else {
+                        //支付失败
+                        bundle.putInt(PayResultFragment.PAY_CODE_FLAG, PayResultFragment.PAY_FAIL_CODE)
+                    }
+                    OrderPresent.notifyRefreshOrderNum()
+                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "支付结果", true, false, bundle, PayResultFragment::class.java)
+                }
+            }
+        }
+    }
+
+
     private val orderPresent by lazy {
         OrderPresent(mPresent)
     }
@@ -47,6 +80,11 @@ class OrderInfoFragment : BaseNetWorkingFragment() {
     override fun getLayoutId(): Int = R.layout.fragment_order_info_layout
 
     override fun initView(view: View?) {
+        subscription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
+            if (it.isRefresh && "支付成功" == it.any) {
+                finish()
+            }
+        }
         mTvOrderInfoTopState.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.img_pic_goods_info_success, 0)
     }
 
@@ -84,9 +122,18 @@ class OrderInfoFragment : BaseNetWorkingFragment() {
                 }
             }
             0x2 -> { //付款
-
+                if (json != null) {
+                    OrderPresent.notifyRefreshShoppingCarList()
+                    PreferenceUtils.setPrefString(mContext, PayResultFragment.PAY_ORDER_RESULT_JSON_FLAG, json.optJSONObject("arr").toString())
+                    if (payType == SelectPayTypeView.WX_PAY) {
+                        val wxBean = Gson().fromJson(json.optJSONObject("result").toString(), WXPayBean::class.java)
+                        PayManager.wxPay(mContext, wxBean)
+                    } else {
+                        PayManager.aliPay(mContext, handle, json.optString("result"))
+                    }
+                }
             }
-            0x4->{
+            0x4 -> { //收货
                 if (json != null) {
                     OrderPresent.notifyRefreshOrderList()
                     OrderPresent.notifyRefreshOrderNum()
@@ -117,8 +164,9 @@ class OrderInfoFragment : BaseNetWorkingFragment() {
                         contentView.setShowConfirmView(View.VISIBLE)
                         contentView.setOnConfirmClickListener {
                             bottomPayDialog!!.dismiss()
+                            payType = contentView.payType
                             mPresent.getDataByPost(0x2, RequestParamsHelper.ORDER_MODEL, RequestParamsHelper.ACT_PAY,
-                                    RequestParamsHelper.getPayParam(orderInfo!!.order_id, orderInfo!!.product_id, contentView.payType))
+                                    RequestParamsHelper.getPayParam(orderInfo!!.order_id, orderInfo!!.product_id, payType))
                         }
                         bottomPayDialog!!.setContentView(contentView)
                     } else {
@@ -172,18 +220,31 @@ class OrderInfoFragment : BaseNetWorkingFragment() {
                 }
                 resources.getString(R.string.order_status_dpj_str)
             }
-            OrderPresent.OrderStatus.STATUS_OF_FINISH -> {
+            OrderPresent.OrderStatus.STATUS_OF_SQTK -> {
+                mBtOrderInfoAction1.visibility = View.GONE
+                mBtOrderInfoAction2.visibility = View.GONE
                 mTvOrderInfoTopState.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.img_pic_goods_info_success, 0)
-                resources.getString(R.string.order_status_dfinish_str)
+                resources.getString(R.string.order_status_tkz_str)
             }
             OrderPresent.OrderStatus.STATUS_OF_CANCEL -> {
+                mBtOrderInfoAction1.visibility = View.GONE
+                mBtOrderInfoAction2.visibility = View.GONE
                 resources.getString(R.string.order_status_dcancel_str)
             }
             OrderPresent.OrderStatus.STATUS_OF_BACK -> {
+                mBtOrderInfoAction1.visibility = View.GONE
+                mBtOrderInfoAction2.visibility = View.GONE
                 resources.getString(R.string.order_status_dback_str)
             }
+            OrderPresent.OrderStatus.STATUS_OF_YPJ -> {
+                mBtOrderInfoAction1.visibility = View.GONE
+                mBtOrderInfoAction2.visibility = View.GONE
+                resources.getString(R.string.order_status_ypj_str)
+            }
             else -> {
-                "已退款"
+                mBtOrderInfoAction1.visibility = View.GONE
+                mBtOrderInfoAction2.visibility = View.GONE
+                ""
             }
         }
         mTvShoppingCarItemEditMode.text = mTvOrderInfoTopState.text
@@ -226,12 +287,12 @@ class OrderInfoFragment : BaseNetWorkingFragment() {
             mTvOrderInfoDetailOrderFTime.text = "付款时间：${orderInfo!!.order_ftime}"
         }
 
-        if (TextUtils.isEmpty(orderInfo!!.order_ftime) || "null" == orderInfo!!.order_htime) {
+        if (TextUtils.isEmpty(orderInfo!!.order_htime) || "null" == orderInfo!!.order_htime) {
             mTvOrderInfoDetailOrderHTime.visibility = View.GONE
         } else {
             mTvOrderInfoDetailOrderHTime.text = "发货时间：${orderInfo!!.order_htime}"
         }
-        if (TextUtils.isEmpty(orderInfo!!.order_ftime) || "null" == orderInfo!!.order_fintime) {
+        if (TextUtils.isEmpty(orderInfo!!.order_fintime) || "null" == orderInfo!!.order_fintime) {
             mTvOrderInfoDetailOrderFinTime.visibility = View.GONE
         } else {
             mTvOrderInfoDetailOrderFinTime.text = "完成时间：${orderInfo!!.order_fintime}"
@@ -241,14 +302,9 @@ class OrderInfoFragment : BaseNetWorkingFragment() {
             clipBoardManager.text = orderInfo!!.order_sn
             toast("复制成功")
         }
-        mLlOrderInfoDetailGoodsContainer.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString(CutGoodsInfoFragment.GOODS_ID_FLAG, orderInfo!!.product_id)
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, TeamCutItemInfoFragment::class.java)
-        }
     }
 
-    class OrderInfoBean : MyOrderBean(){
+    class OrderInfoBean : MyOrderBean() {
         lateinit var address_name: String
         lateinit var address_phone: String
         lateinit var address_addres: String

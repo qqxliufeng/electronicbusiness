@@ -13,6 +13,7 @@ import com.android.ql.lf.electronicbusiness.data.ShoppingCarItemBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.ShoppingCarItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.AllPersonalCutItemFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SubmitNewOrderFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SubmitOrderFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
@@ -50,7 +51,7 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
     override fun initView(view: View?) {
         super.initView(view)
         subscription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
-            if (it.isRefresh && it.any == REFRESH_SHOPPING_CAR_FLAG){
+            if (it.isRefresh && it.any == REFRESH_SHOPPING_CAR_FLAG) {
                 onPostRefresh()
             }
         }
@@ -73,6 +74,10 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
             val bundle = Bundle()
             bundle.putParcelableArrayList(SubmitNewOrderFragment.GOODS_ID_FLAG, selectedList)
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "确认订单", true, false, bundle, SubmitNewOrderFragment::class.java)
+        }
+        mBtShoppingCarEmpty.setOnClickListener {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "个人砍商品", true, false, AllPersonalCutItemFragment::class.java)
+            finish()
         }
     }
 
@@ -172,7 +177,7 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                 mBaseAdapter.notifyItemChanged(position)
 
                 var money = 0.00f
-                mCivShoppingCarAllSelect.isChecked  = mArrayList.filter { it.isSelector }.size == mArrayList.size
+                mCivShoppingCarAllSelect.isChecked = mArrayList.filter { it.isSelector }.size == mArrayList.size
                 money = calculatePrice(money)
                 mCalculate.isEnabled = money != 0.00f
                 mTvShoppingCarAllSelectMoney.text = "￥${DecimalFormat("0.00").format(money)}"

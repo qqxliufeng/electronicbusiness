@@ -198,12 +198,12 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
     private fun showBottomParamDialog() {
         if (bottomParamDialog == null) {
             bottomParamDialog = BottomGoodsParamDialog(mContext)
-            bottomParamDialog!!.setOnGoodsConfirmClickListener { specification, num ->
+            bottomParamDialog!!.setOnGoodsConfirmClickListener { specification, selectPic, num ->
                 if (bottomDialogActionType == 0) {
                     mPresent.getDataByPost(0x3,
                             RequestParamsHelper.MEMBER_MODEL,
                             RequestParamsHelper.ACT_ADD_SHOPCART,
-                            RequestParamsHelper.getAddShopCartParam(cutInfoBean!!.result.detail.product_id, specification, num))
+                            RequestParamsHelper.getAddShopCartParam(cutInfoBean!!.result.detail.product_id, selectPic+","+specification, num))
                 } else if (bottomDialogActionType == 1) {
                     val shoppingCarItem = ShoppingCarItemBean()
                     shoppingCarItem.shopcart_mdprice = cutInfoBean!!.result.detail.product_mdprice
@@ -213,7 +213,11 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
                     shoppingCarItem.shopcart_gid = cutInfoBean!!.result.detail.product_id
                     shoppingCarItem.shopcart_id = ""
                     shoppingCarItem.shopcart_ktype = cutInfoBean!!.result.detail.product_ktype
-                    shoppingCarItem.shopcart_pic = cutInfoBean!!.result.detail.product_pic as ArrayList<String>
+                    if (TextUtils.isEmpty(selectPic)) {
+                        shoppingCarItem.shopcart_pic = cutInfoBean!!.result.detail.product_pic as ArrayList<String>
+                    } else {
+                        shoppingCarItem.shopcart_pic = arrayListOf(selectPic)
+                    }
                     shoppingCarItem.shopcart_specification = specification
                     val bundle = Bundle()
                     bundle.putParcelableArrayList(SubmitNewOrderFragment.GOODS_ID_FLAG, arrayListOf(shoppingCarItem))

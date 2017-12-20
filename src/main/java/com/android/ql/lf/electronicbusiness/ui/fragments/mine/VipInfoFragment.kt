@@ -24,9 +24,9 @@ import com.android.ql.lf.electronicbusiness.ui.views.SelectPayTypeView
 import com.android.ql.lf.electronicbusiness.ui.views.VipPayTypeView
 import com.android.ql.lf.electronicbusiness.utils.*
 import com.google.gson.Gson
-import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.fragment_vip_info_layout.*
 import org.jetbrains.anko.support.v4.toast
+import org.json.JSONObject
 
 /**
  * Created by lf on 2017/11/4 0004.
@@ -39,6 +39,8 @@ class VipInfoFragment : BaseNetWorkingFragment() {
     private var vipPaySelectTimeViewList = arrayListOf<VipPayTypeView>()
 
     private var currentVipPayTimeBean: VipSelectPayTimeBean? = null
+
+    private var isRefreshStatus = false
 
     private val handle = @SuppressLint("HandlerLeak")
     object : Handler() {
@@ -58,13 +60,27 @@ class VipInfoFragment : BaseNetWorkingFragment() {
                         bundle.putInt(PayResultFragment.PAY_CODE_FLAG, PayResultFragment.PAY_FAIL_CODE)
                     }
                     FragmentContainerActivity.startFragmentContainerActivity(mContext, "支付结果", true, false, bundle, PayResultFragment::class.java)
-                    finish()
                 }
             }
         }
     }
 
     override fun initView(view: View?) {
+        setUserInfo()
+        mTvVipInfoPay.setOnClickListener {
+            if (currentVipPayTimeBean == null) {
+                toast("请先选择一种VIP时间类型")
+                return@setOnClickListener
+            }
+            mNSVVipInfoContainer.fullScroll(NestedScrollView.FOCUS_DOWN)
+            mPresent.getDataByPost(0x0,
+                    RequestParamsHelper.MEMBER_MODEL,
+                    RequestParamsHelper.ACT_BBS,
+                    RequestParamsHelper.getBBSParam(mSptvContainer.payType, currentVipPayTimeBean!!.m_p_price))
+        }
+    }
+
+    private fun setUserInfo() {
         GlideManager.loadFaceCircleImage(mContext, UserInfo.getInstance().memberPic, mVipFace)
         mVipName.text = UserInfo.getInstance().memberName
         mVipTime.movementMethod = LinkMovementMethod.getInstance()
@@ -85,15 +101,13 @@ class VipInfoFragment : BaseNetWorkingFragment() {
             }
         }, spanStr.indexOf("立"), spanStr.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
         mVipTime.text = spanStr
-        mTvVipInfoPay.setOnClickListener {
-            if (currentVipPayTimeBean == null) {
-                toast("请先选择一种VIP时间类型")
-                return@setOnClickListener
-            }
-            mPresent.getDataByPost(0x0,
-                    RequestParamsHelper.MEMBER_MODEL,
-                    RequestParamsHelper.ACT_BBS,
-                    RequestParamsHelper.getBBSParam(mSptvContainer.payType, currentVipPayTimeBean!!.m_p_price))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isRefreshStatus) {
+            isRefreshStatus = false
+            mPresent.getDataByPost(0x2, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_MEMBERVIP, RequestParamsHelper.getMemberVipParams())
         }
     }
 
@@ -104,8 +118,10 @@ class VipInfoFragment : BaseNetWorkingFragment() {
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
-        progressDialog = MyProgressDialog(context, if (requestID == 0x0) "正在支付……" else "正在加载……")
-        progressDialog.show()
+        if (requestID != 0x2) {
+            progressDialog = MyProgressDialog(context, if (requestID == 0x0) "正在支付……" else "正在加载……")
+            progressDialog.show()
+        }
     }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
@@ -113,6 +129,7 @@ class VipInfoFragment : BaseNetWorkingFragment() {
         val json = checkResultCode(result)
         if (requestID == 0x0) {
             if (json != null) {
+                isRefreshStatus = true
                 PreferenceUtils.setPrefString(mContext, PayResultFragment.PAY_ORDER_RESULT_JSON_FLAG, "")
                 if (mSptvContainer.payType == SelectPayTypeView.WX_PAY) {
                     val wxBean = Gson().fromJson(json.optJSONObject("result").toString(), WXPayBean::class.java)
@@ -143,6 +160,27 @@ class VipInfoFragment : BaseNetWorkingFragment() {
                     }
                 }
             }
+        }else if(requestID == 0x2){
+            if (json!=null){
+                parseUserInfo(json.optJSONObject("result"))
+                setUserInfo()
+            }
         }
+    }
+
+
+    private fun parseUserInfo(userJson: JSONObject?) {
+        UserInfo.getInstance().memberId = userJson!!.optString("member_id")
+        UserInfo.getInstance().memberName = userJson.optString("member_name")
+        UserInfo.getInstance().memberPhone = userJson.optString("member_phone")
+        UserInfo.getInstance().memberRank = userJson.optString("member_rank")
+        UserInfo.getInstance().memberSex = userJson.optString("member_sex")
+        UserInfo.getInstance().memberMtime = userJson.optString("member_mtime")
+        UserInfo.getInstance().memberIntegral = userJson.optString("member_integral")
+        UserInfo.getInstance().memberForm = userJson.optString("member_form")
+        UserInfo.getInstance().memberAddress = userJson.optString("member_address")
+        UserInfo.getInstance().memberPic = userJson.optString("member_pic")
+        UserInfo.getInstance().member_hxname = userJson.optString("member_hxname")
+        UserInfo.getInstance().member_hxpw = userJson.optString("member_hxpw")
     }
 }

@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Html
 import android.text.TextPaint
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -62,7 +63,7 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
     //0加入购物车  1立即购买
     private var currentMode = 0
 
-    private var vipGoodsInfoBean:VipGoodsInfoBean? = null
+    private var vipGoodsInfoBean: VipGoodsInfoBean? = null
 
 
     override fun getLayoutId() = R.layout.vip_privilege_item_info_layout
@@ -118,7 +119,7 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
         val json = checkResultCode(result)
         if (requestID == 0x0) {
             if (json != null) {
-                vipGoodsInfoBean = Gson().fromJson(json.toString(),VipGoodsInfoBean::class.java)
+                vipGoodsInfoBean = Gson().fromJson(json.toString(), VipGoodsInfoBean::class.java)
                 loadComment()
                 goodsId = vipGoodsInfoBean!!.result.detail.product_id
                 tv_sell.text = "${vipGoodsInfoBean!!.result.detail.product_sv}人购买"
@@ -221,10 +222,11 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                     tv_release_count.text.toString(),
                     tv_goods_name.text.toString(),
                     defaultPicPath, specifications)
-            bottomParamDialog!!.setOnGoodsConfirmClickListener { specification, num ->
+            bottomParamDialog!!.setOnGoodsConfirmClickListener { specification, selectPic, num ->
                 if (currentMode == 0) { //加入购物车
-                    mPresent.getDataByPost(0x1, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_ADD_SHOPCART, RequestParamsHelper.getAddShopCartParam(goodsId!!, specification, num))
-                }else{ // 立即购买
+                    mPresent.getDataByPost(0x1, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_ADD_SHOPCART,
+                            RequestParamsHelper.getAddShopCartParam(goodsId!!, selectPic + "," + specification, num))
+                } else { // 立即购买
                     val shoppingCarItem = ShoppingCarItemBean()
                     shoppingCarItem.shopcart_mdprice = vipGoodsInfoBean!!.result.detail.product_mdprice
                     shoppingCarItem.shopcart_num = num
@@ -233,7 +235,11 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                     shoppingCarItem.shopcart_gid = vipGoodsInfoBean!!.result.detail.product_id
                     shoppingCarItem.shopcart_id = ""
                     shoppingCarItem.shopcart_ktype = vipGoodsInfoBean!!.result.detail.product_ktype
-                    shoppingCarItem.shopcart_pic = vipGoodsInfoBean!!.result.detail.product_pic
+                    if (TextUtils.isEmpty(selectPic)) {
+                        shoppingCarItem.shopcart_pic = vipGoodsInfoBean!!.result.detail.product_pic
+                    } else {
+                        shoppingCarItem.shopcart_pic = arrayListOf(selectPic)
+                    }
                     shoppingCarItem.shopcart_specification = specification
                     val bundle = Bundle()
                     bundle.putParcelableArrayList(SubmitNewOrderFragment.GOODS_ID_FLAG, arrayListOf(shoppingCarItem))

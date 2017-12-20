@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.android.ql.lf.electronicbusiness.R;
 import com.android.ql.lf.electronicbusiness.data.RefreshData;
 import com.android.ql.lf.electronicbusiness.data.SelectImageItemBean;
+import com.android.ql.lf.electronicbusiness.data.UserInfo;
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity;
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment;
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog;
@@ -155,6 +156,7 @@ public class ReplyQuestionFragment extends BaseNetWorkingFragment {
         super.onRequestSuccess(requestID, result);
         JSONObject json = checkResultCode(result);
         if (json != null) {
+            UserInfo.getInstance().setMemberIntegral(json.optString("arr"));
             Toast.makeText(mContext, "回复成功", Toast.LENGTH_SHORT).show();
             RefreshData.INSTANCE.setRefresh(true);
             RefreshData.INSTANCE.setAny("回复成功");

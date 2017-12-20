@@ -42,6 +42,7 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
     private lateinit var contentAdapter: ContentAdapter
 
     override fun initView(view: View?) {
+        mRlSearchAndClassifySearchContainer.visibility = View.GONE
         val gridLayoutManager = GridLayoutManager(mContext, 3)
         mRcContent.layoutManager = gridLayoutManager
         contentAdapter = ContentAdapter(R.layout.adapter_search_and_classify_content_item_layout,

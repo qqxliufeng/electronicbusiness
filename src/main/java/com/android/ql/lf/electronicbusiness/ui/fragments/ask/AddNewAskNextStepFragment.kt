@@ -11,6 +11,7 @@ import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.RefreshData
 import com.android.ql.lf.electronicbusiness.data.SelectImageItemBean
 import com.android.ql.lf.electronicbusiness.data.TagBean
+import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.AddNewAskTagsAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
@@ -144,6 +145,7 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
                     override fun onActionFailed() {
                         toast("上传失败，请稍后重试！")
                     }
+
                     override fun onActionStart() {
                         progressDialog = MyProgressDialog(mContext, "正在上传……")
                         progressDialog.show()
@@ -184,7 +186,7 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
             if (data != null) {
                 val list = data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS) as ArrayList<ImageItem>
                 list.forEach {
-                    imageList.add(SelectImageItemBean(it.path,0))
+                    imageList.add(SelectImageItemBean(it.path, 0))
                 }
                 if (imageListFile == null) {
                     imageListFile = ArrayList()
@@ -208,6 +210,7 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
         if (json != null) {
+            UserInfo.getInstance().memberIntegral = json.optString("arr")
             toast("提问成功")
             RefreshData.isRefresh = true
             RefreshData.any = "提问问题"

@@ -55,7 +55,7 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
     private lateinit var loginSubscription: Subscription
     private lateinit var refreshSubscription: Subscription
 
-    private lateinit var currentItem:IndexAskInfoBean
+    private lateinit var currentItem: IndexAskInfoBean
 
     private var currentTag: TagBean? = null
 
@@ -180,7 +180,7 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
                 tempList.clear()
                 Collections.sort(list) { o1, o2 -> o1!!.tag_sort.toInt().compareTo(o2!!.tag_sort.toInt()) }
                 val lastTag = TagBean()
-                lastTag.tag_title = "………"
+                lastTag.tag_title = "更多"
                 list.add(lastTag)
                 tagList.addAll(list)
                 topRvAdapter.notifyDataSetChanged()

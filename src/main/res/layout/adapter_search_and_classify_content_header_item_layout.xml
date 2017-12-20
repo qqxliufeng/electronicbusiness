@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="#fff"
     android:gravity="center"
+    android:textStyle="bold"
     android:orientation="vertical"
     android:paddingBottom="@dimen/dp_10"
     android:paddingTop="@dimen/dp_10" />

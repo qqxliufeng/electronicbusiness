@@ -1,8 +1,11 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.support.design.widget.BottomSheetDialog
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -17,17 +20,19 @@ import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.MyOrderBean
 import com.android.ql.lf.electronicbusiness.data.RefreshData
+import com.android.ql.lf.electronicbusiness.data.WXPayBean
 import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.OrderListItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.ExpressInfoFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.PayResultFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.ui.views.SelectPayTypeView
-import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
-import com.android.ql.lf.electronicbusiness.utils.RxBus
+import com.android.ql.lf.electronicbusiness.utils.*
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.google.gson.Gson
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 
@@ -51,6 +56,33 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
         OrderPresent(mPresent)
     }
 
+    private var payType: String = SelectPayTypeView.WX_PAY
+
+
+    private val handle = @SuppressLint("HandlerLeak")
+    object : Handler() {
+        override fun handleMessage(msg: Message?) {
+            super.handleMessage(msg)
+            when (msg!!.what) {
+                PayManager.SDK_PAY_FLAG -> {
+                    val payResult = PayResult(msg.obj as Map<String, String>)
+                    val resultInfo = payResult.result// 同步返回需要验证的信息
+                    val resultStatus = payResult.resultStatus
+                    val bundle = Bundle()
+                    if (TextUtils.equals(resultStatus, "9000")) {
+                        //支付成功
+                        bundle.putInt(PayResultFragment.PAY_CODE_FLAG, PayResultFragment.PAY_SUCCESS_CODE)
+                    } else {
+                        //支付失败
+                        bundle.putInt(PayResultFragment.PAY_CODE_FLAG, PayResultFragment.PAY_FAIL_CODE)
+                    }
+                    OrderPresent.notifyRefreshOrderNum()
+                    FragmentContainerActivity.startFragmentContainerActivity(mContext, "支付结果", true, false, bundle, PayResultFragment::class.java)
+                }
+            }
+        }
+    }
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         setHasOptionsMenu(true)
@@ -61,6 +93,9 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
         subscription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
             if (it.isRefresh && it.any == REFRESH_ORDER_FLAG) {
                 OrderPresent.notifyRefreshOrderNum()
+                onPostRefresh()
+            }
+            if (it.isRefresh && it.any == "支付成功") {
                 onPostRefresh()
             }
         }
@@ -130,6 +165,11 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
             progressDialog.show()
         }
 
+        if (requestID == 0x2){
+            progressDialog = MyProgressDialog(mContext, "正在支付……")
+            progressDialog.show()
+        }
+
         if (requestID == 0x3) {
             super.onRefresh()
             mSwipeRefreshLayout.post { mSwipeRefreshLayout.isRefreshing = true }
@@ -158,6 +198,16 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
                 }
             }
             0x2 -> { //付款
+                if (json!=null) {
+                    OrderPresent.notifyRefreshShoppingCarList()
+                    PreferenceUtils.setPrefString(mContext, PayResultFragment.PAY_ORDER_RESULT_JSON_FLAG, json.optJSONObject("arr").toString())
+                    if (payType == SelectPayTypeView.WX_PAY) {
+                        val wxBean = Gson().fromJson(json.optJSONObject("result").toString(), WXPayBean::class.java)
+                        PayManager.wxPay(mContext, wxBean)
+                    } else {
+                        PayManager.aliPay(mContext, handle, json.optString("result"))
+                    }
+                }
             }
             0x4 -> { //确认收货
                 if (json != null) {
@@ -188,20 +238,10 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
                     orderPresent.cancelOrder(0x1, currentOrder.order_id)
                 }.setNegativeButton("不了", null).create().show()
             }
-            OrderPresent.OrderStatus.STATUS_OF_DFH -> {
-            }
             OrderPresent.OrderStatus.STATUS_OF_DSH -> {
                 if (!TextUtils.isEmpty(currentOrder.order_tn)) {
                     FragmentContainerActivity.startFragmentContainerActivity(mContext, "快递信息", true, false, bundleOf(Pair(ExpressInfoFragment.ORDER_BEAN_FLAG, currentOrder)), ExpressInfoFragment::class.java)
                 }
-            }
-            OrderPresent.OrderStatus.STATUS_OF_DPJ -> {
-            }
-            OrderPresent.OrderStatus.STATUS_OF_FINISH -> {
-            }
-            OrderPresent.OrderStatus.STATUS_OF_CANCEL -> {
-            }
-            OrderPresent.OrderStatus.STATUS_OF_BACK -> {
             }
             else -> {
             }
@@ -218,8 +258,9 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
                     contentView.setShowConfirmView(View.VISIBLE)
                     contentView.setOnConfirmClickListener {
                         bottomPayDialog!!.dismiss()
+                        payType = contentView.payType
                         mPresent.getDataByPost(0x2, RequestParamsHelper.ORDER_MODEL, RequestParamsHelper.ACT_PAY,
-                                RequestParamsHelper.getPayParam(currentOrder.order_id, currentOrder.product_id, contentView.payType))
+                                RequestParamsHelper.getPayParam(currentOrder.order_id, currentOrder.product_id, payType))
                     }
                     bottomPayDialog!!.setContentView(contentView)
                 } else {
@@ -240,19 +281,6 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
                         bundleOf(Pair(OrderCommentSubmitFragment.ORDER_ID_FLAG, currentOrder.order_id),
                                 Pair(OrderCommentSubmitFragment.PRODUCT_ID_FLAG, currentOrder.product_id)),
                         OrderCommentSubmitFragment::class.java)
-            }
-            OrderPresent.OrderStatus.STATUS_OF_FINISH -> {
-                FragmentContainerActivity.startFragmentContainerActivity(mContext,
-                        "商品评价",
-                        true,
-                        false,
-                        bundleOf(Pair(OrderCommentSubmitFragment.ORDER_ID_FLAG, currentOrder.order_id),
-                                Pair(OrderCommentSubmitFragment.PRODUCT_ID_FLAG, currentOrder.product_id)),
-                        OrderCommentSubmitFragment::class.java)
-            }
-            OrderPresent.OrderStatus.STATUS_OF_CANCEL -> {
-            }
-            OrderPresent.OrderStatus.STATUS_OF_BACK -> {
             }
             else -> {
             }

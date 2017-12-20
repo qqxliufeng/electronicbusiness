@@ -71,19 +71,30 @@ class OrderListItemAdapter(layoutId: Int, list: ArrayList<MyOrderBean>) : BaseQu
                 tv_action2.text = "去评价"
                 "待评价"
             }
-            OrderPresent.OrderStatus.STATUS_OF_FINISH -> {
+            OrderPresent.OrderStatus.STATUS_OF_SQTK -> {
                 tv_action1.visibility = View.GONE
                 tv_action2.visibility = View.GONE
-                "完成"
+                "退款中……"
             }
             OrderPresent.OrderStatus.STATUS_OF_CANCEL -> {
+                tv_action1.visibility = View.GONE
+                tv_action2.visibility = View.GONE
                 "已取消"
             }
             OrderPresent.OrderStatus.STATUS_OF_BACK -> {
+                tv_action1.visibility = View.GONE
+                tv_action2.visibility = View.GONE
                 "已退款"
             }
+            OrderPresent.OrderStatus.STATUS_OF_YPJ -> {
+                tv_action1.visibility = View.GONE
+                tv_action2.visibility = View.GONE
+                "已评价"
+            }
             else -> {
-                "已退款"
+                tv_action1.visibility = View.GONE
+                tv_action2.visibility = View.GONE
+                ""
             }
         })
     }

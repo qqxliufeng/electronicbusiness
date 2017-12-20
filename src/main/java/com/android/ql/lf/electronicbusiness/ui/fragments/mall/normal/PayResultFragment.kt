@@ -10,9 +10,7 @@ import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.CreateOrderSuccessBean
 import com.android.ql.lf.electronicbusiness.present.OrderPresent
-import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mine.OrderInfoFragment
 import com.android.ql.lf.electronicbusiness.utils.PreferenceUtils
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_pay_result_layout.*
@@ -48,6 +46,7 @@ class PayResultFragment : BaseFragment() {
             OrderPresent.notifyRefreshOrderNum()
             when (arguments.getInt(PAY_CODE_FLAG)) {
                 PAY_SUCCESS_CODE -> {
+                    OrderPresent.notifyPaySuccess()
                     mLlPayResultOrderInfoContainer.visibility = View.GONE
                     mTvPayResultTitle.text = "支付成功"
                     mBtBack.text = "立即返回"

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/mRlSearchAndClassifySearchContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#F5F5F5"
@@ -49,15 +49,15 @@
             android:id="@+id/mRcMenu"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="#F5F5F5"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="#F5F5F5" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/mRcContent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="#fff"
-            android:layout_weight="3" />
+            android:layout_weight="3"
+            android:background="#fff" />
 
 
     </LinearLayout>

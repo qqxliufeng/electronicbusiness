@@ -37,6 +37,8 @@ public class BottomGoodsParamDialog extends BottomSheetDialog {
     private LinearLayout llContainer;
     private ImageView iv_goods_pic;
 
+    private String selectPic;
+
     private OnGoodsConfirmClickListener onGoodsConfirmClickListener;
 
     private ArrayList<SpecificationBean> mSpecificationList = null;
@@ -86,7 +88,7 @@ public class BottomGoodsParamDialog extends BottomSheetDialog {
                         }
                     }
                     stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                    onGoodsConfirmClickListener.onGoodsConfirmClick(stringBuilder.toString(), tv_goods_num.getText().toString());
+                    onGoodsConfirmClickListener.onGoodsConfirmClick(stringBuilder.toString(), selectPic, tv_goods_num.getText().toString());
                     dismiss();
                 }
             }
@@ -116,6 +118,7 @@ public class BottomGoodsParamDialog extends BottomSheetDialog {
         tv_price.setText(price);
         tv_release_count.setText(releaseCount);
         tv_goods_name.setText(goodsName);
+        selectPic = defaultPicPath;
         GlideManager.loadRoundImage(getContext(), defaultPicPath, iv_goods_pic, 15);
         if (items != null && !items.isEmpty()) {
             mSpecificationList = items;
@@ -134,6 +137,7 @@ public class BottomGoodsParamDialog extends BottomSheetDialog {
                         if (pic != null && !pic.isEmpty()) {
                             String path = pic.get(index);
                             if (!TextUtils.isEmpty(path)) {
+                                selectPic = path;
                                 GlideManager.loadRoundImage(getContext(), path, iv_goods_pic, 15);
                             }
                         }
@@ -146,7 +150,7 @@ public class BottomGoodsParamDialog extends BottomSheetDialog {
 
 
     public interface OnGoodsConfirmClickListener {
-        public void onGoodsConfirmClick(String specification, String num);
+        public void onGoodsConfirmClick(String specification, String picPath, String num);
     }
 
 }

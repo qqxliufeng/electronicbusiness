@@ -7,6 +7,8 @@ import android.view.MenuItem
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.AddressBean
+import com.android.ql.lf.electronicbusiness.data.RefreshData
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.AddressSelectListItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
@@ -32,6 +34,15 @@ class AddressSelectFragment : BaseRecyclerViewFragment<AddressBean>() {
         inflater?.inflate(R.menu.add_new_address_menu, menu)
     }
 
+    override fun initView(view: View?) {
+        super.initView(view)
+        subscription = RxBus.getDefault().toObservable(RefreshData::class.java).subscribe {
+            if (it.isRefresh && it.any is String && "添加地址" == it.any) {
+                onPostRefresh()
+            }
+        }
+    }
+
     override fun onRefresh() {
         super.onRefresh()
         mPresent.getDataByPost(0x0,
@@ -42,6 +53,7 @@ class AddressSelectFragment : BaseRecyclerViewFragment<AddressBean>() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.mMenuAddNewAddress) {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext,"新增地址",true,false,AddNewAddressFragment::class.java)
         }
         return super.onOptionsItemSelected(item)
     }

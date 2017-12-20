@@ -16,15 +16,16 @@ import com.android.ql.lf.electronicbusiness.utils.RxBus;
 
 public class OrderPresent {
 
-    // 0 待付款 1 待发货 2 待收货 3 待评价 4 完成 5 已取消 6 已退款
+    //0 待付款  1 待发货  2 已发货/待收货 3 已收货/待评价 4 取消订单 5 申请退款  6 已退款  7 已评价/订单完成
     public static class OrderStatus {
         public static int STATUS_OF_DFK = 0;
         public static int STATUS_OF_DFH = 1;
         public static int STATUS_OF_DSH = 2;
         public static int STATUS_OF_DPJ = 3;
-        public static int STATUS_OF_FINISH = 4;
-        public static int STATUS_OF_CANCEL = 5;
+        public static int STATUS_OF_CANCEL = 4;
+        public static int STATUS_OF_SQTK = 5;
         public static int STATUS_OF_BACK = 6;
+        public static int STATUS_OF_YPJ = 7;
     }
 
     // "1" 个人砍  "2" 团体砍 "3" 会员专享
@@ -134,6 +135,13 @@ public class OrderPresent {
         RxBus.getDefault().post(RefreshData.INSTANCE);
     }
 
+    public static void notifyPaySuccess() {
+        RefreshData refreshData = RefreshData.INSTANCE;
+        refreshData.setRefresh(true);
+        refreshData.setAny("支付成功");
+        RxBus.getDefault().post(RefreshData.INSTANCE);
+    }
+
 
     /**
      * 通知刷新购物车列表
@@ -166,13 +174,16 @@ public class OrderPresent {
                 return OrderStatus.STATUS_OF_DPJ;
             }
             case "4": {
-                return OrderStatus.STATUS_OF_FINISH;
+                return OrderStatus.STATUS_OF_CANCEL;
             }
             case "5": {
-                return OrderStatus.STATUS_OF_CANCEL;
+                return OrderStatus.STATUS_OF_SQTK;
             }
             case "6": {
                 return OrderStatus.STATUS_OF_BACK;
+            }
+            case "7": {
+                return OrderStatus.STATUS_OF_YPJ;
             }
             default: {
                 return -1;

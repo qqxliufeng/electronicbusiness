@@ -127,11 +127,16 @@ public class UserInfo {
     }
 
     public String getMemberIntegral() {
+        if (TextUtils.isEmpty(memberIntegral)) {
+            return "0";
+        }
         return memberIntegral;
     }
 
     public void setMemberIntegral(String memberIntegral) {
-        this.memberIntegral = memberIntegral;
+        if (!TextUtils.isEmpty(memberIntegral)) {
+            this.memberIntegral = memberIntegral;
+        }
     }
 
 

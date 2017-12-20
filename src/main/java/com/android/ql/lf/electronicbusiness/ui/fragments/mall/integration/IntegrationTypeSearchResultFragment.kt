@@ -2,19 +2,22 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration
 
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.IMallGoodsItemBean
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.IntegrationMallItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
 import com.android.ql.lf.electronicbusiness.utils.DividerGridItemDecoration
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import org.jetbrains.anko.bundleOf
 
 /**
  * Created by liufeng on 2017/12/19.
  */
-class IntegrationTypeSearchResultFragment :BaseRecyclerViewFragment<IMallGoodsItemBean>(){
+class IntegrationTypeSearchResultFragment : BaseRecyclerViewFragment<IMallGoodsItemBean>() {
 
     companion object {
         val TYPE_PARAM_FLAG = "type_param_flag"
@@ -55,7 +58,18 @@ class IntegrationTypeSearchResultFragment :BaseRecyclerViewFragment<IMallGoodsIt
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
-        processList(checkResultCode(result),IMallGoodsItemBean::class.java)
+        processList(checkResultCode(result), IMallGoodsItemBean::class.java)
+    }
+
+
+    override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onMyItemClick(adapter, view, position)
+        FragmentContainerActivity.startFragmentContainerActivity(mContext,
+                "兑换详情",
+                true,
+                false,
+                bundleOf(Pair(IntegrationMallGoodsInfoFragment.GOODS_ID_FLAG, mArrayList[position].jproduct_id)),
+                IntegrationMallGoodsInfoFragment::class.java)
     }
 
 }

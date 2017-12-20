@@ -20,5 +20,7 @@
     <string name="order_status_dfinish_str">完成</string>
     <string name="order_status_dcancel_str">已取消</string>
     <string name="order_status_dback_str">已退款</string>
+    <string name="order_status_ypj_str">已评价</string>
+    <string name="order_status_tkz_str">退款中……</string>
 
 </resources>

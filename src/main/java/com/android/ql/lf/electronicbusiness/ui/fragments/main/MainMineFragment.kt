@@ -159,9 +159,6 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
             }
         }
-        mWaitingGoods.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "物流信息", true, false, ExpressInfoFragment::class.java)
-        }
         mIntegrationCountContainer.setOnClickListener {
             if (!UserInfo.getInstance().isLogin) {
                 UserInfo.getInstance().loginTag = UserInfo.DEFAULT_LOGIN_TAG
@@ -275,6 +272,17 @@ class MainMineFragment : BaseNetWorkingFragment() {
         loadUserInfo()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (UserInfo.getInstance().isLogin) {
+            //更新积分
+            mTvMainMineIntegration.text = UserInfo.getInstance().memberIntegral
+            mTvMainMineNickName.text = UserInfo.getInstance().memberName
+            //1 代表会员  0 代表非会员
+            mTvMainMineNickName.setCompoundDrawablesWithIntrinsicBounds(0, 0, if ("1" == UserInfo.getInstance().memberRank) R.drawable.img_icon_vip_s else 0, 0)
+        }
+    }
+
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
         if (requestID == 0x1) {
@@ -337,6 +345,11 @@ class MainMineFragment : BaseNetWorkingFragment() {
             0x1 -> {
                 if (json != null) {
                     toast(json.optString("msg"))
+                    val result = json.optString("result")
+                    if (!TextUtils.isEmpty(result)) {
+                        UserInfo.getInstance().memberIntegral = result
+                        mTvMainMineIntegration.text = UserInfo.getInstance().memberIntegral
+                    }
                 } else {
                     toast("签到失败，请稍后重试……")
                 }
@@ -362,7 +375,22 @@ class MainMineFragment : BaseNetWorkingFragment() {
             GlideManager.loadFaceCircleImage(mContext, Constants.BASE_IP + UserInfo.getInstance().memberPic, mIvMainMineFace)
             mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_PERSONAL, RequestParamsHelper.getPersonal())
         } else {
-            badge0?.hide(true)
+            if (badge0!=null){
+                badge0!!.hide(false)
+                badge0 = null
+            }
+            if (badge1!=null){
+                badge1!!.hide(false)
+                badge1 = null
+            }
+            if (badge2!=null){
+                badge2!!.hide(false)
+                badge2 = null
+            }
+            if (badge3!=null){
+                badge3!!.hide(false)
+                badge3 = null
+            }
             mIvMainMineFace.setImageResource(R.drawable.pic_headportrait)
         }
         mTvMainMineIntegration.text = if (UserInfo.getInstance().isLogin && !TextUtils.isEmpty(UserInfo.getInstance().memberIntegral) && "null" != UserInfo.getInstance().memberIntegral) UserInfo.getInstance().memberIntegral else "0"

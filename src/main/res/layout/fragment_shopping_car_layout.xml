@@ -23,6 +23,7 @@
             android:textColor="#A0A0A0" />
 
         <Button
+            android:id="@+id/mBtShoppingCarEmpty"
             android:layout_width="100dp"
             android:layout_height="30dp"
             android:layout_below="@+id/mEmptyShoppingCar"
