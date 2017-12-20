@@ -578,6 +578,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
      */
     private fun <T : Any?> onPersonalCutAction(json: JSONObject?, result: T) {
         if (json != null) {
+            UserInfo.getInstance().memberIntegral = json.optString("arr1")
             toast(json.optString("msg"))
             refreshPersonalDataToView(json)
         } else {
@@ -628,8 +629,8 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
     }
 
     private fun <T : Any?> onTeamCutAction(json: JSONObject?, result: T) {
-
         if (json != null) {
+            UserInfo.getInstance().memberIntegral = json.optString("arr1")
             toast(json.optString("msg"))
             refreshTeamDataToView(json)
         } else {

@@ -10,12 +10,21 @@ import java.util.List;
 
 public class MyCutPriceBean {
 
+    private String product_id;
     private String product_name;
     private String product_price;
     private String kprice_id;
-    private Object kprice_time;
+    private String kprice_time;
     private String kprice_uid;
     private List<String> product_pic;
+
+    public String getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
+    }
 
     public String getProduct_name() {
         return product_name;
@@ -45,7 +54,7 @@ public class MyCutPriceBean {
         return kprice_time;
     }
 
-    public void setKprice_time(Object kprice_time) {
+    public void setKprice_time(String kprice_time) {
         this.kprice_time = kprice_time;
     }
 

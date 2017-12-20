@@ -13,15 +13,14 @@ import com.android.ql.lf.electronicbusiness.data.ShoppingCarItemBean
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.ShoppingCarItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.AllPersonalCutItemFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SubmitNewOrderFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.SubmitOrderFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.*
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import kotlinx.android.synthetic.main.fragment_shopping_car_layout.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import java.text.DecimalFormat
 
@@ -208,6 +207,26 @@ class ShoppingCarFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                         RequestParamsHelper.ACT_UPDATE_SHOPCART,
                         RequestParamsHelper.getUpdateShopcart(currentItem.shopcart_id, (currentItem.shopcart_num.toInt() + 1).toString()))
             }
+        }
+    }
+
+    override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onMyItemClick(adapter, view, position)
+        val item = mArrayList[position]
+        if ("3" == item.shopcart_ktype) {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext,
+                    "商品详情",
+                    true,
+                    false,
+                    bundleOf(Pair(VipPrivilegeItemInfoFragment.GOODS_ID_FLAG, item.shopcart_gid)),
+                    VipPrivilegeItemInfoFragment::class.java)
+        }else{
+            FragmentContainerActivity.startFragmentContainerActivity(mContext,
+                    "商品详情",
+                    true,
+                    false,
+                    bundleOf(Pair(CutGoodsInfoFragment.GOODS_ID_FLAG, item.shopcart_gid)),
+                    CutGoodsInfoFragment::class.java)
         }
     }
 }
