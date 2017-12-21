@@ -74,6 +74,7 @@ class PersonalInfoFragment : BaseNetWorkingFragment() {
             val build = AlertDialog.Builder(mContext)
             build.setPositiveButton("退出") { _, _ ->
                 UserInfo.getInstance().loginOut()
+                UserInfo.getInstance().clearUserCache(mContext)
                 UserInfo.getInstance().loginTag = -1
                 ChatClient.getInstance().logout(true, null)
                 RxBus.getDefault().post(UserInfo.getInstance())

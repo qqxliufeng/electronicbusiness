@@ -3,6 +3,7 @@ package com.android.ql.lf.electronicbusiness.component;
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity;
 import com.android.ql.lf.electronicbusiness.ui.activities.MainActivity;
 import com.android.ql.lf.electronicbusiness.ui.activities.SelectAddressActivity;
+import com.android.ql.lf.electronicbusiness.ui.activities.SplashActivity;
 import com.android.ql.lf.electronicbusiness.ui.activities.TestActivity;
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment;
 
@@ -23,6 +24,6 @@ public interface ApiServerComponent {
 
     void inject(BaseNetWorkingFragment baseNetWorkingFragment);
 
-    void inject(TestActivity testActivity);
+    void inject(SplashActivity splashActivity);
 
 }

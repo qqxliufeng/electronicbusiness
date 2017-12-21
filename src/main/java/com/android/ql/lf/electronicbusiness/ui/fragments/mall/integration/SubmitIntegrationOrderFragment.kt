@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.fragment_integration_submit_order_layout.*
 import kotlinx.android.synthetic.main.layout_submit_new_order_header_layout.*
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
+import org.json.JSONObject
 
 /**
  * Created by lf on 2017/11/13 0013.
@@ -99,7 +100,10 @@ class SubmitIntegrationOrderFragment : BaseNetWorkingFragment() {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "兑换完成", true, false, bundleOf(Pair(IntegrationMallGoodsInfoFragment.GOODS_ID_FLAG, 0)), IntegrationPayResultFragment::class.java)
                 finish()
             } else {
-                exchangeFailed()
+                if (result != null) {
+                    val json1 = JSONObject(result.toString())
+                    exchangeFailed(json1.optString("msg"))
+                }
             }
         }
     }
@@ -107,12 +111,12 @@ class SubmitIntegrationOrderFragment : BaseNetWorkingFragment() {
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
         if (requestID == 0x1) {
-            exchangeFailed()
+            exchangeFailed("下单失败")
         }
     }
 
-    private fun exchangeFailed() {
-        toast("抱歉，兑换失败，请稍后重试……")
+    private fun exchangeFailed(json: String) {
+        toast(json)
         FragmentContainerActivity.startFragmentContainerActivity(mContext, "兑换完成", true, false, bundleOf(Pair(IntegrationMallGoodsInfoFragment.GOODS_ID_FLAG, 1)), IntegrationPayResultFragment::class.java)
         finish()
     }

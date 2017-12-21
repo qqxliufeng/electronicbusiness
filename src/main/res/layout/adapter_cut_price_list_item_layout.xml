@@ -16,8 +16,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:paddingBottom="@dimen/dp_10"
-        android:paddingTop="@dimen/dp_10">
+        android:padding="@dimen/dp_10">
 
         <TextView
             android:id="@+id/mTvCutPriceItemName"

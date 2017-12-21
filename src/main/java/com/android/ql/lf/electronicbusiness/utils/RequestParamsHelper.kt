@@ -117,6 +117,12 @@ class RequestParamsHelper {
 
         fun getPersonal() = getWithIdParams()
 
+        fun getPersonalParam(uid: String): ApiParams {
+            val param = getBaseParams()
+            param.addParam("uid", uid)
+            return param
+        }
+
         fun getEditPersonalParams(nickName: String): ApiParams {
             val params = getWithIdParams()
             params.addParam("account", nickName.replaceBlank())
@@ -314,6 +320,15 @@ class RequestParamsHelper {
         val ACT_MEMBERVIP = "membervip"
 
         fun getMemberVipParams(): ApiParams = getWithIdParams()
+
+        //改变消息状态
+        val ACT_EDIT_MYMSG_STATUS = "edit_mymsg_status"
+
+        fun getEdit_mymsg_status(mid: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("mid", mid)
+            return param
+        }
 
         /**              member model  end           **/
 

@@ -10,8 +10,21 @@ import android.support.v7.app.AlertDialog;
 import android.widget.ImageView;
 
 import com.android.ql.lf.electronicbusiness.R;
+import com.android.ql.lf.electronicbusiness.application.EBApplication;
+import com.android.ql.lf.electronicbusiness.component.ApiServerModule;
+import com.android.ql.lf.electronicbusiness.component.DaggerApiServerComponent;
+import com.android.ql.lf.electronicbusiness.data.UserInfo;
+import com.android.ql.lf.electronicbusiness.present.GetDataFromNetPresent;
+import com.android.ql.lf.electronicbusiness.utils.PreferenceUtils;
+import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -43,6 +56,9 @@ public class SplashActivity extends BaseActivity implements EasyPermissions.Perm
     @BindView(R.id.mIvSplash)
     ImageView iv_splash;
 
+    @Inject
+    GetDataFromNetPresent mPresent;
+
     @Override
     public int getLayoutId() {
         return R.layout.activity_splash_layout;
@@ -50,6 +66,8 @@ public class SplashActivity extends BaseActivity implements EasyPermissions.Perm
 
     @Override
     public void initView() {
+        DaggerApiServerComponent.builder().apiServerModule(new ApiServerModule()).appComponent(EBApplication.getInstance().getAppComponent()).build().inject(this);
+        mPresent.setNetDataPresenter(this);
         if (hasPermissions()) {
             iv_splash.postDelayed(new Runnable() {
                 @Override
@@ -120,6 +138,39 @@ public class SplashActivity extends BaseActivity implements EasyPermissions.Perm
      * 所有有权限都已经请求到了，直接进入到主页面
      */
     private void startMainActivity() {
+        if (UserInfo.isCacheUserId(this)) {
+            mPresent.getDataByPost(0x0,
+                    RequestParamsHelper.Companion.getMEMBER_MODEL(),
+                    RequestParamsHelper.Companion.getACT_PERSONAL(),
+                    RequestParamsHelper.Companion.getPersonalParam(UserInfo.getUserIdFromCache(this)));
+        } else {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
+    }
+
+    @Override
+    public <T> void onRequestSuccess(int requestID, T result) {
+        super.onRequestSuccess(requestID, result);
+        try {
+            JSONObject json = new JSONObject(result.toString());
+            if ("200".equals(json.optString("code"))) {
+                UserInfo.parseUserInfo(this, json.optJSONObject("result").optJSONObject("data"));
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+            } else {
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+            }
+        } catch (JSONException e) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
+    }
+
+    @Override
+    public void onRequestFail(int requestID, @NotNull Throwable e) {
+        super.onRequestFail(requestID, e);
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

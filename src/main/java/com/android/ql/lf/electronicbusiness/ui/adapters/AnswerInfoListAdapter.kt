@@ -24,6 +24,7 @@ class AnswerInfoListAdapter(layoutId: Int, list: ArrayList<AnswerBean>) : BaseQu
         helper.setText(R.id.mTvAnswerInfoItemTime, item.answer_time)
         helper.setText(R.id.mTvPraiseText, if ("暂无" == item.answer_click) PraiseView.PRAISE_TEXT else item.answer_click)
         val imageContainer = helper.getView<ImageContainerLinearLayout>(R.id.mLlAnswerInfoItemImageContainer)
+        helper.addOnClickListener(R.id.mLlAnswerInfoItemImageContainer)
         imageContainer.setImages(item.answer_pic)
     }
 }

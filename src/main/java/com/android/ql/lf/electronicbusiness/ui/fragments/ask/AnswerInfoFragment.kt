@@ -15,7 +15,9 @@ import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.AnswerInfoListAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.BrowserImageFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
+import com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.ui.views.PopupWindowDialog
 import com.android.ql.lf.electronicbusiness.ui.views.PraiseView
@@ -28,6 +30,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_fragment_container_layout.*
 import kotlinx.android.synthetic.main.fragment_answer_info_layout.*
 import org.jetbrains.anko.bundleOf
+import org.jetbrains.anko.collections.forEachWithIndex
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription
 
@@ -141,7 +144,7 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                                     }
                                 }
                             }
-                        }else{
+                        } else {
                             mTvAnswerInfoFocus.text = "已关注"
                             mTvAnswerInfoFocus.isEnabled = false
                         }
@@ -161,15 +164,18 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                             textView.layoutParams = param
                             mLlAnswerInfoTagsContainer.addView(textView)
                         }
-                        askInfoBean?.quiz_pic?.forEach {
+                        askInfoBean?.quiz_pic?.forEachWithIndex { index, it ->
                             val image = ImageView(mContext)
-                            val params = LinearLayout.LayoutParams(0, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100.0f, mLlAnswerInfoImageContainer.context.resources.displayMetrics).toInt())
+                            val params = LinearLayout.LayoutParams(0, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150.0f, mLlAnswerInfoImageContainer.context.resources.displayMetrics).toInt())
                             params.weight = 1.0f
                             val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, mLlAnswerInfoImageContainer.context.resources.displayMetrics).toInt()
                             params.leftMargin = margin
                             params.rightMargin = margin
                             image.layoutParams = params
                             image.scaleType = ImageView.ScaleType.CENTER_CROP
+                            image.setOnClickListener {
+                                BrowserImageFragment.startBrowserImage(mContext, askInfoBean!!.quiz_pic, index)
+                            }
                             GlideManager.loadImage(mLlAnswerInfoImageContainer.context, it, image)
                             mLlAnswerInfoImageContainer.addView(image)
                         }

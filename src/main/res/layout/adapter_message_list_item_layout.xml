@@ -13,10 +13,10 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_10"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginBottom="@dimen/dp_10">
+        android:layout_marginTop="@dimen/dp_10">
 
         <TextView
             android:id="@+id/mSystem"
@@ -25,6 +25,15 @@
             android:background="@drawable/shape_tv_system_bg"
             android:text="系统"
             android:textColor="#fff" />
+
+        <View
+            android:id="@+id/mViewNotify"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/mSystem"
+            android:background="@drawable/shape_view_notify_red" />
+
 
         <TextView
             android:id="@+id/mTvMessageItemTitle"

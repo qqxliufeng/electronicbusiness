@@ -23,6 +23,7 @@ import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActiv
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.adapters.RecommedGoodsInfoAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.BrowserImageFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.EasyCountDownTextureView
 import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
@@ -46,11 +47,13 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.Tencent
 import com.tencent.tauth.UiError
+import com.youth.banner.listener.OnBannerListener
 import kotlinx.android.synthetic.main.fragment_personal_cut_item_info_layout.*
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by lf on 2017/11/13 0013.
@@ -203,7 +206,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
                     mPresent.getDataByPost(0x3,
                             RequestParamsHelper.MEMBER_MODEL,
                             RequestParamsHelper.ACT_ADD_SHOPCART,
-                            RequestParamsHelper.getAddShopCartParam(cutInfoBean!!.result.detail.product_id, selectPic+","+specification, num))
+                            RequestParamsHelper.getAddShopCartParam(cutInfoBean!!.result.detail.product_id, selectPic + "," + specification, num))
                 } else if (bottomDialogActionType == 1) {
                     val shoppingCarItem = ShoppingCarItemBean()
                     shoppingCarItem.shopcart_mdprice = cutInfoBean!!.result.detail.product_mdprice
@@ -305,9 +308,12 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         setCommentList()
         setBanner()
         tv_goods_desc.text = Html.fromHtml(cutInfoBean!!.result.detail.product_ms)
+        tv_goods_desc.isFocusable = false
         htv_content_info.setHtmlFromString(cutInfoBean!!.result.detail.product_content, false)
         adapter.notifyDataSetChanged()
-        mRvPersonalCutItemInfo.smoothScrollToPosition(0)
+        mRvPersonalCutItemInfo.post {
+            mRvPersonalCutItemInfo.scrollToPosition(0)
+        }
     }
 
     /**
@@ -345,7 +351,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             if (currentMode == 1) { //个人砍
                 mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_personal_cut_bg)
             } else { //团体砍
-                when (cutInfoBean!!.result.detail.product_jtoken) {
+                when (cutInfoBean!!.result.detail.product_jstatus) {
                     "0" -> {
                         mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_personal_cut_bg)
                     }
@@ -417,6 +423,9 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
      */
     private fun setBanner() {
         mCBPersonalCutItemInfo.setImageLoader(GlideImageLoader()).setImages(cutInfoBean!!.result.detail.product_pic)
+                .setOnBannerListener { position ->
+                    BrowserImageFragment.startBrowserImage(mContext, cutInfoBean!!.result.detail.product_pic as ArrayList<String>, position)
+                }
                 .setDelayTime(5000)
                 .start()
     }

@@ -31,6 +31,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_fragment_container_layout.*
 import kotlinx.android.synthetic.main.fragment_submit_order_layout.*
 import org.jetbrains.anko.support.v4.toast
+import org.json.JSONObject
 import rx.Subscription
 import java.text.DecimalFormat
 
@@ -130,7 +131,7 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
         val bottomView = View.inflate(mContext, R.layout.layout_submit_new_order_bottom_layout, null)
         val payView = bottomView.findViewById<SelectPayTypeView>(R.id.mStvPay)
         mTvSubmitOrder.setOnClickListener {
-            if (addressBean == null){
+            if (addressBean == null) {
                 toast("请先选择收货地址")
                 return@setOnClickListener
             }
@@ -196,6 +197,10 @@ class SubmitNewOrderFragment : BaseRecyclerViewFragment<ShoppingCarItemBean>() {
                     PayManager.aliPay(mContext, handle, json.optString("result"))
                 }
                 finish()
+            } else {
+                if (result != null) {
+                    toast(JSONObject(result.toString()).optString("msg"))
+                }
             }
         }
     }
