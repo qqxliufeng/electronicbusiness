@@ -1,6 +1,20 @@
 package com.android.ql.lf.electronicbusiness.data;
 
+import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.android.ql.lf.electronicbusiness.ui.activities.SplashActivity;
+import com.android.ql.lf.electronicbusiness.ui.fragments.im.MyChatActivity;
+import com.android.ql.lf.electronicbusiness.utils.Constants;
+import com.android.ql.lf.electronicbusiness.utils.PreferenceUtils;
+import com.hyphenate.chat.ChatClient;
+import com.hyphenate.helpdesk.callback.Callback;
+import com.hyphenate.helpdesk.easeui.util.IntentBuilder;
+
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 
 /**
  * @author Administrator
@@ -8,6 +22,8 @@ import android.text.TextUtils;
  */
 
 public class UserInfo {
+
+    public static final String USER_ID_FLAG = "user_id";
 
     public static final int DEFAULT_LOGIN_TAG = -1000;
 
@@ -127,7 +143,7 @@ public class UserInfo {
     }
 
     public String getMemberIntegral() {
-        if (TextUtils.isEmpty(memberIntegral)) {
+        if (TextUtils.isEmpty(memberIntegral) || "null".equals(memberIntegral)) {
             return "0";
         }
         return memberIntegral;
@@ -162,9 +178,68 @@ public class UserInfo {
         return !TextUtils.isEmpty(memberId);
     }
 
+    public static void parseUserInfo(Context context, JSONObject userJson) {
+        if (userJson != null) {
+            UserInfo.getInstance().memberId = userJson.optString("member_id");
+            UserInfo.getInstance().memberName = userJson.optString("member_name");
+            UserInfo.getInstance().memberPhone = userJson.optString("member_phone");
+            UserInfo.getInstance().memberRank = userJson.optString("member_rank");
+            UserInfo.getInstance().memberSex = userJson.optString("member_sex");
+            UserInfo.getInstance().memberMtime = userJson.optString("member_mtime");
+            UserInfo.getInstance().memberIntegral = userJson.optString("member_integral");
+            UserInfo.getInstance().memberForm = userJson.optString("member_form");
+            UserInfo.getInstance().memberAddress = userJson.optString("member_address");
+            UserInfo.getInstance().memberPic = userJson.optString("member_pic");
+            UserInfo.getInstance().member_hxname = userJson.optString("member_hxname");
+            UserInfo.getInstance().member_hxpw = userJson.optString("member_hxpw");
+            PreferenceUtils.setPrefString(context, USER_ID_FLAG, UserInfo.getInstance().memberId);
+        }
+    }
+
+    /**
+     * 登录环信
+     */
+    public static void loginHx() {
+        ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, new Callback() {
+            @Override
+            public void onSuccess() {
+                Log.e("TAG", "环信登录成功");
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                Log.e("TAG", s);
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+
+            }
+        });
+    }
+
+    public static void openKeFu(Context context){
+        Intent intent = new IntentBuilder(context)
+                .setServiceIMNumber(Constants.HX_IM_SERVICE_NUM)
+                .setTargetClass(MyChatActivity.class)
+                .build();
+        context.startActivity(intent);
+    }
 
     public void loginOut() {
         memberId = null;
         instance = null;
+    }
+
+    public void clearUserCache(Context context) {
+        PreferenceUtils.setPrefString(context, USER_ID_FLAG, "");
+    }
+
+    public static boolean isCacheUserId(Context context) {
+        return PreferenceUtils.hasKey(context, USER_ID_FLAG) && !TextUtils.isEmpty(PreferenceUtils.getPrefString(context, USER_ID_FLAG, ""));
+    }
+
+    public static String getUserIdFromCache(Context context) {
+        return PreferenceUtils.getPrefString(context, USER_ID_FLAG, "");
     }
 }

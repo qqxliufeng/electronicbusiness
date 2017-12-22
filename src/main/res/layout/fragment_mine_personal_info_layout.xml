@@ -112,19 +112,18 @@
         android:textColor="#343434"
         android:textSize="16sp" />
 
-
-    <Button
-        android:id="@+id/mBtLogout"
+    <TextView
+        android:id="@+id/mTvSettingAddressManager"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:background="@drawable/shape_bt_bg1"
-        android:text="退出登录"
-        android:textColor="#fff"
-        android:textSize="16sp" />
-
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mTvPersonalInfoResetPassword"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/selector_press_bg"
+        android:drawableRight="@drawable/icon_inter"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/dp_10"
+        android:paddingTop="@dimen/dp_10"
+        android:text="收货地址管理"
+        android:textColor="@color/black_tv_color" />
 
 </RelativeLayout>

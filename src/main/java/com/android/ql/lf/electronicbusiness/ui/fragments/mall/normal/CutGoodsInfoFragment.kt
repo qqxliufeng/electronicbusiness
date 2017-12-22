@@ -23,6 +23,8 @@ import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActiv
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.adapters.RecommedGoodsInfoAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.BrowserImageFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.im.MyChatActivity
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.EasyCountDownTextureView
 import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
@@ -37,6 +39,7 @@ import com.chad.library.adapter.base.BaseViewHolder
 import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.google.gson.Gson
 import com.hyphenate.chat.ChatClient
+import com.hyphenate.helpdesk.callback.Callback
 import com.hyphenate.helpdesk.easeui.util.IntentBuilder
 import com.sina.weibo.sdk.share.WbShareCallback
 import com.sina.weibo.sdk.share.WbShareHandler
@@ -46,11 +49,14 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.Tencent
 import com.tencent.tauth.UiError
+import com.youth.banner.listener.OnBannerListener
 import kotlinx.android.synthetic.main.fragment_personal_cut_item_info_layout.*
 import org.jetbrains.anko.bundleOf
+import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by lf on 2017/11/13 0013.
@@ -186,24 +192,51 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             }
         }
         mTvAskOnline.setOnClickListener {
-            if (cutInfoBean != null && ChatClient.getInstance().isLoggedInBefore) {
-                val intent = IntentBuilder(mContext)
-                        .setServiceIMNumber(Constants.HX_IM_SERVICE_NUM)
-                        .build()
-                startActivity(intent)
+            if (ChatClient.getInstance().isLoggedInBefore) {
+                if (cutInfoBean != null) {
+                    UserInfo.openKeFu(mContext)
+                }
+            } else {
+                loginHx()
             }
         }
+    }
+
+    private fun loginHx() {
+        progressDialog = MyProgressDialog(mContext)
+        progressDialog.show()
+        ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
+            override fun onSuccess() {
+                mContext.runOnUiThread {
+                    onRequestEnd(-1)
+                }
+                if (cutInfoBean != null && ChatClient.getInstance().isLoggedInBefore) {
+                    UserInfo.openKeFu(mContext)
+                }
+            }
+
+            override fun onProgress(p0: Int, p1: String?) {
+            }
+
+            override fun onError(p0: Int, p1: String?) {
+                mContext.runOnUiThread {
+                    toast("加载失败，请稍后重试……")
+                    onRequestEnd(-1)
+                }
+            }
+        })
     }
 
     private fun showBottomParamDialog() {
         if (bottomParamDialog == null) {
             bottomParamDialog = BottomGoodsParamDialog(mContext)
             bottomParamDialog!!.setOnGoodsConfirmClickListener { specification, selectPic, num ->
+                bottomParamDialog = null
                 if (bottomDialogActionType == 0) {
                     mPresent.getDataByPost(0x3,
                             RequestParamsHelper.MEMBER_MODEL,
                             RequestParamsHelper.ACT_ADD_SHOPCART,
-                            RequestParamsHelper.getAddShopCartParam(cutInfoBean!!.result.detail.product_id, selectPic+","+specification, num))
+                            RequestParamsHelper.getAddShopCartParam(cutInfoBean!!.result.detail.product_id, selectPic + "," + specification, num))
                 } else if (bottomDialogActionType == 1) {
                     val shoppingCarItem = ShoppingCarItemBean()
                     shoppingCarItem.shopcart_mdprice = cutInfoBean!!.result.detail.product_mdprice
@@ -305,9 +338,12 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         setCommentList()
         setBanner()
         tv_goods_desc.text = Html.fromHtml(cutInfoBean!!.result.detail.product_ms)
+        tv_goods_desc.isFocusable = false
         htv_content_info.setHtmlFromString(cutInfoBean!!.result.detail.product_content, false)
         adapter.notifyDataSetChanged()
-        mRvPersonalCutItemInfo.smoothScrollToPosition(0)
+        mRvPersonalCutItemInfo.post {
+            mRvPersonalCutItemInfo.scrollToPosition(0)
+        }
     }
 
     /**
@@ -345,7 +381,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             if (currentMode == 1) { //个人砍
                 mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_personal_cut_bg)
             } else { //团体砍
-                when (cutInfoBean!!.result.detail.product_jtoken) {
+                when (cutInfoBean!!.result.detail.product_jstatus) {
                     "0" -> {
                         mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_personal_cut_bg)
                     }
@@ -417,6 +453,9 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
      */
     private fun setBanner() {
         mCBPersonalCutItemInfo.setImageLoader(GlideImageLoader()).setImages(cutInfoBean!!.result.detail.product_pic)
+                .setOnBannerListener { position ->
+                    BrowserImageFragment.startBrowserImage(mContext, cutInfoBean!!.result.detail.product_pic as ArrayList<String>, position)
+                }
                 .setDelayTime(5000)
                 .start()
     }
@@ -610,10 +649,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
      * 绑定团体砍数据
      */
     private fun reBindTeamData() {
-
         mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_bg)
-
-
         mTvPersonalCutItemInfoEveryOneCut.text = "距离${cutInfoBean!!.result.nextprice}元还差${cutInfoBean!!.result.resnum}人"
         mTvPersonalCutItemInfoHasCutNum.text = "已参砍人数${cutInfoBean!!.result.detail.product_knum}人"
         mTvPersonalCutItemInfoEveryOneCut.setCompoundDrawablesWithIntrinsicBounds(R.drawable.img_icon_mark_team_cut, 0, 0, 0)
@@ -634,8 +670,15 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             toast(json.optString("msg"))
             refreshTeamDataToView(json)
         } else {
-            toast(JSONObject(result.toString()).optString("msg"))
-            mTvPersonalCutItemInfoCut.isEnabled = false //已经砍过一次价了 或者已经到最低价了 都不能再砍了
+            if (result != null) {
+                val jsonObject = JSONObject(result.toString())
+                toast(jsonObject.optString("msg"))
+                if (jsonObject.optString("code") == "400") { // 砍到最底价
+                    cutInfoBean!!.result.resnum = "0"
+                    mTvPersonalCutItemInfoEveryOneCut.text = "距离${cutInfoBean!!.result.nextprice}元还差${cutInfoBean!!.result.resnum}人"
+                }
+                mTvPersonalCutItemInfoCut.isEnabled = false //已经砍过一次价了 或者已经到最低价了 都不能再砍了
+            }
         }
     }
 
@@ -643,13 +686,32 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         cutInfoBean!!.result.detail.product_knum = json.optJSONObject("arr").optString("product_knum")
         cutInfoBean!!.result.detail.product_price = json.optJSONObject("arr").optString("product_price")
         cutInfoBean!!.result.detail.product_minus = json.optJSONObject("arr").optString("product_minus")
+        cutInfoBean!!.result.detail.product_jstatus = json.optJSONObject("arr").optString("product_jstatus")
         cutInfoBean!!.result.nextprice = json.optJSONObject("result").optString("nextprice")
         cutInfoBean!!.result.kprice = json.optJSONObject("result").optString("kprice")
         cutInfoBean!!.result.resnum = json.optJSONObject("result").optString("resnum")
         mTvPersonalCutItemInfoEveryOneCut.text = "距离${cutInfoBean!!.result.nextprice}元还差${cutInfoBean!!.result.resnum}人"
         mTvPersonalCutItemInfoHasCutNum.text = "已参砍人数${cutInfoBean!!.result.detail.product_knum}人"
+        mTvPersonalCutItemInfoPrice.text = "￥ ${cutInfoBean!!.result.detail.product_price}"
         mTvPersonalCutItemInfoBuy.text = "￥${cutInfoBean!!.result.detail.product_price}\n立即购买"
         tv_has_cut_money.text = "累计已减${cutInfoBean!!.result.detail.product_minus}元"
+        when (cutInfoBean!!.result.detail.product_jstatus) {
+            "0" -> {
+                mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_personal_cut_bg)
+            }
+            "1" -> {
+                mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_one)
+            }
+            "2" -> {
+                mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_two)
+            }
+            "3" -> {
+                mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_three)
+            }
+            else -> {
+                mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_bg)
+            }
+        }
     }
 
 

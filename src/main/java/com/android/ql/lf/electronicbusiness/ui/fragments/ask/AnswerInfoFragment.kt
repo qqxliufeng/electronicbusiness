@@ -2,6 +2,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.ask
 
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -15,7 +16,9 @@ import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.AnswerInfoListAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.BrowserImageFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
+import com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.ui.views.PopupWindowDialog
 import com.android.ql.lf.electronicbusiness.ui.views.PraiseView
@@ -28,6 +31,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_fragment_container_layout.*
 import kotlinx.android.synthetic.main.fragment_answer_info_layout.*
 import org.jetbrains.anko.bundleOf
+import org.jetbrains.anko.collections.forEachWithIndex
 import org.jetbrains.anko.support.v4.toast
 import rx.Subscription
 
@@ -42,6 +46,7 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
     }
 
     private var askInfoBean: IndexAskInfoBean? = null
+    private var currentAnswerBean: AnswerBean? = null
 
     private lateinit var replySubscription: Subscription
 
@@ -109,8 +114,15 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
-        if (requestID == 0x2 || requestID == 0x3) {
-            progressDialog = MyProgressDialog(mContext, if (requestID == 0x2) "正在关注……" else "评论中……")
+        if (requestID == 0x2 || requestID == 0x3 || requestID == 0x4) {
+            progressDialog = MyProgressDialog(mContext, when (requestID) {
+                0x2 -> "正在关注……"
+                0x3 -> "评论中……"
+                0x4 -> "正在删除……"
+                else -> {
+                    ""
+                }
+            })
             progressDialog.show()
         }
     }
@@ -141,7 +153,7 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                                     }
                                 }
                             }
-                        }else{
+                        } else {
                             mTvAnswerInfoFocus.text = "已关注"
                             mTvAnswerInfoFocus.isEnabled = false
                         }
@@ -161,15 +173,18 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                             textView.layoutParams = param
                             mLlAnswerInfoTagsContainer.addView(textView)
                         }
-                        askInfoBean?.quiz_pic?.forEach {
+                        askInfoBean?.quiz_pic?.forEachWithIndex { index, it ->
                             val image = ImageView(mContext)
-                            val params = LinearLayout.LayoutParams(0, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100.0f, mLlAnswerInfoImageContainer.context.resources.displayMetrics).toInt())
+                            val params = LinearLayout.LayoutParams(0, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150.0f, mLlAnswerInfoImageContainer.context.resources.displayMetrics).toInt())
                             params.weight = 1.0f
                             val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, mLlAnswerInfoImageContainer.context.resources.displayMetrics).toInt()
                             params.leftMargin = margin
                             params.rightMargin = margin
                             image.layoutParams = params
                             image.scaleType = ImageView.ScaleType.CENTER_CROP
+                            image.setOnClickListener {
+                                BrowserImageFragment.startBrowserImage(mContext, askInfoBean!!.quiz_pic, index)
+                            }
                             GlideManager.loadImage(mLlAnswerInfoImageContainer.context, it, image)
                             mLlAnswerInfoImageContainer.addView(image)
                         }
@@ -208,6 +223,12 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                     onPostRefresh()
                 }
             }
+            0x4 -> {
+                if (json != null) {
+                    mArrayList.remove(currentAnswerBean)
+                    mBaseAdapter.notifyDataSetChanged()
+                }
+            }
         }
     }
 
@@ -221,10 +242,21 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
     }
 
     override fun onMyItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        currentAnswerBean = mArrayList[position]
         when (view?.id) {
             R.id.mPraiseView -> {
                 (view as PraiseView).toggle()
-                mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_PRAISE, RequestParamsHelper.getPraise(mArrayList[0].answer_id))
+                mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_PRAISE, RequestParamsHelper.getPraise(currentAnswerBean!!.answer_id))
+            }
+            R.id.mTvAnswerInfoItemDelete -> {
+                val builder = AlertDialog.Builder(mContext)
+                builder.setMessage("确认删除此评论？")
+                builder.setTitle("提示")
+                builder.setNegativeButton("取消", null)
+                builder.setPositiveButton("确定") { _, _ ->
+                    mPresent.getDataByPost(0x4, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_DEL_QAA, RequestParamsHelper.getDelQaaParam(aid = currentAnswerBean!!.answer_id))
+                }
+                builder.create().show()
             }
         }
     }

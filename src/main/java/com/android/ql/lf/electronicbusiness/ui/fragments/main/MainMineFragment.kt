@@ -15,10 +15,7 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.Expres
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.IntegrationMallFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.*
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
-import com.android.ql.lf.electronicbusiness.utils.Constants
-import com.android.ql.lf.electronicbusiness.utils.GlideManager
-import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
-import com.android.ql.lf.electronicbusiness.utils.RxBus
+import com.android.ql.lf.electronicbusiness.utils.*
 import com.hyphenate.chat.ChatClient
 import com.hyphenate.chat.ChatManager
 import com.hyphenate.chat.Message
@@ -42,10 +39,11 @@ class MainMineFragment : BaseNetWorkingFragment() {
     private lateinit var loginSubscribe: Subscription
     private lateinit var qBadgeSubScribe: Subscription
 
-    private var badge0: QBadgeView? = null
-    private var badge1: QBadgeView? = null
-    private var badge2: QBadgeView? = null
-    private var badge3: QBadgeView? = null
+    private var badge0: QBadgeView? = null //侍付款
+    private var badge1: QBadgeView? = null //待发货
+    private var badge2: QBadgeView? = null //待收货
+    private var badge3: QBadgeView? = null //待评价
+    private var badge4: QBadgeView? = null //未读消息
 
     companion object {
         fun newInstance() = MainMineFragment()
@@ -153,7 +151,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
         }
         mMainMineMessage.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "系统消息", true, false, MessageListFragment::class.java)
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "消息", true, false, MessageListFragment::class.java)
             } else {
                 UserInfo.getInstance().loginTag = 2
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, LoginFragment::class.java)
@@ -300,9 +298,9 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 val s0 = arrJsonObject.optString("s0")
                 if ("0" != s0) {
                     if (badge0 == null) {
-                        badge0 = QBadgeView(mContext)
+                        badge0 = BadgeViewFactory.createBadge(mContext, mDFKOrder, s0.toInt(), 10.0f, 0f, true)
                     }
-                    setBadgeView(mDFKOrder, badge0!!, s0.toInt())
+                    badge0!!.badgeNumber = s0.toInt()
                 } else {
                     if (badge0 != null) {
                         badge0!!.hide(false)
@@ -311,9 +309,9 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 val s1 = arrJsonObject.optString("s1")
                 if ("0" != s1) {
                     if (badge1 == null) {
-                        badge1 = QBadgeView(mContext)
+                        badge1 = BadgeViewFactory.createBadge(mContext, mDFHOrder, s1.toInt(), 10.0f, 0f, true)
                     }
-                    setBadgeView(mDFHOrder, badge1!!, s1.toInt())
+                    badge1!!.badgeNumber = s1.toInt()
                 } else {
                     if (badge1 != null) {
                         badge1!!.hide(false)
@@ -322,9 +320,9 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 val s2 = arrJsonObject.optString("s2")
                 if ("0" != s2) {
                     if (badge2 == null) {
-                        badge2 = QBadgeView(mContext)
+                        badge2 = BadgeViewFactory.createBadge(mContext, mWaitingGoods, s2.toInt(), 10.0f, 0f, true)
                     }
-                    setBadgeView(mWaitingGoods, badge2!!, s2.toInt())
+                    badge2!!.badgeNumber = s2.toInt()
                 } else {
                     if (badge2 != null) {
                         badge2!!.hide(false)
@@ -333,12 +331,23 @@ class MainMineFragment : BaseNetWorkingFragment() {
                 val s3 = arrJsonObject.optString("s3")
                 if ("0" != s3) {
                     if (badge3 == null) {
-                        badge3 = QBadgeView(mContext)
+                        badge3 = BadgeViewFactory.createBadge(mContext, mSuccessOrder, s3.toInt(), 10.0f, 0f, true)
                     }
-                    setBadgeView(mSuccessOrder, badge3!!, s3.toInt())
+                    badge3!!.badgeNumber = s3.toInt()
                 } else {
                     if (badge3 != null) {
                         badge3!!.hide(false)
+                    }
+                }
+                val s4 = arrJsonObject.optString("s4")
+                if ("0" != s4) {
+                    if (badge4 == null) {
+                        badge4 = BadgeViewFactory.createBadge(mContext, mMainMineMessage, -1, 40.0f, 0f, true)
+                    }
+                    badge4!!.badgeNumber = -1
+                } else {
+                    if (badge4 != null) {
+                        badge4!!.hide(false)
                     }
                 }
             }
@@ -375,21 +384,25 @@ class MainMineFragment : BaseNetWorkingFragment() {
             GlideManager.loadFaceCircleImage(mContext, Constants.BASE_IP + UserInfo.getInstance().memberPic, mIvMainMineFace)
             mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_PERSONAL, RequestParamsHelper.getPersonal())
         } else {
-            if (badge0!=null){
+            if (badge0 != null) {
                 badge0!!.hide(false)
                 badge0 = null
             }
-            if (badge1!=null){
+            if (badge1 != null) {
                 badge1!!.hide(false)
                 badge1 = null
             }
-            if (badge2!=null){
+            if (badge2 != null) {
                 badge2!!.hide(false)
                 badge2 = null
             }
-            if (badge3!=null){
+            if (badge3 != null) {
                 badge3!!.hide(false)
                 badge3 = null
+            }
+            if (badge4 != null) {
+                badge4!!.hide(false)
+                badge4 = null
             }
             mIvMainMineFace.setImageResource(R.drawable.pic_headportrait)
         }

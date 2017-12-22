@@ -4,9 +4,11 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.android.ql.lf.electronicbusiness.ui.fragments.BrowserImageFragment;
 import com.android.ql.lf.electronicbusiness.utils.ExtensionUtilsKt;
 import com.android.ql.lf.electronicbusiness.utils.GlideManager;
 
@@ -47,7 +49,7 @@ public class ImageContainerLinearLayout extends LinearLayout {
                     int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, getContext().getResources().getDisplayMetrics());
                     int imageWidth = (getMeasuredWidth() - padding * 4) / 3;
                     int imageHeight = imageWidth;
-                    for (String path : images) {
+                    for (final String path : images) {
                         ImageView image = new ImageView(getContext());
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageWidth, imageHeight);
                         params.leftMargin = margin;
@@ -55,6 +57,12 @@ public class ImageContainerLinearLayout extends LinearLayout {
                         image.setLayoutParams(params);
                         image.setScaleType(ImageView.ScaleType.CENTER_CROP);
                         GlideManager.loadImage(getContext(), path, image);
+                        image.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                BrowserImageFragment.Companion.startBrowserImage(getContext(), images, images.indexOf(path));
+                            }
+                        });
                         addView(image);
                     }
                 }

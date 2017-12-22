@@ -17,6 +17,6 @@ class SearchGoodsAdapter(layoutId: Int, list: ArrayList<GoodsItemBean>) : BaseQu
         GlideManager.loadImage(iv_pic.context, if (item!!.product_pic.isEmpty()) "" else item.product_pic[0], iv_pic)
         helper.setText(R.id.mIvSearchGoodsItemName, item.product_name)
         helper.setText(R.id.mIvSearchGoodsItemPrice, "￥${item.product_price}")
-        helper.setText(R.id.mIvSearchGoodsItemHasNum, "${item.product_knum}人已购买")
+        helper.setText(R.id.mIvSearchGoodsItemHasNum, "${item.product_sv}人已购买")
     }
 }

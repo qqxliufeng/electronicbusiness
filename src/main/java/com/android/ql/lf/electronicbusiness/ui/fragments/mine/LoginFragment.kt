@@ -140,48 +140,39 @@ class LoginFragment : BaseNetWorkingFragment() {
     }
 
     private fun LoginFragment.onLoginSuccess(userJson: JSONObject) {
-        parseUserInfo(userJson)
+        UserInfo.parseUserInfo(mContext,userJson)
         RxBus.getDefault().post(UserInfo.getInstance())
         if (ChatClient.getInstance().isLoggedInBefore) {
             ChatClient.getInstance().logout(true, object : Callback {
                 override fun onSuccess() {
                     loginHx()
                 }
+
                 override fun onProgress(p0: Int, p1: String?) {
                 }
+
                 override fun onError(p0: Int, p1: String?) {
-                    Log.e("TAG", "logout --> "+p1)
+                    Log.e("TAG", "logout --> " + p1)
                 }
             })
-        }else{
+        } else {
             loginHx()
         }
         finish()
     }
 
-    private fun loginHx(){
+    private fun loginHx() {
         ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
             override fun onSuccess() {
             }
+
             override fun onProgress(p0: Int, p1: String?) {
             }
+
             override fun onError(p0: Int, p1: String?) {
             }
         })
     }
 
-    private fun parseUserInfo(userJson: JSONObject?) {
-        UserInfo.getInstance().memberId = userJson!!.optString("member_id")
-        UserInfo.getInstance().memberName = userJson.optString("member_name")
-        UserInfo.getInstance().memberPhone = userJson.optString("member_phone")
-        UserInfo.getInstance().memberRank = userJson.optString("member_rank")
-        UserInfo.getInstance().memberSex = userJson.optString("member_sex")
-        UserInfo.getInstance().memberMtime = userJson.optString("member_mtime")
-        UserInfo.getInstance().memberIntegral = userJson.optString("member_integral")
-        UserInfo.getInstance().memberForm = userJson.optString("member_form")
-        UserInfo.getInstance().memberAddress = userJson.optString("member_address")
-        UserInfo.getInstance().memberPic = userJson.optString("member_pic")
-        UserInfo.getInstance().member_hxname = userJson.optString("member_hxname")
-        UserInfo.getInstance().member_hxpw = userJson.optString("member_hxpw")
-    }
+
 }

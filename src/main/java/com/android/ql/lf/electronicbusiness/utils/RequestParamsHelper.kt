@@ -117,6 +117,12 @@ class RequestParamsHelper {
 
         fun getPersonal() = getWithIdParams()
 
+        fun getPersonalParam(uid: String): ApiParams {
+            val param = getBaseParams()
+            param.addParam("uid", uid)
+            return param
+        }
+
         fun getEditPersonalParams(nickName: String): ApiParams {
             val params = getWithIdParams()
             params.addParam("account", nickName.replaceBlank())
@@ -315,6 +321,15 @@ class RequestParamsHelper {
 
         fun getMemberVipParams(): ApiParams = getWithIdParams()
 
+        //改变消息状态
+        val ACT_EDIT_MYMSG_STATUS = "edit_mymsg_status"
+
+        fun getEdit_mymsg_status(mid: String): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("mid", mid)
+            return param
+        }
+
         /**              member model  end           **/
 
 
@@ -428,6 +443,17 @@ class RequestParamsHelper {
         fun getQuizSearchParam(keyword: String, page: Int, pageSize: Int = 10): ApiParams {
             val param = getWithPageParams(page, pageSize)
             param.addParam("keyword", keyword)
+            return param
+        }
+
+        //删除问题
+        val ACT_DEL_QAA = "del_qaa"
+
+        fun getDelQaaParam(qid: String = "", aid: String = "", hid: String = ""): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("qid", qid)
+            param.addParam("aid", aid)
+            param.addParam("hid", hid)
             return param
         }
 

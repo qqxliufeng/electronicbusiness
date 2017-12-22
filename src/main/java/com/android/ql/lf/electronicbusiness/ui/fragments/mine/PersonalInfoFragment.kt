@@ -70,22 +70,12 @@ class PersonalInfoFragment : BaseNetWorkingFragment() {
         mTvPersonalInfoResetPassword.setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "修改密码", true, false, ResetPasswordFragment::class.java)
         }
-        mBtLogout.setOnClickListener {
-            val build = AlertDialog.Builder(mContext)
-            build.setPositiveButton("退出") { _, _ ->
-                UserInfo.getInstance().loginOut()
-                UserInfo.getInstance().loginTag = -1
-                ChatClient.getInstance().logout(true, null)
-                RxBus.getDefault().post(UserInfo.getInstance())
-                finish()
-            }
-            build.setNegativeButton("取消", null)
-            build.setMessage("是否要退出当前帐号？")
-            build.create().show()
-        }
         GlideManager.loadFaceCircleImage(mContext, "${Constants.BASE_IP}${UserInfo.getInstance().memberPic}", mTvPersonalInfoFace)
         mTvPersonalInfoNickName.text = UserInfo.getInstance().memberName
         mTvPersonalInfoPhone.text = UserInfo.getInstance().memberPhone
+        mTvSettingAddressManager.setOnClickListener {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "地址管理", true, false, AddressManagerFragment::class.java)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

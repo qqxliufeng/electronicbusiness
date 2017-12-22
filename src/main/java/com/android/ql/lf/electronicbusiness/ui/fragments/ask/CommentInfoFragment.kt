@@ -1,5 +1,6 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.ask
 
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActiv
 import com.android.ql.lf.electronicbusiness.ui.adapters.CommentInfoItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
+import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.ui.views.PopupWindowDialog
 import com.android.ql.lf.electronicbusiness.ui.views.PraiseView
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
@@ -86,6 +88,14 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
         mPresent.getDataByPost(0x0, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_ANSWER_DETAIL, RequestParamsHelper.getAnswerDetailParams(answerBean.answer_id, currentPage))
     }
 
+    override fun onRequestStart(requestID: Int) {
+        super.onRequestStart(requestID)
+        if (requestID == 0x2) {
+            progressDialog = MyProgressDialog(mContext)
+            progressDialog.show()
+        }
+    }
+
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         val json = checkResultCode(result)
@@ -94,7 +104,7 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
                 if (json != null) {
                     val jsonResult = json.optJSONObject("result")
                     mTvCommentInfoTitle.text = jsonResult.optString("answer_qtitle")
-                    mTvCommentInfoAskCount.text =  "${jsonResult.optString("answer_qnum")}个回答"
+                    mTvCommentInfoAskCount.text = "${jsonResult.optString("answer_qnum")}个回答"
                     mTvCommentInfoTime.text = "回答于 ${jsonResult.optString("answer_time")}"
                     mTvCommentInfoReplyCount.text = "${jsonResult.optString("answer_num")} 回复"
                     val jsonArray = json.optJSONArray("arr")
@@ -118,6 +128,12 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
                     onPostRefresh()
                 }
             }
+            0x2 -> {
+                if (json != null) {
+                    mArrayList.remove(replyAnswerBean)
+                    mBaseAdapter.notifyDataSetChanged()
+                }
+            }
         }
     }
 
@@ -126,6 +142,16 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
         when (view?.id) {
             R.id.mTvReplyInfoItemReply -> {
                 showReplyDialog(0x25)
+            }
+            R.id.mTvReplyInfoItemDelete -> {
+                val builder = AlertDialog.Builder(mContext)
+                builder.setMessage("确认删除此回复？")
+                builder.setTitle("提示")
+                builder.setNegativeButton("取消", null)
+                builder.setPositiveButton("确定") { _, _ ->
+                    mPresent.getDataByPost(0x2, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_DEL_QAA, RequestParamsHelper.getDelQaaParam(hid = replyAnswerBean!!.reply_id))
+                }
+                builder.create().show()
             }
         }
     }

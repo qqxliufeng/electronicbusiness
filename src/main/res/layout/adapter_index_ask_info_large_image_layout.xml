@@ -10,7 +10,7 @@
         android:id="@+id/mTvIndexAskInfoLargeImageTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="有人说床头不能朝西，有科学根据吗？"
+        android:layout_marginBottom="@dimen/dp_10"
         android:textColor="@color/black_tv_color"
         android:textSize="@dimen/sp_14" />
 
@@ -18,16 +18,29 @@
         android:id="@+id/mIvIndexAskInfoLargeImage"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:layout_marginTop="@dimen/dp_10"
-        android:scaleType="centerCrop"
-        android:src="@drawable/img_icon_test_pic_05" />
+        android:scaleType="centerCrop" />
 
-    <TextView
-        android:id="@+id/mTvIndexAskInfoLargeImageAskCount"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="2510回答"
-        android:textColor="@color/colorPrimary"
-        android:textSize="@dimen/sp_14" />
+        android:layout_marginTop="@dimen/dp_10">
+
+        <TextView
+            android:id="@+id/mTvIndexAskInfoLargeImageAskCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:id="@+id/mTvIndexAskInfoLargeImageAskDelete"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:gravity="right|center_vertical"
+            android:text="删除"
+            android:textColor="@color/black_tv_color"
+            android:textSize="@dimen/sp_12" />
+    </RelativeLayout>
 </LinearLayout>

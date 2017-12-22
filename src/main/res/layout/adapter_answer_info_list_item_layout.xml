@@ -9,8 +9,7 @@
     <ImageView
         android:id="@+id/mIvAnswerInfoItemFace"
         android:layout_width="40dp"
-        android:layout_height="40dp"
-        />
+        android:layout_height="40dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,8 +54,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginLeft="5dp"
-                        android:textColor="@color/black_tv_color"
-                        android:text="赞" />
+                        android:text="赞"
+                        android:textColor="@color/black_tv_color" />
                 </LinearLayout>
 
                 <TextView
@@ -88,14 +87,30 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/dp_10"
             android:layout_marginTop="@dimen/dp_10"
-            android:orientation="horizontal">
-        </com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout>
+            android:orientation="horizontal"></com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout>
 
-        <TextView
-            android:id="@+id/mTvAnswerInfoItemTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#A3A3A3"
-            android:textSize="@dimen/sp_12" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/mTvAnswerInfoItemTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#A3A3A3"
+                android:textSize="@dimen/sp_12" />
+
+            <TextView
+                android:id="@+id/mTvAnswerInfoItemDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="删除"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"
+                android:textColor="@color/black_tv_color"
+                android:textSize="@dimen/sp_12" />
+
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

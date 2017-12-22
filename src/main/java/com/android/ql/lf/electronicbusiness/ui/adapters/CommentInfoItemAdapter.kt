@@ -5,9 +5,12 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.ReplyAnswerBean
+import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -23,6 +26,13 @@ class CommentInfoItemAdapter(layoutId: Int, list: ArrayList<ReplyAnswerBean>) : 
         GlideManager.loadFaceCircleImage(iv_face.context, item!!.member_pic, iv_face)
         helper.setText(R.id.mTvReplyInfoItemNickName, item.member_name)
         helper.setText(R.id.mTvReplyInfoItemTime, item.reply_time)
+        val tv_delete = helper.getView<TextView>(R.id.mTvReplyInfoItemDelete)
+        helper.addOnClickListener(R.id.mTvReplyInfoItemDelete)
+        if (item.member_id == UserInfo.getInstance().memberId) {
+            tv_delete.visibility = View.VISIBLE
+        } else {
+            tv_delete.visibility = View.GONE
+        }
         if (TextUtils.isEmpty(item.name)) {
             helper.setText(R.id.mTvReplyInfoItemContent, item.reply_content)
         } else {
