@@ -25,6 +25,7 @@ class MainAskAndAnswerAdapter(list: ArrayList<IndexAskInfoBean>) : BaseMultiItem
             IndexAskInfoBean.LARGE_IMAGE -> {
                 helper!!.setText(R.id.mTvIndexAskInfoLargeImageTitle, item.quiz_title)
                 helper.setText(R.id.mTvIndexAskInfoLargeImageAskCount, "${item.quiz_num}个回答")
+                helper.addOnClickListener(R.id.mTvIndexAskInfoLargeImageAskDelete)
                 val image = helper.getView<ImageView>(R.id.mIvIndexAskInfoLargeImage)
                 if (item.quiz_pic.isEmpty()) {
                     image.visibility = View.GONE
@@ -36,6 +37,7 @@ class MainAskAndAnswerAdapter(list: ArrayList<IndexAskInfoBean>) : BaseMultiItem
             IndexAskInfoBean.MULTI_IMAGE -> {
                 helper!!.setText(R.id.mTvIndexAskInfoMultiImageTitle, item.quiz_title)
                 helper.setText(R.id.mTvIndexAskInfoMultiImageAskCount, "${item.quiz_num}个回答")
+                helper.addOnClickListener(R.id.mTvIndexAskInfoMultiImageAskDelete)
                 val ll_container = helper.getView<ImageContainerLinearLayout>(R.id.mLlIndexAskInfoMultiImageAskImageContainer)
                 ll_container.setImages(item.quiz_pic)
             }

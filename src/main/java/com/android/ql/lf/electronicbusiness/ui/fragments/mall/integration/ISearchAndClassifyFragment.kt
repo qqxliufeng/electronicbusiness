@@ -77,7 +77,7 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
                 FragmentContainerActivity.startFragmentContainerActivity(mContext,
                         itemEntity.t.jclassify_title,
                         true,false,
-                        bundleOf(Pair(IntegrationTypeSearchResultFragment.TYPE_PARAM_FLAG,menuItem.jclassify_id),
+                        bundleOf(Pair(IntegrationTypeSearchResultFragment.TYPE_PARAM_FLAG,itemEntity.t.jclassify_pid),
                                 Pair(IntegrationTypeSearchResultFragment.STYPE_PARAM_FLAG,itemEntity.t.jclassify_id)
                         ),
                         IntegrationTypeSearchResultFragment::class.java)
@@ -111,12 +111,6 @@ class ISearchAndClassifyFragment : BaseNetWorkingFragment() {
                 }
             }
         })
-        mLlSearchAndClassifySearch.setOnClickListener {
-
-        }
-
-
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

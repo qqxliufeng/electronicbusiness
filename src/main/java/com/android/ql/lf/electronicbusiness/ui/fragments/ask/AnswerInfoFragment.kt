@@ -195,8 +195,7 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                     val jsonArray = json.optJSONArray("arr")
                     if (jsonArray.length() == 0) {
                         if (currentPage == 0) {
-                            mBaseAdapter.setEmptyView(emptyLayoutId)
-                            mBaseAdapter.notifyDataSetChanged()
+                            setEmptyView()
                         }
                         mBaseAdapter.loadMoreEnd(false)
                     } else {
@@ -226,11 +225,17 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
             0x4 -> {
                 if (json != null) {
                     mArrayList.remove(currentAnswerBean)
+                    if (mArrayList.isEmpty()){
+                        setEmptyView()
+                        return
+                    }
                     mBaseAdapter.notifyDataSetChanged()
                 }
             }
         }
     }
+
+    override fun getEmptyMessage(): String = "暂无评论哦~~~"
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         val bundle = Bundle()

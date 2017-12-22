@@ -56,6 +56,9 @@ class IntegrationTypeSearchResultFragment : BaseRecyclerViewFragment<IMallGoodsI
         loadData()
     }
 
+    override fun getEmptyMessage() = "暂无商品哦~~~"
+
+
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         processList(checkResultCode(result), IMallGoodsItemBean::class.java)

@@ -2,6 +2,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.ask
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
@@ -91,6 +92,22 @@ class AnswerListFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         }else{
             UserInfo.getInstance().loginTag = 0x24
             LoginFragment.startLogin(mContext)
+        }
+    }
+
+    override fun onMyItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onMyItemChildClick(adapter, view, position)
+        when(view?.id){
+            R.id.mTvAskListItemDelete->{
+                val builder = AlertDialog.Builder(mContext)
+                builder.setTitle("提示")
+                builder.setMessage("是否要删除此问答？")
+                builder.setNegativeButton("取消",null)
+                builder.setPositiveButton("确定"){_,_->
+
+                }
+                builder.create().show()
+            }
         }
     }
 

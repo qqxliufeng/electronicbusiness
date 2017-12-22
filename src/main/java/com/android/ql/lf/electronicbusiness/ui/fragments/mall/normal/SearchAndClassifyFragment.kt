@@ -65,7 +65,7 @@ class SearchAndClassifyFragment : BaseNetWorkingFragment() {
                     return
                 }
                 FragmentContainerActivity.startFragmentContainerActivity(mContext, contentItem.t.classify_title, true, true,
-                        bundleOf(Pair(SearchGoodsFragment.TYPE_ID_FLAG, menuItem.classify_id),
+                        bundleOf(Pair(SearchGoodsFragment.TYPE_ID_FLAG, contentItem.t.classify_pid),
                                 Pair(SearchGoodsFragment.STYPE_ID_FLAG, contentItem.t.classify_id),
                                 Pair(SearchGoodsFragment.K_TYPE_FLAG, arguments.getString(SearchGoodsFragment.K_TYPE_FLAG, ""))),
                         SearchGoodsFragment::class.java)

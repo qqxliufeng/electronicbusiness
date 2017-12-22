@@ -78,6 +78,11 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
         }
     }
 
+    override fun onLoadMore() {
+        super.onLoadMore()
+        loadData()
+    }
+
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)

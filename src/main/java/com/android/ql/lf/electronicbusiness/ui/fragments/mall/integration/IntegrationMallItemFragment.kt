@@ -66,6 +66,8 @@ class IntegrationMallItemFragment : AbstractLazyLoadFragment<IMallGoodsItemBean>
         processList(json, IMallGoodsItemBean::class.java)
     }
 
+    override fun getEmptyMessage() = "暂无商品哦~~~"
+
     override fun onLoadMore() {
         if (!isVisible || !isPrepared) {
             return

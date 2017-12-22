@@ -8,6 +8,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.android.ql.lf.electronicbusiness.R;
 import com.android.ql.lf.electronicbusiness.data.lists.ListParseHelper;
@@ -56,6 +57,21 @@ public abstract class BaseRecyclerViewFragment<T> extends BaseNetWorkingFragment
 
     protected int getEmptyLayoutId() {
         return R.layout.layout_list_empty_layout;
+    }
+
+    protected void setEmptyMessage(String emptyMessage){
+        TextView tv_empty = mBaseAdapter.getEmptyView().findViewById(R.id.mTvRecyclerViewEmpty);
+        tv_empty.setText(emptyMessage);
+    }
+
+    protected String getEmptyMessage(){
+        return "暂无数据";
+    }
+
+    protected void setEmptyView() {
+        mBaseAdapter.setEmptyView(getEmptyLayoutId());
+        setEmptyMessage(getEmptyMessage());
+        mBaseAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -199,6 +215,7 @@ public abstract class BaseRecyclerViewFragment<T> extends BaseNetWorkingFragment
                 } else {
                     if (currentPage == 0) {
                         mBaseAdapter.setEmptyView(getEmptyLayoutId());
+                        setEmptyMessage(getEmptyMessage());
                     } else {
                         mBaseAdapter.loadMoreEnd();
                     }
@@ -215,11 +232,6 @@ public abstract class BaseRecyclerViewFragment<T> extends BaseNetWorkingFragment
         } catch (Exception e) {
             setEmptyView();
         }
-    }
-
-    private void setEmptyView() {
-        mBaseAdapter.setEmptyView(getEmptyLayoutId());
-        mBaseAdapter.notifyDataSetChanged();
     }
 
 }

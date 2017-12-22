@@ -88,6 +88,8 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
         mPresent.getDataByPost(0x0, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_ANSWER_DETAIL, RequestParamsHelper.getAnswerDetailParams(answerBean.answer_id, currentPage))
     }
 
+    override fun getEmptyMessage() = "暂无回复哦~~~"
+
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
         if (requestID == 0x2) {
@@ -110,8 +112,7 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
                     val jsonArray = json.optJSONArray("arr")
                     if (jsonArray.length() == 0) {
                         if (currentPage == 0) {
-                            mBaseAdapter.setEmptyView(emptyLayoutId)
-                            mBaseAdapter.notifyDataSetChanged()
+                            setEmptyView()
                         }
                         mBaseAdapter.loadMoreEnd(false)
                     } else {
@@ -131,6 +132,10 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
             0x2 -> {
                 if (json != null) {
                     mArrayList.remove(replyAnswerBean)
+                    if (mArrayList.isEmpty()){
+                        setEmptyView()
+                        return
+                    }
                     mBaseAdapter.notifyDataSetChanged()
                 }
             }

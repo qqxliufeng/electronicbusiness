@@ -2,6 +2,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.main
 
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -30,6 +31,7 @@ import kotlinx.android.synthetic.main.fragment_main_ask_and_answer_layout.*
 import kotlinx.android.synthetic.main.layout_main_ank_and_answer_top_layout.*
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.collections.forEachWithIndex
+import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
 import rx.Subscription
 import java.util.*
@@ -228,6 +230,22 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         } else {
             UserInfo.getInstance().loginTag = 0x23
             LoginFragment.startLogin(mContext)
+        }
+    }
+
+    override fun onMyItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        super.onMyItemChildClick(adapter, view, position)
+        when(view?.id){
+            R.id.mTvIndexAskInfoMultiImageAskDelete,R.id.mTvIndexAskInfoLargeImageAskDelete->{
+                val builder = AlertDialog.Builder(mContext)
+                builder.setTitle("提示")
+                builder.setMessage("是否要删除此问答？")
+                builder.setNegativeButton("取消",null)
+                builder.setPositiveButton("确定"){_,_->
+
+                }
+                builder.create().show()
+            }
         }
     }
 

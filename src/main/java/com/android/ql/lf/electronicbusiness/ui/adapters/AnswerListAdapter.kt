@@ -14,5 +14,6 @@ class AnswerListAdapter(layoutId: Int, list: ArrayList<IndexAskInfoBean>) : Base
         helper!!.setText(R.id.mTvAskListItemTitle,item!!.quiz_title)
         helper.setText(R.id.mTvAskListItemCount,"回答：${item.quiz_num}")
         helper.setText(R.id.mTvAskListItemFocus,"关注：${item.quiz_click}")
+        helper.addOnClickListener(R.id.mTvAskListItemDelete)
     }
 }
