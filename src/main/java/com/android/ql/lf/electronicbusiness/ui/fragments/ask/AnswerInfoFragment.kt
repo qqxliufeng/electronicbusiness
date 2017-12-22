@@ -2,6 +2,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.ask
 
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -45,6 +46,7 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
     }
 
     private var askInfoBean: IndexAskInfoBean? = null
+    private var currentAnswerBean: AnswerBean? = null
 
     private lateinit var replySubscription: Subscription
 
@@ -112,8 +114,15 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
-        if (requestID == 0x2 || requestID == 0x3) {
-            progressDialog = MyProgressDialog(mContext, if (requestID == 0x2) "正在关注……" else "评论中……")
+        if (requestID == 0x2 || requestID == 0x3 || requestID == 0x4) {
+            progressDialog = MyProgressDialog(mContext, when (requestID) {
+                0x2 -> "正在关注……"
+                0x3 -> "评论中……"
+                0x4 -> "正在删除……"
+                else -> {
+                    ""
+                }
+            })
             progressDialog.show()
         }
     }
@@ -214,6 +223,12 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                     onPostRefresh()
                 }
             }
+            0x4 -> {
+                if (json != null) {
+                    mArrayList.remove(currentAnswerBean)
+                    mBaseAdapter.notifyDataSetChanged()
+                }
+            }
         }
     }
 
@@ -227,10 +242,21 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
     }
 
     override fun onMyItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        currentAnswerBean = mArrayList[position]
         when (view?.id) {
             R.id.mPraiseView -> {
                 (view as PraiseView).toggle()
-                mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_PRAISE, RequestParamsHelper.getPraise(mArrayList[0].answer_id))
+                mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_PRAISE, RequestParamsHelper.getPraise(currentAnswerBean!!.answer_id))
+            }
+            R.id.mTvAnswerInfoItemDelete -> {
+                val builder = AlertDialog.Builder(mContext)
+                builder.setMessage("确认删除此评论？")
+                builder.setTitle("提示")
+                builder.setNegativeButton("取消", null)
+                builder.setPositiveButton("确定") { _, _ ->
+                    mPresent.getDataByPost(0x4, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_DEL_QAA, RequestParamsHelper.getDelQaaParam(aid = currentAnswerBean!!.answer_id))
+                }
+                builder.create().show()
             }
         }
     }

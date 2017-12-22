@@ -1,10 +1,17 @@
 package com.android.ql.lf.electronicbusiness.data;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.android.ql.lf.electronicbusiness.ui.activities.SplashActivity;
+import com.android.ql.lf.electronicbusiness.ui.fragments.im.MyChatActivity;
+import com.android.ql.lf.electronicbusiness.utils.Constants;
 import com.android.ql.lf.electronicbusiness.utils.PreferenceUtils;
+import com.hyphenate.chat.ChatClient;
+import com.hyphenate.helpdesk.callback.Callback;
+import com.hyphenate.helpdesk.easeui.util.IntentBuilder;
 
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
@@ -187,6 +194,36 @@ public class UserInfo {
             UserInfo.getInstance().member_hxpw = userJson.optString("member_hxpw");
             PreferenceUtils.setPrefString(context, USER_ID_FLAG, UserInfo.getInstance().memberId);
         }
+    }
+
+    /**
+     * 登录环信
+     */
+    public static void loginHx() {
+        ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, new Callback() {
+            @Override
+            public void onSuccess() {
+                Log.e("TAG", "环信登录成功");
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                Log.e("TAG", s);
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+
+            }
+        });
+    }
+
+    public static void openKeFu(Context context){
+        Intent intent = new IntentBuilder(context)
+                .setServiceIMNumber(Constants.HX_IM_SERVICE_NUM)
+                .setTargetClass(MyChatActivity.class)
+                .build();
+        context.startActivity(intent);
     }
 
     public void loginOut() {

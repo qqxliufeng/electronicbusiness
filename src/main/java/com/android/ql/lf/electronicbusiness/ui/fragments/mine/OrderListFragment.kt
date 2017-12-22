@@ -165,7 +165,7 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
             progressDialog.show()
         }
 
-        if (requestID == 0x2){
+        if (requestID == 0x2) {
             progressDialog = MyProgressDialog(mContext, "正在支付……")
             progressDialog.show()
         }
@@ -195,10 +195,12 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
                 if (json != null) {
                     onPostRefresh()
                     OrderPresent.notifyRefreshOrderNum()
+                } else {
+                    toast("订单取消失败，请稍后重试……")
                 }
             }
             0x2 -> { //付款
-                if (json!=null) {
+                if (json != null) {
                     OrderPresent.notifyRefreshShoppingCarList()
                     PreferenceUtils.setPrefString(mContext, PayResultFragment.PAY_ORDER_RESULT_JSON_FLAG, json.optJSONObject("arr").toString())
                     if (payType == SelectPayTypeView.WX_PAY) {

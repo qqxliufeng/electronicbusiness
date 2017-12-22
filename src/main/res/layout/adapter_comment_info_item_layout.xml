@@ -18,14 +18,13 @@
         android:layout_marginLeft="@dimen/dp_10"
         android:orientation="vertical">
 
-
-            <TextView
-                android:id="@+id/mTvReplyInfoItemNickName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/sp_14" />
+        <TextView
+            android:id="@+id/mTvReplyInfoItemNickName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/sp_14" />
 
 
         <TextView
@@ -44,16 +43,18 @@
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/sp_14" />-->
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_10"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/mTvReplyInfoItemTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"
+                android:paddingTop="5dp"
                 android:textColor="#a4a4a4"
                 android:textSize="@dimen/sp_12" />
 
@@ -61,17 +62,29 @@
                 android:id="@+id/mTvReplyInfoItemReply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="回复"
+                android:layout_toRightOf="@+id/mTvReplyInfoItemTime"
+                android:paddingBottom="5dp"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:paddingTop="5dp"
-                android:paddingBottom="5dp"
+                android:text="回复"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/sp_12" />
 
-        </LinearLayout>
-
+            <TextView
+                android:id="@+id/mTvReplyInfoItemDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingBottom="5dp"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"
+                android:paddingTop="5dp"
+                android:text="删除"
+                android:textColor="@color/black_tv_color"
+                android:textSize="@dimen/sp_12" />
+        </RelativeLayout>
     </LinearLayout>
 
 

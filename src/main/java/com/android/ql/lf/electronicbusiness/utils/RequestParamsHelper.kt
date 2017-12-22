@@ -446,6 +446,17 @@ class RequestParamsHelper {
             return param
         }
 
+        //删除问题
+        val ACT_DEL_QAA = "del_qaa"
+
+        fun getDelQaaParam(qid: String = "", aid: String = "", hid: String = ""): ApiParams {
+            val param = getWithIdParams()
+            param.addParam("qid", qid)
+            param.addParam("aid", aid)
+            param.addParam("hid", hid)
+            return param
+        }
+
 
         /**              qaa model  end           **/
 

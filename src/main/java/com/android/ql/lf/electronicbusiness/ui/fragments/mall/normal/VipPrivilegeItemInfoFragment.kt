@@ -14,18 +14,22 @@ import com.android.ql.lf.electronicbusiness.data.*
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.im.MyChatActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.VipInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
+import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.google.gson.Gson
 import com.hyphenate.chat.ChatClient
+import com.hyphenate.helpdesk.callback.Callback
 import com.hyphenate.helpdesk.easeui.util.IntentBuilder
 import com.hyphenate.helpdesk.model.ContentFactory
 import kotlinx.android.synthetic.main.vip_privilege_item_info_layout.*
 import org.jetbrains.anko.bundleOf
+import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONArray
 import org.json.JSONObject
@@ -154,11 +158,11 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                 }
                 mTvVipInfoOnlineAsk.setOnClickListener {
                     if (ChatClient.getInstance().isLoggedInBefore) {
-                        val intent = IntentBuilder(mContext)
-                                .setServiceIMNumber("kefuchannelimid_872049")
-                                .setScheduleQueue(ContentFactory.createQueueIdentityInfo("砍价产品"))
-                                .build()
-                        startActivity(intent)
+                        if (vipGoodsInfoBean != null) {
+                            UserInfo.openKeFu(mContext)
+                        }
+                    } else {
+                        loginHx()
                     }
                 }
                 if (picJsonArray != null && picJsonArray!!.size > 0) {
@@ -179,6 +183,32 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
             }
         }
     }
+
+    private fun loginHx() {
+        progressDialog = MyProgressDialog(mContext)
+        progressDialog.show()
+        ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
+            override fun onSuccess() {
+                mContext.runOnUiThread {
+                    onRequestEnd(-1)
+                }
+                if (vipGoodsInfoBean != null && ChatClient.getInstance().isLoggedInBefore) {
+                    UserInfo.openKeFu(mContext)
+                }
+            }
+
+            override fun onProgress(p0: Int, p1: String?) {
+            }
+
+            override fun onError(p0: Int, p1: String?) {
+                mContext.runOnUiThread {
+                    toast("加载失败，请稍后重试……")
+                    onRequestEnd(-1)
+                }
+            }
+        })
+    }
+
 
     private fun openVip() {
         val build = AlertDialog.Builder(mContext)
@@ -212,17 +242,9 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
 
     private fun showBottomParamDialog(picJsonArray: ArrayList<String>, specifications: ArrayList<SpecificationBean>) {
         if (bottomParamDialog == null) {
-            val defaultPicPath = if (picJsonArray.size > 0) {
-                picJsonArray[0]
-            } else {
-                ""
-            }
             bottomParamDialog = BottomGoodsParamDialog(context)
-            bottomParamDialog!!.bindDataToView(tv_price.text.toString(),
-                    tv_release_count.text.toString(),
-                    tv_goods_name.text.toString(),
-                    defaultPicPath, specifications)
             bottomParamDialog!!.setOnGoodsConfirmClickListener { specification, selectPic, num ->
+                bottomParamDialog = null
                 if (currentMode == 0) { //加入购物车
                     mPresent.getDataByPost(0x1, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_ADD_SHOPCART,
                             RequestParamsHelper.getAddShopCartParam(goodsId!!, selectPic + "," + specification, num))
@@ -247,6 +269,10 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                 }
             }
         }
+        bottomParamDialog!!.bindDataToView(tv_price.text.toString(),
+                tv_release_count.text.toString(),
+                tv_goods_name.text.toString(),
+                if (picJsonArray.size > 0) picJsonArray[0] else "", specifications)
         bottomParamDialog!!.show()
     }
 
