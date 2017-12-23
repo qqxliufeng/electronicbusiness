@@ -164,8 +164,20 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
             if (json != null) {
                 processList(json, IndexAskInfoBean::class.java)
             }
+        } else if (requestID == 0x2) {
+            if (json != null) {
+                mArrayList.remove(currentItem)
+                if (mArrayList.isEmpty()) {
+                    setEmptyView()
+                    return
+                }
+                mBaseAdapter.notifyDataSetChanged()
+            }
         }
     }
+
+
+    override fun getEmptyMessage() = "暂无问题哦~~~"
 
     private fun parseTagJson(json: JSONObject?) {
         if (json != null) {
@@ -235,14 +247,15 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
 
     override fun onMyItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onMyItemChildClick(adapter, view, position)
-        when(view?.id){
-            R.id.mTvIndexAskInfoMultiImageAskDelete,R.id.mTvIndexAskInfoLargeImageAskDelete->{
+        currentItem = mArrayList[position]
+        when (view?.id) {
+            R.id.mTvIndexAskInfoMultiImageAskDelete, R.id.mTvIndexAskInfoLargeImageAskDelete -> {
                 val builder = AlertDialog.Builder(mContext)
                 builder.setTitle("提示")
                 builder.setMessage("是否要删除此问答？")
-                builder.setNegativeButton("取消",null)
-                builder.setPositiveButton("确定"){_,_->
-
+                builder.setNegativeButton("取消", null)
+                builder.setPositiveButton("确定") { _, _ ->
+                    mPresent.getDataByPost(0x2, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_DEL_QAA, RequestParamsHelper.getDelQaaParam(qid = currentItem.quiz_id))
                 }
                 builder.create().show()
             }

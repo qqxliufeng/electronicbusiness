@@ -24,7 +24,7 @@ import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.adapters.RecommedGoodsInfoAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.BrowserImageFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.im.MyChatActivity
+import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.EasyCountDownTextureView
 import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
@@ -40,22 +40,19 @@ import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.google.gson.Gson
 import com.hyphenate.chat.ChatClient
 import com.hyphenate.helpdesk.callback.Callback
-import com.hyphenate.helpdesk.easeui.util.IntentBuilder
 import com.sina.weibo.sdk.share.WbShareCallback
 import com.sina.weibo.sdk.share.WbShareHandler
-import com.tencent.mm.opensdk.constants.ConstantsAPI
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.Tencent
 import com.tencent.tauth.UiError
-import com.youth.banner.listener.OnBannerListener
 import kotlinx.android.synthetic.main.fragment_personal_cut_item_info_layout.*
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
-import java.util.*
+import rx.Subscription
 import kotlin.collections.ArrayList
 
 /**
@@ -67,6 +64,13 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
 
     companion object {
         val GOODS_ID_FLAG = "goods_id_flag"
+
+        val LOGIN_FLAG_ADD_SHOPPING_CAR = "cut_add_shopping_car"
+        val LOGIN_FLAG_BUY = "cut_buy"
+        val LOGIN_FLAG_KEFU_ONLINE = "cut_kefu_online"
+        val LOGIN_FLAG_CUT_PRICE_FOR_PERSONAL = "cut_cut_price_for_personal"
+        val LOGIN_FLAG_CUT_PRICE_FOR_TEAM = "cut_cut_price_for_team"
+
     }
 
     private val commentList = arrayListOf<CommentForGoodsBean>()
@@ -99,6 +103,9 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
     // 0 代表添加到购物车   1 代表立即购买
     private var bottomDialogActionType = 0
 
+    //加载详情是否成功  默认成功  加载失败为 false
+    private var loadSuccess = true
+
     /**
      * 微信api
      */
@@ -120,6 +127,8 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         Tencent.createInstance(Constants.QQ_APP_ID, mContext)
     }
 
+    private lateinit var loginSubscription: Subscription
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         setHasOptionsMenu(true)
@@ -134,6 +143,30 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
                 Tencent.handleResultData(it, this@CutGoodsInfoFragment)
             } else if (requestCode == -1) {
                 shareHandler.doResultIntent(it, this@CutGoodsInfoFragment)
+            }
+        }
+        loginSubscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
+            if (UserInfo.getInstance().isLogin) {
+                when (UserInfo.getInstance().loginTag) {
+                    LOGIN_FLAG_ADD_SHOPPING_CAR -> {
+                        if (mTvPersonalCutItemInfoCollection.isEnabled) {
+                            mTvPersonalCutItemInfoCollection.performClick()
+                        }
+                    }
+                    LOGIN_FLAG_BUY -> {
+                        if (mTvPersonalCutItemInfoBuy.isEnabled) {
+                            mTvPersonalCutItemInfoBuy.performClick()
+                        }
+                    }
+                    LOGIN_FLAG_KEFU_ONLINE -> {
+                        mTvAskOnline.performClick()
+                    }
+                    LOGIN_FLAG_CUT_PRICE_FOR_PERSONAL, LOGIN_FLAG_CUT_PRICE_FOR_TEAM -> {
+                        if (mTvPersonalCutItemInfoCut.isEnabled) {
+                            mTvPersonalCutItemInfoCut.performClick()
+                        }
+                    }
+                }
             }
         }
 
@@ -156,10 +189,6 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         topView.findViewById<TextView>(R.id.mTvPersonalCutItemInfoCommentCountAll).setOnClickListener {
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "全部评价", true, false, bundleOf(Pair(AllCommentFragment.GOODS_ID_FLAG, cutInfoBean!!.result.detail.product_id)), AllCommentFragment::class.java)
         }
-        mTvPersonalCutItemInfoBuy.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "提交订单", true, false, SubmitOrderFragment::class.java)
-        }
-
         val bottomRecommendView = View.inflate(mContext, R.layout.layout_personal_cut_item_goods_info_bootom_recommend_layout, null)
         mRvRecommend = bottomRecommendView.findViewById(R.id.mRvPersonalCutItemGoodsInfoRecommend)
         mRvRecommend.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
@@ -178,26 +207,41 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         htv_content_info = bottomInfoContentView.findViewById(R.id.mHTvPersonalCutItemGoodsInfo)
         adapter.addFooterView(bottomInfoContentView)
         mTvPersonalCutItemInfoBuy.setOnClickListener {
-            if (cutInfoBean != null) {
-                //重新获取新的价格
-                bottomDialogActionType = 1 //立即购买
-                mPresent.getDataByPost(0x4, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL, RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
+            if (UserInfo.getInstance().isLogin) {
+                if (cutInfoBean != null) {
+                    //重新获取新的价格
+                    bottomDialogActionType = 1 //立即购买
+                    mPresent.getDataByPost(0x4, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL, RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
+                }
+            } else {
+                UserInfo.getInstance().loginTag = LOGIN_FLAG_BUY
+                LoginFragment.startLogin(mContext)
             }
         }
         mTvPersonalCutItemInfoCollection.setOnClickListener {
-            if (cutInfoBean != null) {
-                //重新获取新的价格
-                bottomDialogActionType = 0 //加入购物车
-                mPresent.getDataByPost(0x4, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL, RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
+            if (UserInfo.getInstance().isLogin) {
+                if (cutInfoBean != null) {
+                    //重新获取新的价格
+                    bottomDialogActionType = 0 //加入购物车
+                    mPresent.getDataByPost(0x4, RequestParamsHelper.PRODUCT_MODEL, RequestParamsHelper.ACT_PRODUCT_DETAIL, RequestParamsHelper.getProductDetailParam(arguments.getString(GOODS_ID_FLAG, "")))
+                }
+            } else {
+                UserInfo.getInstance().loginTag = LOGIN_FLAG_ADD_SHOPPING_CAR
+                LoginFragment.startLogin(mContext)
             }
         }
         mTvAskOnline.setOnClickListener {
-            if (ChatClient.getInstance().isLoggedInBefore) {
-                if (cutInfoBean != null) {
-                    UserInfo.openKeFu(mContext)
+            if (UserInfo.getInstance().isLogin) {
+                if (ChatClient.getInstance().isLoggedInBefore) {
+                    if (cutInfoBean != null) {
+                        UserInfo.openKeFu(mContext)
+                    }
+                } else {
+                    loginHx()
                 }
             } else {
-                loginHx()
+                UserInfo.getInstance().loginTag = LOGIN_FLAG_KEFU_ONLINE
+                LoginFragment.startLogin(mContext)
             }
         }
     }
@@ -288,6 +332,9 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             0x0 -> {
                 if (json != null) {
                     bindData(json)
+                    if (TextUtils.equals("1", cutInfoBean!!.result.detail.product_ptype)) {
+                        toast("已经砍到最底价了")
+                    }
                 } else {
                     setEmptyView()
                 }
@@ -326,6 +373,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
     }
 
     private fun setEmptyView() {
+        loadSuccess = false
         mClCutInfoContainer.visibility = View.GONE
         mTvCutItemInfoEmpty.visibility = View.VISIBLE
     }
@@ -432,7 +480,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
                 mTvPersonalCutItemInfoDownTime.setTime(0)
                 mTvPersonalCutItemInfoDownTime.stop()
             }
-            if (TextUtils.equals("1", cutInfoBean!!.result.detail.product_jtoken) || TextUtils.equals("1", cutInfoBean!!.result.detail.product_ptype)) {
+            if (TextUtils.equals("1", cutInfoBean!!.result.detail.product_ptype)) { //product_ptype== 1  已经到底价了
                 mTvPersonalCutItemInfoCut.isEnabled = false //已经砍过一次价了 或者已经到最低价了 都不能再砍了
             }
         }
@@ -475,65 +523,67 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.mMenuShare) {
-            if (cutInfoBean != null) {
-                if (shareDialog == null) {
-                    shareDialog = BottomSheetDialog(mContext)
-                    val shareContentView = View.inflate(mContext, R.layout.layout_share_layout, null)
-                    shareContentView.findViewById<TextView>(R.id.mTvShareClose).setOnClickListener { shareDialog!!.dismiss() }
-                    shareContentView.findViewById<TextView>(R.id.mTvShareWX).setOnClickListener {
-                        if (shareBitmapPic == null) {
-                            Glide.with(mContext).load("${Constants.BASE_IP}${cutInfoBean!!.result.share.pic}").asBitmap().diskCacheStrategy(DiskCacheStrategy.NONE).into(object : SimpleTarget<Bitmap>() {
-                                override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
-                                    shareBitmapPic = resource
-                                    shareToWx(SendMessageToWX.Req.WXSceneSession)
-                                }
-                            })
-                        } else {
-                            shareToWx(SendMessageToWX.Req.WXSceneSession)
+        if (loadSuccess) {
+            if (item?.itemId == R.id.mMenuShare) {
+                if (cutInfoBean != null) {
+                    if (shareDialog == null) {
+                        shareDialog = BottomSheetDialog(mContext)
+                        val shareContentView = View.inflate(mContext, R.layout.layout_share_layout, null)
+                        shareContentView.findViewById<TextView>(R.id.mTvShareClose).setOnClickListener { shareDialog!!.dismiss() }
+                        shareContentView.findViewById<TextView>(R.id.mTvShareWX).setOnClickListener {
+                            if (shareBitmapPic == null) {
+                                Glide.with(mContext).load("${Constants.BASE_IP}${cutInfoBean!!.result.share.pic}").asBitmap().diskCacheStrategy(DiskCacheStrategy.NONE).into(object : SimpleTarget<Bitmap>() {
+                                    override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
+                                        shareBitmapPic = resource
+                                        shareToWx(SendMessageToWX.Req.WXSceneSession)
+                                    }
+                                })
+                            } else {
+                                shareToWx(SendMessageToWX.Req.WXSceneSession)
+                            }
+                            shareDialog!!.dismiss()
                         }
-                        shareDialog!!.dismiss()
-                    }
-                    shareContentView.findViewById<TextView>(R.id.mTvShareQQ).setOnClickListener {
-                        ShareManager.shareToQQ(mContext, tencent, cutInfoBean!!.result.detail.product_name,
-                                Html.fromHtml(cutInfoBean!!.result.share.ms).toString(),
-                                "${Constants.BASE_IP}${cutInfoBean!!.result.share.url}",
-                                Constants.BASE_IP + cutInfoBean!!.result.share.pic,
-                                this@CutGoodsInfoFragment)
-                        shareDialog!!.dismiss()
-                    }
-                    shareContentView.findViewById<TextView>(R.id.mTvShareWB).setOnClickListener {
-                        if (shareBitmapPic == null) {
-                            Glide.with(mContext).load("${Constants.BASE_IP}${cutInfoBean!!.result.share.pic}").asBitmap().diskCacheStrategy(DiskCacheStrategy.NONE).into(object : SimpleTarget<Bitmap>() {
-                                override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
-                                    shareBitmapPic = resource
-                                    shareToWb()
-                                }
-                            })
-                        } else {
-                            shareToWb()
+                        shareContentView.findViewById<TextView>(R.id.mTvShareQQ).setOnClickListener {
+                            ShareManager.shareToQQ(mContext, tencent, cutInfoBean!!.result.detail.product_name,
+                                    Html.fromHtml(cutInfoBean!!.result.share.ms).toString(),
+                                    "${Constants.BASE_IP}${cutInfoBean!!.result.share.url}",
+                                    Constants.BASE_IP + cutInfoBean!!.result.share.pic,
+                                    this@CutGoodsInfoFragment)
+                            shareDialog!!.dismiss()
                         }
-                        shareDialog!!.dismiss()
-                    }
-                    shareContentView.findViewById<TextView>(R.id.mTvShareCircle).setOnClickListener {
-                        if (shareBitmapPic == null) {
-                            Glide.with(mContext).
-                                    load("${Constants.BASE_IP}${cutInfoBean!!.result.share.pic}").
-                                    asBitmap().
-                                    diskCacheStrategy(DiskCacheStrategy.NONE).into(object : SimpleTarget<Bitmap>(ShareManager.SHARE_PIC_WIDTH, ShareManager.SHARE_PIC_HEIGHT) {
-                                override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
-                                    shareBitmapPic = resource
-                                    shareToWx(SendMessageToWX.Req.WXSceneTimeline)
-                                }
-                            })
-                        } else {
-                            shareToWx(SendMessageToWX.Req.WXSceneTimeline)
+                        shareContentView.findViewById<TextView>(R.id.mTvShareWB).setOnClickListener {
+                            if (shareBitmapPic == null) {
+                                Glide.with(mContext).load("${Constants.BASE_IP}${cutInfoBean!!.result.share.pic}").asBitmap().diskCacheStrategy(DiskCacheStrategy.NONE).into(object : SimpleTarget<Bitmap>() {
+                                    override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
+                                        shareBitmapPic = resource
+                                        shareToWb()
+                                    }
+                                })
+                            } else {
+                                shareToWb()
+                            }
+                            shareDialog!!.dismiss()
                         }
-                        shareDialog!!.dismiss()
+                        shareContentView.findViewById<TextView>(R.id.mTvShareCircle).setOnClickListener {
+                            if (shareBitmapPic == null) {
+                                Glide.with(mContext).
+                                        load("${Constants.BASE_IP}${cutInfoBean!!.result.share.pic}").
+                                        asBitmap().
+                                        diskCacheStrategy(DiskCacheStrategy.NONE).into(object : SimpleTarget<Bitmap>(ShareManager.SHARE_PIC_WIDTH, ShareManager.SHARE_PIC_HEIGHT) {
+                                    override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
+                                        shareBitmapPic = resource
+                                        shareToWx(SendMessageToWX.Req.WXSceneTimeline)
+                                    }
+                                })
+                            } else {
+                                shareToWx(SendMessageToWX.Req.WXSceneTimeline)
+                            }
+                            shareDialog!!.dismiss()
+                        }
+                        shareDialog!!.setContentView(shareContentView)
                     }
-                    shareDialog!!.setContentView(shareContentView)
+                    shareDialog!!.show()
                 }
-                shareDialog!!.show()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -605,10 +655,15 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         mTvPersonalCutItemInfoCut.text = "- ￥${cutInfoBean!!.result.kprice}\n砍价"
         tv_has_cut_money.text = "累计已减${cutInfoBean!!.result.detail.product_minus}元"
         mTvPersonalCutItemInfoCut.setOnClickListener {
-            mPresent.getDataByPost(0x1,
-                    RequestParamsHelper.PRODUCT_MODEL,
-                    RequestParamsHelper.ACT_ONEBARGAIN,
-                    RequestParamsHelper.getOnebargainParam(cutInfoBean!!.result.detail.product_id))
+            if (UserInfo.getInstance().isLogin) {
+                mPresent.getDataByPost(0x1,
+                        RequestParamsHelper.PRODUCT_MODEL,
+                        RequestParamsHelper.ACT_ONEBARGAIN,
+                        RequestParamsHelper.getOnebargainParam(cutInfoBean!!.result.detail.product_id))
+            } else {
+                UserInfo.getInstance().loginTag = LOGIN_FLAG_CUT_PRICE_FOR_PERSONAL
+                LoginFragment.startLogin(mContext)
+            }
         }
     }
 
@@ -657,10 +712,15 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
         mTvPersonalCutItemInfoCut.text = "参与砍价"
         tv_has_cut_money.text = "累计已减${cutInfoBean!!.result.detail.product_minus}元"
         mTvPersonalCutItemInfoCut.setOnClickListener {
-            mPresent.getDataByPost(0x2,
-                    RequestParamsHelper.PRODUCT_MODEL,
-                    RequestParamsHelper.ACT_MOREBARGAIN,
-                    RequestParamsHelper.getMorebargainParam(cutInfoBean!!.result.detail.product_id))
+            if (UserInfo.getInstance().isLogin) {
+                mPresent.getDataByPost(0x2,
+                        RequestParamsHelper.PRODUCT_MODEL,
+                        RequestParamsHelper.ACT_MOREBARGAIN,
+                        RequestParamsHelper.getMorebargainParam(cutInfoBean!!.result.detail.product_id))
+            } else {
+                UserInfo.getInstance().loginTag = LOGIN_FLAG_CUT_PRICE_FOR_TEAM
+                LoginFragment.startLogin(mContext)
+            }
         }
     }
 
@@ -723,6 +783,9 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             }
         }
         mTvPersonalCutItemInfoDownTime.stop()
+        if (!loginSubscription.isUnsubscribed) {
+            loginSubscription.unsubscribe()
+        }
         super.onDestroyView()
     }
 }

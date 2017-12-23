@@ -533,7 +533,7 @@ class RequestParamsHelper {
         val ACT_PRODUCT_DETAIL = "product_detail"
 
         fun getProductDetailParam(gid: String): ApiParams {
-            val param = getWithIdParams()
+            val param = getBaseParams()
             param.addParam("gid", gid)
             return param
         }

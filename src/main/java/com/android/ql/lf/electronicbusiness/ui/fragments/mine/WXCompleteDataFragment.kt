@@ -16,6 +16,7 @@ import com.google.gson.Gson
 import com.hyphenate.chat.ChatClient
 import com.hyphenate.helpdesk.callback.Callback
 import kotlinx.android.synthetic.main.fragment_wx_complete_data_layout.*
+import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
 import java.util.regex.Pattern
@@ -108,7 +109,7 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
             if ("200" == codeBean.status) {
                 mCode = codeBean.code
                 toast("验证码已经发送，请注意查收")
-            }else{
+            } else {
                 getCodeFailed()
             }
         } else if (requestID == 0x1) {
@@ -128,34 +129,35 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
     private fun onLoginSuccess(json: JSONObject) {
         val memId = json.optString("result")
         UserInfo.getInstance().memberId = memId
-        UserInfo.parseUserInfo(mContext,json.optJSONObject("arr"))
+        UserInfo.parseUserInfo(mContext, json.optJSONObject("arr"))
         RxBus.getDefault().post(UserInfo.getInstance())
-        if (ChatClient.getInstance().isLoggedInBefore) {
-            ChatClient.getInstance().logout(true, object : Callback {
-                override fun onSuccess() {
-                    loginHx()
-                }
-                override fun onProgress(p0: Int, p1: String?) {
-                }
-                override fun onError(p0: Int, p1: String?) {
-                    Log.e("TAG", "logout --> "+p1)
-                }
-            })
-        }else{
+        if (!ChatClient.getInstance().isLoggedInBefore) {
             loginHx()
         }
-        finish()
     }
 
-    private fun loginHx(){
+    private fun loginHx() {
         ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
             override fun onSuccess() {
+                close()
             }
+
             override fun onProgress(p0: Int, p1: String?) {
             }
+
             override fun onError(p0: Int, p1: String?) {
+                close()
             }
         })
+    }
+
+    private fun close() {
+        mContext.runOnUiThread {
+            if (progressDialog != null && progressDialog.isShowing) {
+                progressDialog.dismiss()
+            }
+            finish()
+        }
     }
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
@@ -166,6 +168,9 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
             getCodeFailed()
             counterHelper.stop()
         }
+    }
+
+    override fun onRequestEnd(requestID: Int) {
     }
 
     private fun getCodeFailed() {

@@ -142,12 +142,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
             }
         }
         mSetting.setOnClickListener {
-            if (UserInfo.getInstance().isLogin) {
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "设置", true, false, SettingFragment::class.java)
-            } else {
-                UserInfo.getInstance().loginTag = 10
-                LoginFragment.startLogin(mContext)
-            }
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "设置", true, false, SettingFragment::class.java)
         }
         mMainMineMessage.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {

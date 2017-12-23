@@ -28,7 +28,7 @@ import org.jetbrains.anko.bundleOf
  */
 class AnswerListFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
 
-    private lateinit var currentItem:IndexAskInfoBean
+    private lateinit var currentItem: IndexAskInfoBean
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -45,13 +45,13 @@ class AnswerListFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.search_qustion_menu,menu)
+        inflater?.inflate(R.menu.search_qustion_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.action_search) {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext,"",true,true,QuestionSearchFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, QuestionSearchFragment::class.java)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -59,8 +59,13 @@ class AnswerListFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
     override fun initView(view: View?) {
         super.initView(view)
         subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
-            if (it.isLogin && it.loginTag == 0x24){
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "问题详情", true, false, bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, currentItem.quiz_id)),AnswerInfoFragment::class.java)
+            if (it.isLogin && it.loginTag == 0x24) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext,
+                        "问题详情",
+                        true,
+                        false,
+                        bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, currentItem.quiz_id)),
+                        AnswerInfoFragment::class.java)
             }
         }
     }
@@ -75,21 +80,39 @@ class AnswerListFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
         loadData()
     }
 
-    private fun loadData(){
+    private fun loadData() {
         mPresent.getDataByPost(0x0, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_QUIZ_TYPE_SEARCH,
                 RequestParamsHelper.getQuizTypeSearch("", page = currentPage))
     }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
-        processList(checkResultCode(result),IndexAskInfoBean::class.java)
+        val json = checkResultCode(result)
+        when (requestID) {
+            0x0 -> {
+                processList(json, IndexAskInfoBean::class.java)
+            }
+            0x1 -> {
+                if (json != null) {
+                    mArrayList.remove(currentItem)
+                    if (mArrayList.isEmpty()) {
+                        setEmptyView()
+                        return
+                    }
+                    mBaseAdapter.notifyDataSetChanged()
+                }
+            }
+        }
     }
+
+    override fun getEmptyMessage() = "暂无问题哦~~~"
+
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         currentItem = mArrayList[position]
-        if (UserInfo.getInstance().isLogin){
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "问题详情", true, false, bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, currentItem.quiz_id)),AnswerInfoFragment::class.java)
-        }else{
+        if (UserInfo.getInstance().isLogin) {
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "问题详情", true, false, bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, currentItem.quiz_id)), AnswerInfoFragment::class.java)
+        } else {
             UserInfo.getInstance().loginTag = 0x24
             LoginFragment.startLogin(mContext)
         }
@@ -97,14 +120,15 @@ class AnswerListFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
 
     override fun onMyItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onMyItemChildClick(adapter, view, position)
-        when(view?.id){
-            R.id.mTvAskListItemDelete->{
+        currentItem = mArrayList[position]
+        when (view?.id) {
+            R.id.mTvAskListItemDelete -> {
                 val builder = AlertDialog.Builder(mContext)
                 builder.setTitle("提示")
                 builder.setMessage("是否要删除此问答？")
-                builder.setNegativeButton("取消",null)
-                builder.setPositiveButton("确定"){_,_->
-
+                builder.setNegativeButton("取消", null)
+                builder.setPositiveButton("确定") { _, _ ->
+                    mPresent.getDataByPost(0x1, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_DEL_QAA, RequestParamsHelper.getDelQaaParam(qid = currentItem.quiz_id))
                 }
                 builder.create().show()
             }

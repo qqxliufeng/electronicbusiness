@@ -37,11 +37,6 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
 
     private lateinit var currentItem: GoodsItemBean
 
-    private val currentLoginFlag by lazy {
-        "${this@PersonalCutItemFragment.hashCode()}${this@PersonalCutItemFragment}"
-    }
-
-
     override fun createAdapter(): BaseQuickAdapter<GoodsItemBean, BaseViewHolder> =
             PersonalCutItemAdapter(R.layout.adapter_personal_cut_item_layout, mArrayList)
 
@@ -49,17 +44,6 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
         val itemDecoration = super.getItemDecoration() as DividerItemDecoration
         itemDecoration.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.recycler_view_height_divider))
         return itemDecoration
-    }
-
-    override fun initView(view: View?) {
-        super.initView(view)
-        subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
-            when (UserInfo.getInstance().loginTag) {
-                currentLoginFlag -> {
-                    enterGoodsInfo()
-                }
-            }
-        }
     }
 
     override fun loadData() {
@@ -72,7 +56,7 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT_TYPE_SEARCH,
-                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString("cid"), "", "1", "",currentPage))
+                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString("cid"), "", "1", "", currentPage))
         }
     }
 
@@ -89,12 +73,7 @@ class PersonalCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
 
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         currentItem = mArrayList[position]
-        if (UserInfo.getInstance().isLogin) {
-            enterGoodsInfo()
-        } else {
-            UserInfo.getInstance().loginTag = currentLoginFlag
-            LoginFragment.startLogin(mContext)
-        }
+        enterGoodsInfo()
     }
 
     private fun enterGoodsInfo() {

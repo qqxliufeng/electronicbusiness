@@ -36,24 +36,7 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
         }
     }
 
-
-    private lateinit var currentItem:VipGoodsBean
-
-    private val currentFlag by lazy {
-        "${this.hashCode()}$this"
-    }
-
-    override fun initView(view: View?) {
-        super.initView(view)
-        subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
-            when(UserInfo.getInstance().loginTag){
-                currentFlag->{
-                    enterGoodsInfo()
-                }
-            }
-        }
-    }
-
+    private lateinit var currentItem: VipGoodsBean
 
     override fun createAdapter(): BaseQuickAdapter<VipGoodsBean, BaseViewHolder> =
             VipPrivilegeItemAdapter(R.layout.adapter_vip_privilege_item_layout, mArrayList)
@@ -74,7 +57,7 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT_TYPE_SEARCH,
-                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString(ITEM_ID_FLAG), "", OrderPresent.GoodsType.VIP_GOODS,"", currentPage))
+                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString(ITEM_ID_FLAG), "", OrderPresent.GoodsType.VIP_GOODS, "", currentPage))
         }
     }
 
@@ -83,7 +66,6 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
         loadData()
     }
 
-
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         isLoad = true
@@ -91,19 +73,13 @@ class VipPrivilegeItemFragment : AbstractLazyLoadFragment<VipGoodsBean>() {
         processList(json, VipGoodsBean::class.java)
     }
 
-
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onMyItemClick(adapter, view, position)
         currentItem = mArrayList[position]
-        if (UserInfo.getInstance().isLogin) {
-            enterGoodsInfo()
-        } else {
-            UserInfo.getInstance().loginTag = currentFlag
-            LoginFragment.startLogin(mContext)
-        }
+        enterGoodsInfo()
     }
 
-    private fun enterGoodsInfo(){
+    private fun enterGoodsInfo() {
         val bundle = Bundle()
         bundle.putString(VipPrivilegeItemInfoFragment.GOODS_ID_FLAG, currentItem.product_id)
         FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, VipPrivilegeItemInfoFragment::class.java)

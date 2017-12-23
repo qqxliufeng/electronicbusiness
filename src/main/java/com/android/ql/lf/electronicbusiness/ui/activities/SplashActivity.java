@@ -15,7 +15,6 @@ import com.android.ql.lf.electronicbusiness.component.ApiServerModule;
 import com.android.ql.lf.electronicbusiness.component.DaggerApiServerComponent;
 import com.android.ql.lf.electronicbusiness.data.UserInfo;
 import com.android.ql.lf.electronicbusiness.present.GetDataFromNetPresent;
-import com.android.ql.lf.electronicbusiness.utils.PreferenceUtils;
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +63,7 @@ public class SplashActivity extends BaseActivity implements EasyPermissions.Perm
         return R.layout.activity_splash_layout;
     }
 
+
     @Override
     public void initView() {
         DaggerApiServerComponent.builder().apiServerModule(new ApiServerModule()).appComponent(EBApplication.getInstance().getAppComponent()).build().inject(this);
@@ -72,7 +72,7 @@ public class SplashActivity extends BaseActivity implements EasyPermissions.Perm
             iv_splash.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    startMainActivity();
+                    isLogin();
                 }
             }, 2500);
         } else {
@@ -116,7 +116,7 @@ public class SplashActivity extends BaseActivity implements EasyPermissions.Perm
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
             if (hasPermissions()) {
-                startMainActivity();
+                isLogin();
             } else {
                 requestPermission();
             }
@@ -131,22 +131,33 @@ public class SplashActivity extends BaseActivity implements EasyPermissions.Perm
      */
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-        startMainActivity();
+        isLogin();
     }
 
     /**
      * 所有有权限都已经请求到了，直接进入到主页面
      */
-    private void startMainActivity() {
+    private void isLogin() {
         if (UserInfo.isCacheUserId(this)) {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.Companion.getMEMBER_MODEL(),
                     RequestParamsHelper.Companion.getACT_PERSONAL(),
                     RequestParamsHelper.Companion.getPersonalParam(UserInfo.getUserIdFromCache(this)));
         } else {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
+            startMainActivity();
         }
+    }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        Intent srcIntent = getIntent();
+        if (srcIntent != null) {
+            intent.setAction(srcIntent.getAction());
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setData(srcIntent.getData());
+        }
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -156,23 +167,19 @@ public class SplashActivity extends BaseActivity implements EasyPermissions.Perm
             JSONObject json = new JSONObject(result.toString());
             if ("200".equals(json.optString("code"))) {
                 UserInfo.parseUserInfo(this, json.optJSONObject("result").optJSONObject("data"));
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
+                startMainActivity();
             } else {
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
+                startMainActivity();
             }
         } catch (JSONException e) {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
+            startMainActivity();
         }
     }
 
     @Override
     public void onRequestFail(int requestID, @NotNull Throwable e) {
         super.onRequestFail(requestID, e);
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
+        startMainActivity();
     }
 
     /**

@@ -28,6 +28,7 @@ class SettingFragment : BaseFragment() {
             CacheDataManager.clearAllCache(mContext)
             mCacheSize.text = "暂无缓存"
         }
+        mBtLogout.isEnabled = UserInfo.getInstance().isLogin
         mBtLogout.setOnClickListener {
             val build = AlertDialog.Builder(mContext)
             build.setPositiveButton("退出") { _, _ ->

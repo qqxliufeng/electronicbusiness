@@ -1,11 +1,14 @@
 package com.android.ql.lf.electronicbusiness.ui.activities
 
+import android.content.Intent
+import android.os.Bundle
 import android.support.design.internal.BottomNavigationMenuView
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
+import android.text.TextUtils
 import android.util.Log
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.UserInfo
@@ -13,6 +16,7 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainAskAndAnswerFr
 import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainCutPrivilegeFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainMineFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.main.MainVipPrivilegeFragment
+import com.android.ql.lf.electronicbusiness.ui.fragments.mall.normal.CutGoodsInfoFragment
 import com.android.ql.lf.electronicbusiness.utils.BottomNavigationViewHelper
 import com.hyphenate.chat.ChatClient
 import com.hyphenate.chat.ChatManager
@@ -28,7 +32,32 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
     override fun getLayoutId(): Int = R.layout.activity_main
 
-    private var exitTime:Long = 0
+    private var exitTime: Long = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val intent = intent
+        //从第三方跳转来的
+        startGoodsInfo(intent)
+    }
+
+    private fun startGoodsInfo(intent: Intent?) {
+        if (intent != null) {
+            if (Intent.ACTION_VIEW == intent.action && intent.data != null) {
+                val param = intent.data.getQueryParameter("gid")
+                val bundle = Bundle()
+                if (!TextUtils.isEmpty(param)) {
+                    bundle.putString(CutGoodsInfoFragment.GOODS_ID_FLAG, param)
+                    FragmentContainerActivity.startFragmentContainerActivity(this, "商品详情", true, false, bundle, CutGoodsInfoFragment::class.java)
+                }
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        startGoodsInfo(intent)
+    }
 
     override fun initView() {
         BottomNavigationViewHelper.disableShiftMode(mMainNavigation)
@@ -101,10 +130,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     }
 
     override fun onBackPressed() {
-        if (System.currentTimeMillis() - exitTime  > 2000){
+        if (System.currentTimeMillis() - exitTime > 2000) {
             exitTime = System.currentTimeMillis()
             toast("再一次退出")
-        }else {
+        } else {
             super.onBackPressed()
         }
     }

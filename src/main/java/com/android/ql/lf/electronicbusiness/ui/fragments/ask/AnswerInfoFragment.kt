@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.fragment_answer_info_layout.*
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.collections.forEachWithIndex
 import org.jetbrains.anko.support.v4.toast
+import org.json.JSONObject
 import rx.Subscription
 
 /**
@@ -86,20 +87,10 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
 
     private fun showReplyDialog() {
         if (askInfoBean != null) {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "回答问题", true, false, bundleOf(Pair("qid", askInfoBean!!.quiz_id), Pair("title", askInfoBean!!.quiz_title)), ReplyQuestionFragment::class.java)
-//            val contentView = LayoutInflater.from(context).inflate(R.layout.layout_answer_info_repay_layout, null)
-//            val et_content = contentView.findViewById<EditText>(R.id.mEtReplyContent)
-//            et_content.hint = "回复："
-//            val bt_send = contentView.findViewById<Button>(R.id.mBtReplaySend)
-//            val popupWindow = PopupWindowDialog.showReplyDialog(mContext, contentView)
-//            bt_send.setOnClickListener {
-//                if (TextUtils.isEmpty(et_content.text.toString())) {
-//                    toast("请输入评论内容")
-//                    return@setOnClickListener
-//                }
-//                mPresent.getDataByPost(0x3, RequestParamsHelper.QAA_MODEL, RequestParamsHelper.ACT_ADD_ANSWER, RequestParamsHelper.getAddAnswerParams(askInfoBean!!.quiz_id, et_content.text.toString()))
-//                popupWindow.dismiss()
-//            }
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "回答问题", true, false, bundleOf(
+                    Pair("qid", askInfoBean!!.quiz_id),
+                    Pair("title", askInfoBean!!.quiz_title),
+                    Pair("uid", askInfoBean!!.quiz_uid)), ReplyQuestionFragment::class.java)
         }
     }
 
@@ -205,6 +196,12 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                         mBaseAdapter.notifyDataSetChanged()
                         mBaseAdapter.loadMoreComplete()
                     }
+                } else {
+                    if (result != null) {
+                        if ("400" == JSONObject(result.toString()).optString("code")) {
+                            onAnswerDelete()
+                        }
+                    }
                 }
             }
             0x1 -> { //点赞
@@ -214,18 +211,30 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                     toast("关注成功")
                     mTvAnswerInfoFocus.text = "已关注"
                     mTvAnswerInfoFocus.isEnabled = false
+                }else{
+                    if(result != null) {
+                        if ("400" == JSONObject(result.toString()).optString("code")) {
+                            onAnswerDelete()
+                        }
+                    }
                 }
             }
             0x3 -> {
                 if (json != null) {
                     toast("评论成功")
                     onPostRefresh()
+                } else {
+                    if(result != null) {
+                        if ("400" == JSONObject(result.toString()).optString("code")) {
+                            onAnswerDelete()
+                        }
+                    }
                 }
             }
             0x4 -> {
                 if (json != null) {
                     mArrayList.remove(currentAnswerBean)
-                    if (mArrayList.isEmpty()){
+                    if (mArrayList.isEmpty()) {
                         setEmptyView()
                         return
                     }
@@ -233,6 +242,11 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                 }
             }
         }
+    }
+
+    private fun onAnswerDelete() {
+        mTvAnswerInfoDeleteInfo.visibility = View.VISIBLE
+        mClAnswerInfoInfoContainer.visibility = View.GONE
     }
 
     override fun getEmptyMessage(): String = "暂无评论哦~~~"

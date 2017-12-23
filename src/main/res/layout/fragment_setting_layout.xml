@@ -76,7 +76,7 @@
         android:layout_marginBottom="30dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:background="@drawable/shape_bt_bg1"
+        android:background="@drawable/selector_shape_bt_bg1"
         android:text="退出登录"
         android:textColor="#fff"
         android:textSize="16sp" />

@@ -25,7 +25,7 @@ public class MyChatFragment extends ChatFragment {
     @Override
     protected void initView() {
         itemStrings = new int[]{com.hyphenate.helpdesk.R.string.attach_take_pic, com.hyphenate.helpdesk.R.string.attach_picture};
-        itemdrawables = new int[]{R.drawable.img_take_photo_icon, com.hyphenate.helpdesk.R.drawable.hd_chat_image_selector};
+        itemdrawables = new int[]{R.drawable.img_take_photo_icon, R.drawable.img_select_pic_icon};
         itemIds = new int[]{ITEM_TAKE_PICTURE, ITEM_PICTURE};
         itemResIds = new int[]{com.hyphenate.helpdesk.R.id.chat_menu_take_pic, com.hyphenate.helpdesk.R.id.chat_menu_pic};
         super.initView();

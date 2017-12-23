@@ -1,189 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/mTvAnswerInfoDeleteInfo"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:text="该问题已被作者删除"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="@dimen/sp_14"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#fff"
-            android:orientation="vertical"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-
-            <LinearLayout
-                android:id="@+id/mLlAnswerInfoTagsContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dp_10">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/shape_tv_bg2"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="@dimen/dp_10"
-                    android:paddingRight="@dimen/dp_10"
-                    android:paddingTop="5dp"
-                    android:text="婚姻"
-                    android:textColor="@color/black_tv_color" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:background="@drawable/shape_tv_bg2"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="@dimen/dp_10"
-                    android:paddingRight="@dimen/dp_10"
-                    android:paddingTop="5dp"
-                    android:text="婚姻"
-                    android:textColor="@color/black_tv_color" />
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/shape_tv_bg2"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="@dimen/dp_10"
-                    android:paddingRight="@dimen/dp_10"
-                    android:paddingTop="5dp"
-                    android:text="婚姻"
-                    android:textColor="@color/black_tv_color" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/mTvAnswerInfoTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dp_10"
-                android:textColor="@color/black_tv_color"
-                android:textSize="@dimen/sp_16" />
-
-            <TextView
-                android:id="@+id/mTvAnswerInfoContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dp_10"
-                android:textColor="#717171"
-                android:textSize="@dimen/sp_14" />
-
-            <com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout
-                android:id="@+id/mLlAnswerInfoImageContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="@dimen/dp_10" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dp_10">
-
-                <TextView
-                    android:id="@+id/mTvAnswerInfoAnswerCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:textColor="#AEAEAE"
-                    android:textSize="@dimen/sp_12" />
-
-                <TextView
-                    android:id="@+id/mTvAnswerInfoFocusCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:layout_toRightOf="@+id/mTvAnswerInfoAnswerCount"
-                    android:text="1850个关注"
-                    android:textColor="#AEAEAE"
-                    android:textSize="@dimen/sp_12" />
-
-                <TextView
-                    android:id="@+id/mTvAnswerInfoFocus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/shape_tv_bg3"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="@dimen/dp_10"
-                    android:paddingRight="@dimen/dp_10"
-                    android:paddingTop="5dp"
-                    android:text="+ 关注问题"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp" />
-            </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#f5f5f5" />
-        </LinearLayout>
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/id_srl_base_recycler_view"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/mClAnswerInfoInfoContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="50dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:orientation="vertical">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/id_rv_base_recycler_view"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:elevation="0dp">
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff"
+                android:orientation="vertical"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/mLlAnswerInfoTagsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_10" />
+
+                <TextView
+                    android:id="@+id/mTvAnswerInfoTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dp_10"
+                    android:textColor="@color/black_tv_color"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/mTvAnswerInfoContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dp_10"
+                    android:textColor="#717171"
+                    android:textSize="@dimen/sp_14" />
+
+                <com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout
+                    android:id="@+id/mLlAnswerInfoImageContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_10" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dp_10">
+
+                    <TextView
+                        android:id="@+id/mTvAnswerInfoAnswerCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:textColor="#AEAEAE"
+                        android:textSize="@dimen/sp_12" />
+
+                    <TextView
+                        android:id="@+id/mTvAnswerInfoFocusCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:layout_toRightOf="@+id/mTvAnswerInfoAnswerCount"
+                        android:text="1850个关注"
+                        android:textColor="#AEAEAE"
+                        android:textSize="@dimen/sp_12" />
+
+                    <TextView
+                        android:id="@+id/mTvAnswerInfoFocus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/shape_tv_bg3"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:paddingRight="@dimen/dp_10"
+                        android:paddingTop="5dp"
+                        android:text="+ 关注问题"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#f5f5f5" />
+            </LinearLayout>
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/id_srl_base_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/id_rv_base_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <LinearLayout
-            android:id="@+id/mLlAnswerInfoAsk"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_weight="1"
-            android:background="#f5f5f5"
-            android:gravity="center">
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:drawableLeft="@drawable/img_icon_questions"
-                android:drawablePadding="@dimen/dp_10"
-                android:gravity="center"
-                android:text="去提问" />
+            <LinearLayout
+                android:id="@+id/mLlAnswerInfoAsk"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="#f5f5f5"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:drawableLeft="@drawable/img_icon_questions"
+                    android:drawablePadding="@dimen/dp_10"
+                    android:gravity="center"
+                    android:text="去提问" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/mLlAnswerInfoReply"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="#F95959"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:drawableLeft="@drawable/img_icon_answer"
+                    android:drawablePadding="@dimen/dp_10"
+                    android:gravity="center"
+                    android:text="回答"
+                    android:textColor="#fff" />
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/mLlAnswerInfoReply"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:background="#F95959"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:drawableLeft="@drawable/img_icon_answer"
-                android:drawablePadding="@dimen/dp_10"
-                android:gravity="center"
-                android:text="回答"
-                android:textColor="#fff" />
-        </LinearLayout>
-    </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</FrameLayout>

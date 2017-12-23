@@ -106,6 +106,9 @@ class LoginFragment : BaseNetWorkingFragment() {
         toast("登录失败，请稍后重试……")
     }
 
+    override fun onRequestEnd(requestID: Int) {
+    }
+
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         when (requestID) {
@@ -140,38 +143,35 @@ class LoginFragment : BaseNetWorkingFragment() {
     }
 
     private fun LoginFragment.onLoginSuccess(userJson: JSONObject) {
-        UserInfo.parseUserInfo(mContext,userJson)
+        UserInfo.parseUserInfo(mContext, userJson)
         RxBus.getDefault().post(UserInfo.getInstance())
-        if (ChatClient.getInstance().isLoggedInBefore) {
-            ChatClient.getInstance().logout(true, object : Callback {
-                override fun onSuccess() {
-                    loginHx()
-                }
-
-                override fun onProgress(p0: Int, p1: String?) {
-                }
-
-                override fun onError(p0: Int, p1: String?) {
-                    Log.e("TAG", "logout --> " + p1)
-                }
-            })
-        } else {
+        if (!ChatClient.getInstance().isLoggedInBefore) {
             loginHx()
         }
-        finish()
     }
 
     private fun loginHx() {
         ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
             override fun onSuccess() {
+                close()
             }
 
             override fun onProgress(p0: Int, p1: String?) {
             }
 
             override fun onError(p0: Int, p1: String?) {
+                close()
             }
         })
+    }
+
+    private fun close() {
+        mContext.runOnUiThread {
+            if (progressDialog != null && progressDialog.isShowing) {
+                progressDialog.dismiss()
+            }
+            finish()
+        }
     }
 
 

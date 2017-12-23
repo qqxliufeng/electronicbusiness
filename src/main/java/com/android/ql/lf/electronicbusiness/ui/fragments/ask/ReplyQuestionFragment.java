@@ -13,6 +13,7 @@ import com.android.ql.lf.electronicbusiness.R;
 import com.android.ql.lf.electronicbusiness.data.RefreshData;
 import com.android.ql.lf.electronicbusiness.data.SelectImageItemBean;
 import com.android.ql.lf.electronicbusiness.data.UserInfo;
+import com.android.ql.lf.electronicbusiness.present.OrderPresent;
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity;
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment;
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog;
@@ -31,6 +32,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -156,14 +158,28 @@ public class ReplyQuestionFragment extends BaseNetWorkingFragment {
         super.onRequestSuccess(requestID, result);
         JSONObject json = checkResultCode(result);
         if (json != null) {
-            UserInfo.getInstance().setMemberIntegral(json.optString("arr"));
-            Toast.makeText(mContext, "回复成功", Toast.LENGTH_SHORT).show();
-            RefreshData.INSTANCE.setRefresh(true);
-            RefreshData.INSTANCE.setAny("回复成功");
-            RxBus.getDefault().post(RefreshData.INSTANCE);
-            finish();
+            if (Objects.equals(json.optString("code"), "200")) {
+                UserInfo.getInstance().setMemberIntegral(json.optString("arr"));
+                Toast.makeText(mContext, "回复成功", Toast.LENGTH_SHORT).show();
+                RefreshData.INSTANCE.setRefresh(true);
+                RefreshData.INSTANCE.setAny("回复成功");
+                if (Objects.equals(getArguments().getString("uid"), UserInfo.getInstance().getMemberId())) {
+                    OrderPresent.notifyRefreshOrderNum();
+                }
+                RxBus.getDefault().post(RefreshData.INSTANCE);
+                finish();
+            }
         } else {
-            Toast.makeText(mContext, "上传失败，请稍后重试", Toast.LENGTH_SHORT).show();
+            try {
+                if (result != null && Objects.equals(new JSONObject(result.toString()).optString("code"), "400")) {
+                    Toast.makeText(mContext, "该问题已被作者删除，暂无法回答", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+                Toast.makeText(mContext, "上传失败，请稍后重试", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(mContext, "上传失败，请稍后重试", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

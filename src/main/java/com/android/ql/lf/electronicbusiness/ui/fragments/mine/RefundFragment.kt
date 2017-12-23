@@ -92,7 +92,6 @@ class RefundFragment : BaseNetWorkingFragment() {
                 toast("请输入合法的手机号")
                 return@setOnClickListener
             }
-
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.ORDER_MODEL,
                     RequestParamsHelper.ACT_REFUND,
@@ -112,6 +111,7 @@ class RefundFragment : BaseNetWorkingFragment() {
         val json = checkResultCode(result)
         if (json != null) {
             toast("退款申请成功")
+            OrderPresent.notifyRefreshOrderNum()
             OrderPresent.notifyRefreshOrderList()
             finish()
         } else {

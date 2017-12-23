@@ -38,21 +38,6 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
 
     private lateinit var currentItem: GoodsItemBean
 
-    private val currentLoginFlag by lazy {
-        "${this.hashCode()}${this}"
-    }
-
-    override fun initView(view: View?) {
-        super.initView(view)
-        subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
-            when (UserInfo.getInstance().loginTag) {
-                currentLoginFlag -> {
-                    enterGoodsInfo()
-                }
-            }
-        }
-    }
-
     override fun createAdapter(): BaseQuickAdapter<GoodsItemBean, BaseViewHolder> =
             TeamCutItemAdapter(R.layout.adapter_team_cut_item_layout, mArrayList)
 
@@ -72,7 +57,7 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.PRODUCT_MODEL,
                     RequestParamsHelper.ACT_PRODUCT_TYPE_SEARCH,
-                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString("cid"), "", "2", "",currentPage))
+                    RequestParamsHelper.getProductTypeSearchParams(arguments.getString("cid"), "", "2", "", currentPage))
         }
     }
 
@@ -90,17 +75,12 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onMyItemClick(adapter, view, position)
         currentItem = mArrayList[position]
-        if (UserInfo.getInstance().isLogin) {
-            enterGoodsInfo()
-        } else {
-            UserInfo.getInstance().loginTag = currentLoginFlag
-            LoginFragment.startLogin(mContext)
-        }
+        enterGoodsInfo()
     }
 
     private fun enterGoodsInfo() {
         val bundle = Bundle()
-        bundle.putString(TeamCutItemInfoFragment.GOODS_ID_FLAG, currentItem.product_id)
+        bundle.putString(CutGoodsInfoFragment.GOODS_ID_FLAG, currentItem.product_id)
         FragmentContainerActivity.startFragmentContainerActivity(mContext, "商品详情", true, false, bundle, CutGoodsInfoFragment::class.java)
     }
 }

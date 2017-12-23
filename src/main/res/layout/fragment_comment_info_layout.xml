@@ -63,8 +63,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
                         android:drawablePadding="@dimen/dp_10"
-                        android:drawableRight="@drawable/img_icon_inter_comment"
-                        android:text="1850个回答"
                         android:textColor="@color/black_tv_color"
                         android:textSize="@dimen/sp_14" />
 

@@ -15,6 +15,7 @@ import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActiv
 import com.android.ql.lf.electronicbusiness.ui.adapters.GoodsInfoCommentAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.im.MyChatActivity
+import com.android.ql.lf.electronicbusiness.ui.fragments.mine.LoginFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.VipInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.views.BottomGoodsParamDialog
 import com.android.ql.lf.electronicbusiness.ui.views.HtmlTextView
@@ -22,6 +23,7 @@ import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.GlideManager
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
+import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.google.gson.Gson
 import com.hyphenate.chat.ChatClient
 import com.hyphenate.helpdesk.callback.Callback
@@ -43,6 +45,10 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
 
     companion object {
         val GOODS_ID_FLAG = "goods_id_flag"
+
+        val LOGIN_FLAG_VIP_ADD_SHOPPING_CAR = "cut_add_vip_shopping_car"
+        val LOGIN_FLAG_VIP_BUY = "cut_vip_buy"
+        val LOGIN_FLAG_VIP_KEFU_ONLINE = "cut_vip_kefu_online"
     }
 
     private val list = arrayListOf<CommentForGoodsBean>()
@@ -73,6 +79,21 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
     override fun getLayoutId() = R.layout.vip_privilege_item_info_layout
 
     override fun initView(view: View?) {
+        subscription = RxBus.getDefault().toObservable(UserInfo.getInstance()::class.java).subscribe {
+            if (UserInfo.getInstance().isLogin) {
+                when (UserInfo.getInstance().loginTag) {
+                    LOGIN_FLAG_VIP_ADD_SHOPPING_CAR -> {
+                        mTvVipPrivilegeGoodsInfoCollection.performClick()
+                    }
+                    LOGIN_FLAG_VIP_BUY -> {
+                        mTvVipPrivilegeGoodsInfoBuy.performClick()
+                    }
+                    LOGIN_FLAG_VIP_KEFU_ONLINE -> {
+                        mTvVipInfoOnlineAsk.performClick()
+                    }
+                }
+            }
+        }
         mNiceVideoPlayer.fullscreenButton.visibility = View.GONE
         mNiceVideoPlayer.titleTextView.visibility = View.GONE
         mNiceVideoPlayer.backButton.visibility = View.GONE
@@ -135,34 +156,49 @@ class VipPrivilegeItemInfoFragment : BaseNetWorkingFragment() {
                 picJsonArray = vipGoodsInfoBean!!.result.detail.product_pic
                 specifications = vipGoodsInfoBean!!.result.detail.product_specification
                 mTvVipPrivilegeGoodsInfoCollection.setOnClickListener {
-                    if (UserInfo.getInstance().memberRank == "1") {
-                        if (picJsonArray != null && picJsonArray!!.size > 0) {
-                            currentMode = 0
-                            showBottomParamDialog(picJsonArray!!, specifications!!)
+                    if (UserInfo.getInstance().isLogin) {
+                        if (UserInfo.getInstance().memberRank == "1") {
+                            if (picJsonArray != null && picJsonArray!!.size > 0) {
+                                currentMode = 0
+                                showBottomParamDialog(picJsonArray!!, specifications)
+                            }
+                        } else {
+                            //开通会员
+                            openVip()
                         }
                     } else {
-                        //开通会员
-                        openVip()
+                        UserInfo.getInstance().loginTag = LOGIN_FLAG_VIP_ADD_SHOPPING_CAR
+                        LoginFragment.startLogin(mContext)
                     }
                 }
                 mTvVipPrivilegeGoodsInfoBuy.setOnClickListener {
-                    if (UserInfo.getInstance().memberRank == "1") {
-                        if (picJsonArray != null && picJsonArray!!.size > 0) {
-                            currentMode = 1
-                            showBottomParamDialog(picJsonArray!!, specifications!!)
+                    if (UserInfo.getInstance().isLogin) {
+                        if (UserInfo.getInstance().memberRank == "1") {
+                            if (picJsonArray != null && picJsonArray!!.size > 0) {
+                                currentMode = 1
+                                showBottomParamDialog(picJsonArray!!, specifications)
+                            }
+                        } else {
+                            //开通会员
+                            openVip()
                         }
                     } else {
-                        //开通会员
-                        openVip()
+                        UserInfo.getInstance().loginTag = LOGIN_FLAG_VIP_BUY
+                        LoginFragment.startLogin(mContext)
                     }
                 }
                 mTvVipInfoOnlineAsk.setOnClickListener {
-                    if (ChatClient.getInstance().isLoggedInBefore) {
-                        if (vipGoodsInfoBean != null) {
-                            UserInfo.openKeFu(mContext)
+                    if (UserInfo.getInstance().isLogin) {
+                        if (ChatClient.getInstance().isLoggedInBefore) {
+                            if (vipGoodsInfoBean != null) {
+                                UserInfo.openKeFu(mContext)
+                            }
+                        } else {
+                            loginHx()
                         }
                     } else {
-                        loginHx()
+                        UserInfo.getInstance().loginTag = LOGIN_FLAG_VIP_KEFU_ONLINE
+                        LoginFragment.startLogin(mContext)
                     }
                 }
                 if (picJsonArray != null && picJsonArray!!.size > 0) {

@@ -10,6 +10,7 @@ import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.AnswerBean
 import com.android.ql.lf.electronicbusiness.data.ReplyAnswerBean
 import com.android.ql.lf.electronicbusiness.data.UserInfo
+import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.adapters.CommentInfoItemAdapter
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseRecyclerViewFragment
@@ -40,6 +41,8 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
     private lateinit var answerBean: AnswerBean
     private var replyAnswerBean: ReplyAnswerBean? = null
 
+    private var currentReplyTag = 0x25
+
     override fun getLayoutId() = R.layout.fragment_comment_info_layout
 
     override fun createAdapter(): BaseQuickAdapter<ReplyAnswerBean, BaseViewHolder> =
@@ -53,14 +56,15 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
         GlideManager.loadFaceCircleImage(mContext, answerBean.member_pic, mIvCommentInfoFace)
         mTvCommentInfoContent.text = answerBean.answer_content
         mRlCommentInfoReply.setOnClickListener {
-            showReplyDialog(0x26)
+            currentReplyTag = 0x26
+            showReplyDialog()
         }
     }
 
-    private fun showReplyDialog(tag: Int) {
+    private fun showReplyDialog() {
         val contentView = LayoutInflater.from(context).inflate(R.layout.layout_answer_info_repay_layout, null)
         val et_content = contentView.findViewById<EditText>(R.id.mEtReplyContent)
-        et_content.hint = if (tag == 0x25) {
+        et_content.hint = if (currentReplyTag == 0x25) {
             "回复：${replyAnswerBean!!.member_name}"
         } else "回复："
         val bt_send = contentView.findViewById<Button>(R.id.mBtReplaySend)
@@ -73,7 +77,7 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
             mPresent.getDataByPost(0x1,
                     RequestParamsHelper.QAA_MODEL,
                     RequestParamsHelper.ACT_H_REPLY,
-                    RequestParamsHelper.getHReply(answerBean.answer_id, if (tag == 0x25) replyAnswerBean!!.reply_id else "", et_content.text.toString()))
+                    RequestParamsHelper.getHReply(answerBean.answer_id, if (currentReplyTag == 0x25) replyAnswerBean!!.reply_id else "", et_content.text.toString()))
             popupWindow.dismiss()
         }
     }
@@ -126,13 +130,24 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
             }
             0x1 -> {
                 if (json != null) {
+                    if (currentReplyTag == 0x26) {
+                        if (answerBean.member_id == UserInfo.getInstance().memberId) {
+                            OrderPresent.notifyRefreshOrderNum()
+                        }
+                    } else {
+                        if (replyAnswerBean != null) {
+                            if (replyAnswerBean!!.member_id == UserInfo.getInstance().memberId) {
+                                OrderPresent.notifyRefreshOrderNum()
+                            }
+                        }
+                    }
                     onPostRefresh()
                 }
             }
             0x2 -> {
                 if (json != null) {
                     mArrayList.remove(replyAnswerBean)
-                    if (mArrayList.isEmpty()){
+                    if (mArrayList.isEmpty()) {
                         setEmptyView()
                         return
                     }
@@ -146,7 +161,8 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
         replyAnswerBean = mArrayList[position]
         when (view?.id) {
             R.id.mTvReplyInfoItemReply -> {
-                showReplyDialog(0x25)
+                currentReplyTag = 0x25
+                showReplyDialog()
             }
             R.id.mTvReplyInfoItemDelete -> {
                 val builder = AlertDialog.Builder(mContext)

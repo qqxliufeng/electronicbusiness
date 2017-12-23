@@ -26,6 +26,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.activities.MainActivity"
+            android:launchMode="singleTask"
             android:label="@string/app_name" />
 
         <activity
@@ -36,11 +37,16 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="com.android.ql.lf.electronicbusiness"
+                    android:scheme="mzdj" />
+            </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activities.TestActivity">
-
-        </activity>
         <activity
             android:name=".ui.activities.FragmentContainerActivity"
             android:theme="@style/AppFragmentContainerTheme"
