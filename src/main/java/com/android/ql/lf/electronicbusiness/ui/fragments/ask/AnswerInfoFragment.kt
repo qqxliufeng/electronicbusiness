@@ -166,7 +166,7 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                         }
                         askInfoBean?.quiz_pic?.forEachWithIndex { index, it ->
                             val image = ImageView(mContext)
-                            val params = LinearLayout.LayoutParams(0, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150.0f, mLlAnswerInfoImageContainer.context.resources.displayMetrics).toInt())
+                            val params = LinearLayout.LayoutParams(0, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100.0f, mLlAnswerInfoImageContainer.context.resources.displayMetrics).toInt())
                             params.weight = 1.0f
                             val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, mLlAnswerInfoImageContainer.context.resources.displayMetrics).toInt()
                             params.leftMargin = margin

@@ -1,5 +1,6 @@
 package com.android.ql.lf.electronicbusiness.ui.adapters
 
+import android.widget.Button
 import android.widget.ImageView
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.GoodsItemBean
@@ -24,6 +25,18 @@ class PersonalCutItemAdapter(layoutId: Int, list: ArrayList<GoodsItemBean>) : Ba
         helper.setText(R.id.mTvPersonalCutItemMoney, "￥ ${item.product_price}")
         helper.setText(R.id.mTvPersonalCutItemHasCut, "已减${item.product_minus}元")
         helper.setText(R.id.mTvPersonalCutItemHasPersonNum, "${item.product_knum}人参与")
-
+        val bt_status = helper.getView<Button>(R.id.mBtPersonalCutItemCut)
+        if ("1" == item.product_ptype) {
+            helper.setText(R.id.mBtPersonalCutItemCut, "已砍到最底价")
+            bt_status.isEnabled = false
+        } else {
+            bt_status.isEnabled = true
+        }
+        if ("1" == item.product_endstatus) {
+            helper.setText(R.id.mBtPersonalCutItemCut, "活动已结束")
+            bt_status.isEnabled = false
+        } else {
+            bt_status.isEnabled = true
+        }
     }
 }

@@ -35,7 +35,9 @@ class SettingFragment : BaseFragment() {
                 UserInfo.getInstance().loginOut()
                 UserInfo.getInstance().clearUserCache(mContext)
                 UserInfo.getInstance().loginTag = -1
-                ChatClient.getInstance().logout(true, null)
+                if (ChatClient.getInstance().isLoggedInBefore) {
+                    ChatClient.getInstance().logout(true, null)
+                }
                 RxBus.getDefault().post(UserInfo.getInstance())
                 finish()
             }

@@ -11,22 +11,15 @@ import com.android.ql.lf.electronicbusiness.data.UserInfo
 import com.android.ql.lf.electronicbusiness.present.OrderPresent
 import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
-import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.ExpressInfoFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mall.integration.IntegrationMallFragment
 import com.android.ql.lf.electronicbusiness.ui.fragments.mine.*
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.*
 import com.hyphenate.chat.ChatClient
-import com.hyphenate.chat.ChatManager
-import com.hyphenate.chat.Message
+import com.hyphenate.helpdesk.Error
 import com.hyphenate.helpdesk.callback.Callback
-import kotlinx.android.synthetic.main.activity_fragment_container_layout.*
 import kotlinx.android.synthetic.main.fragment_main_mine_layout.*
-import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
-import org.jetbrains.anko.toast
-import org.json.JSONObject
-import q.rorbin.badgeview.Badge
 import q.rorbin.badgeview.QBadgeView
 import rx.Subscription
 
@@ -378,6 +371,7 @@ class MainMineFragment : BaseNetWorkingFragment() {
         if (UserInfo.getInstance().isLogin) {
             GlideManager.loadFaceCircleImage(mContext, Constants.BASE_IP + UserInfo.getInstance().memberPic, mIvMainMineFace)
             mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_PERSONAL, RequestParamsHelper.getPersonal())
+            registerHX()
         } else {
             if (badge0 != null) {
                 badge0!!.hide(false)
@@ -406,6 +400,32 @@ class MainMineFragment : BaseNetWorkingFragment() {
         //1 代表会员  0 代表非会员
         mTvMainMineNickName.setCompoundDrawablesWithIntrinsicBounds(0, 0, if (UserInfo.getInstance().isLogin && "1" == UserInfo.getInstance().memberRank) R.drawable.img_icon_vip_s else 0, 0)
     }
+
+    /**
+     * 注册帐号到环信
+     */
+    private fun registerHX() {
+        //注册环信
+        ChatClient.getInstance().register(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
+            override fun onSuccess() {
+                //注册成功，直接登录
+                Log.e("TAG", "直接登录")
+                UserInfo.loginHx()
+            }
+
+            override fun onProgress(p0: Int, p1: String?) {
+            }
+
+            override fun onError(p0: Int, p1: String?) {
+                //注册失败，若是已经注册，直接登录
+                if (p0 == Error.USER_ALREADY_EXIST) {
+                    Log.e("TAG", "已经注册，直接登录")
+                    UserInfo.loginHx()
+                }
+            }
+        })
+    }
+
 
     override fun onDestroyView() {
         if (!loginSubscribe.isUnsubscribed) {

@@ -123,6 +123,7 @@ public class BottomGoodsParamDialog extends BottomSheetDialog {
         if (items != null && !items.isEmpty()) {
             mSpecificationList = items;
             llContainer.removeAllViews();
+            flexboxLayouts.clear();
             for (final SpecificationBean item : mSpecificationList) {
                 MyFlexboxLayout myFlexboxLayout = new MyFlexboxLayout(getContext());
 

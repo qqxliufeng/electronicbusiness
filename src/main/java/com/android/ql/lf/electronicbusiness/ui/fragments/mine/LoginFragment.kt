@@ -1,9 +1,7 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
 import android.content.Context
-import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.UserInfo
@@ -16,19 +14,13 @@ import com.android.ql.lf.electronicbusiness.utils.Constants
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.google.gson.Gson
-import com.hyphenate.chat.ChatClient
-import com.hyphenate.chat.Message
-import com.hyphenate.chat.adapter.EMAChatManager
-import com.hyphenate.helpdesk.callback.Callback
 import com.tencent.mm.opensdk.modelbase.BaseResp
 import com.tencent.mm.opensdk.modelmsg.SendAuth
 import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.fragment_login_layout.*
 import org.jetbrains.anko.bundleOf
-import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
-import org.jetbrains.anko.toast
 import org.json.JSONObject
 import java.util.regex.Pattern
 
@@ -103,6 +95,7 @@ class LoginFragment : BaseNetWorkingFragment() {
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
+        super.onRequestEnd(requestID)
         toast("登录失败，请稍后重试……")
     }
 
@@ -114,6 +107,7 @@ class LoginFragment : BaseNetWorkingFragment() {
         when (requestID) {
             0x0 -> {
                 try {
+                    super.onRequestEnd(requestID)
                     val json = JSONObject(result.toString())
                     val code = json.optString("code")
                     if ("200" == code) {
@@ -131,6 +125,7 @@ class LoginFragment : BaseNetWorkingFragment() {
                     val jsonObject = json.optJSONObject("result")
                     val memberId = jsonObject.optString("member_id")
                     if (TextUtils.isEmpty(memberId)) {
+                        super.onRequestEnd(requestID)
                         val wxUserInfo = Gson().fromJson(jsonObject.toString(), WXUserInfo::class.java)
                         FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, bundleOf(Pair(WXCompleteDataFragment.WX_USER_INFO_FLAG, wxUserInfo)), WXCompleteDataFragment::class.java)
                         finish()
@@ -142,37 +137,10 @@ class LoginFragment : BaseNetWorkingFragment() {
         }
     }
 
-    private fun LoginFragment.onLoginSuccess(userJson: JSONObject) {
+    private fun onLoginSuccess(userJson: JSONObject) {
         UserInfo.parseUserInfo(mContext, userJson)
         RxBus.getDefault().post(UserInfo.getInstance())
-        if (!ChatClient.getInstance().isLoggedInBefore) {
-            loginHx()
-        }
+        finish()
     }
-
-    private fun loginHx() {
-        ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
-            override fun onSuccess() {
-                close()
-            }
-
-            override fun onProgress(p0: Int, p1: String?) {
-            }
-
-            override fun onError(p0: Int, p1: String?) {
-                close()
-            }
-        })
-    }
-
-    private fun close() {
-        mContext.runOnUiThread {
-            if (progressDialog != null && progressDialog.isShowing) {
-                progressDialog.dismiss()
-            }
-            finish()
-        }
-    }
-
 
 }

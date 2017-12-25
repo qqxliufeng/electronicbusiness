@@ -3,6 +3,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
@@ -67,8 +68,13 @@ class PersonalInfoFragment : BaseNetWorkingFragment() {
             bundle.putInt(ACTION_ID_KEY, NICK_ID)
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "昵称", true, false, bundle, EditPersonalInfoFragment::class.java)
         }
-        mTvPersonalInfoResetPassword.setOnClickListener {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "修改密码", true, false, ResetPasswordFragment::class.java)
+        if (TextUtils.isEmpty(UserInfo.getInstance().member_openid)) {
+            mTvPersonalInfoResetPassword.visibility = View.VISIBLE
+            mTvPersonalInfoResetPassword.setOnClickListener {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "修改密码", true, false, ResetPasswordFragment::class.java)
+            }
+        } else {
+            mTvPersonalInfoResetPassword.visibility = View.GONE
         }
         GlideManager.loadFaceCircleImage(mContext, "${Constants.BASE_IP}${UserInfo.getInstance().memberPic}", mTvPersonalInfoFace)
         mTvPersonalInfoNickName.text = UserInfo.getInstance().memberName

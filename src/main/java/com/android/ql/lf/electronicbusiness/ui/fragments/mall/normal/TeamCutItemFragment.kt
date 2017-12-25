@@ -66,6 +66,9 @@ class TeamCutItemFragment : AbstractLazyLoadFragment<GoodsItemBean>() {
         loadData()
     }
 
+    override fun getEmptyMessage() = "暂无商品哦~~~"
+
+
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
         super.onRequestSuccess(requestID, result)
         isLoad = true

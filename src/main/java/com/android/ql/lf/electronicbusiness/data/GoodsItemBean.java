@@ -20,6 +20,24 @@ public class GoodsItemBean {
     private String product_name;
     private String product_ms;
     private String product_content;
+    private String product_endstatus; //1 活动结束 0 活动继续
+    private String product_ptype; // 1  已经砍到最底价  0 未到最底价
+
+    public String getProduct_endstatus() {
+        return product_endstatus;
+    }
+
+    public void setProduct_endstatus(String product_endstatus) {
+        this.product_endstatus = product_endstatus;
+    }
+
+    public String getProduct_ptype() {
+        return product_ptype;
+    }
+
+    public void setProduct_ptype(String product_ptype) {
+        this.product_ptype = product_ptype;
+    }
 
     public String getProduct_id() {
         return product_id;

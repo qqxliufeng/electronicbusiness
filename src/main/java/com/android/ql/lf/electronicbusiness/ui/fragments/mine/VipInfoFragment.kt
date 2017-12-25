@@ -76,7 +76,7 @@ class VipInfoFragment : BaseNetWorkingFragment() {
             mPresent.getDataByPost(0x0,
                     RequestParamsHelper.MEMBER_MODEL,
                     RequestParamsHelper.ACT_BBS,
-                    RequestParamsHelper.getBBSParam(mSptvContainer.payType, currentVipPayTimeBean!!.m_p_price))
+                    RequestParamsHelper.getBBSParam(mSptvContainer.payType, currentVipPayTimeBean!!.m_p_id))
         }
     }
 
@@ -160,27 +160,11 @@ class VipInfoFragment : BaseNetWorkingFragment() {
                     }
                 }
             }
-        }else if(requestID == 0x2){
-            if (json!=null){
-                parseUserInfo(json.optJSONObject("result"))
+        } else if (requestID == 0x2) {
+            if (json != null) {
+                UserInfo.parseUserInfo(mContext, json.optJSONObject("result"))
                 setUserInfo()
             }
         }
-    }
-
-
-    private fun parseUserInfo(userJson: JSONObject?) {
-        UserInfo.getInstance().memberId = userJson!!.optString("member_id")
-        UserInfo.getInstance().memberName = userJson.optString("member_name")
-        UserInfo.getInstance().memberPhone = userJson.optString("member_phone")
-        UserInfo.getInstance().memberRank = userJson.optString("member_rank")
-        UserInfo.getInstance().memberSex = userJson.optString("member_sex")
-        UserInfo.getInstance().memberMtime = userJson.optString("member_mtime")
-        UserInfo.getInstance().memberIntegral = userJson.optString("member_integral")
-        UserInfo.getInstance().memberForm = userJson.optString("member_form")
-        UserInfo.getInstance().memberAddress = userJson.optString("member_address")
-        UserInfo.getInstance().memberPic = userJson.optString("member_pic")
-        UserInfo.getInstance().member_hxname = userJson.optString("member_hxname")
-        UserInfo.getInstance().member_hxpw = userJson.optString("member_hxpw")
     }
 }

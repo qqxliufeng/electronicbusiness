@@ -482,6 +482,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             }
             if (TextUtils.equals("1", cutInfoBean!!.result.detail.product_ptype)) { //product_ptype== 1  已经到底价了
                 mTvPersonalCutItemInfoCut.isEnabled = false //已经砍过一次价了 或者已经到最低价了 都不能再砍了
+                mTvPersonalCutItemInfoEveryOneCut.text = "抢购中……"
             }
         }
     }

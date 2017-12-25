@@ -429,11 +429,10 @@ class RequestParamsHelper {
         //会员中心
         val ACT_BBS = "bbs"
 
-        fun getBBSParam(payType: String, money: String, numtime: String = "6"): ApiParams {
+        fun getBBSParam(payType: String, mid: String): ApiParams {
             val param = getWithIdParams()
             param.addParam("paytype", payType)
-            param.addParam("price", money)
-            param.addParam("numtime", numtime)
+            param.addParam("mid", mid)
             return param
         }
 

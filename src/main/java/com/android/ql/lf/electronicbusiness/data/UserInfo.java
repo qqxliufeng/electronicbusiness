@@ -56,6 +56,15 @@ public class UserInfo {
     private String memberPic;
     private String member_hxname;
     private String member_hxpw;
+    private String member_openid = "";
+
+    public String getMember_openid() {
+        return member_openid;
+    }
+
+    public void setMember_openid(String member_openid) {
+        this.member_openid = member_openid;
+    }
 
     public String getMember_hxname() {
         return member_hxname;
@@ -192,6 +201,9 @@ public class UserInfo {
             UserInfo.getInstance().memberPic = userJson.optString("member_pic");
             UserInfo.getInstance().member_hxname = userJson.optString("member_hxname");
             UserInfo.getInstance().member_hxpw = userJson.optString("member_hxpw");
+            if (TextUtils.isEmpty(UserInfo.getInstance().member_openid)) {
+                UserInfo.getInstance().member_openid = userJson.optString("member_openid");
+            }
             PreferenceUtils.setPrefString(context, USER_ID_FLAG, UserInfo.getInstance().memberId);
         }
     }
@@ -218,7 +230,7 @@ public class UserInfo {
         });
     }
 
-    public static void openKeFu(Context context){
+    public static void openKeFu(Context context) {
         Intent intent = new IntentBuilder(context)
                 .setServiceIMNumber(Constants.HX_IM_SERVICE_NUM)
                 .setTargetClass(MyChatActivity.class)

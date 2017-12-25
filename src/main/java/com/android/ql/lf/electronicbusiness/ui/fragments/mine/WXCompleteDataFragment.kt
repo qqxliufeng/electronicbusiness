@@ -1,7 +1,6 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.CodeBean
@@ -10,13 +9,11 @@ import com.android.ql.lf.electronicbusiness.data.WXUserInfo
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.CounterHelper
+import com.android.ql.lf.electronicbusiness.utils.PreferenceUtils
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.google.gson.Gson
-import com.hyphenate.chat.ChatClient
-import com.hyphenate.helpdesk.callback.Callback
 import kotlinx.android.synthetic.main.fragment_wx_complete_data_layout.*
-import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
 import java.util.regex.Pattern
@@ -126,39 +123,16 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
         }
     }
 
+
     private fun onLoginSuccess(json: JSONObject) {
         val memId = json.optString("result")
-        UserInfo.getInstance().memberId = memId
         UserInfo.parseUserInfo(mContext, json.optJSONObject("arr"))
+        UserInfo.getInstance().memberId = memId
+        PreferenceUtils.setPrefString(context, UserInfo.USER_ID_FLAG, UserInfo.getInstance().memberId)
         RxBus.getDefault().post(UserInfo.getInstance())
-        if (!ChatClient.getInstance().isLoggedInBefore) {
-            loginHx()
-        }
+        finish()
     }
 
-    private fun loginHx() {
-        ChatClient.getInstance().login(UserInfo.getInstance().member_hxname, UserInfo.getInstance().member_hxpw, object : Callback {
-            override fun onSuccess() {
-                close()
-            }
-
-            override fun onProgress(p0: Int, p1: String?) {
-            }
-
-            override fun onError(p0: Int, p1: String?) {
-                close()
-            }
-        })
-    }
-
-    private fun close() {
-        mContext.runOnUiThread {
-            if (progressDialog != null && progressDialog.isShowing) {
-                progressDialog.dismiss()
-            }
-            finish()
-        }
-    }
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
@@ -168,9 +142,6 @@ class WXCompleteDataFragment : BaseNetWorkingFragment() {
             getCodeFailed()
             counterHelper.stop()
         }
-    }
-
-    override fun onRequestEnd(requestID: Int) {
     }
 
     private fun getCodeFailed() {

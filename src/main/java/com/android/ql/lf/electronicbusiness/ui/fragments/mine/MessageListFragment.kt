@@ -43,6 +43,8 @@ class MessageListFragment : BaseRecyclerViewFragment<MessageBean>() {
         }
     }
 
+    override fun getEmptyMessage() = "暂无消息"
+
     override fun onMyItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         super.onMyItemClick(adapter, view, position)
         val messageBean = mArrayList[position]

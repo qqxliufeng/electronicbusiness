@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.IndexAskInfoBean
@@ -192,6 +193,11 @@ class MainAskAndAnswerFragment : BaseRecyclerViewFragment<IndexAskInfoBean>() {
                     list.addAll(tempList)
                 }
                 tempList.clear()
+                list.forEach {
+                    if (TextUtils.isEmpty(it.tag_sort) || !TextUtils.isDigitsOnly(it.tag_sort)) {
+                        list.remove(it)
+                    }
+                }
                 Collections.sort(list) { o1, o2 -> o1!!.tag_sort.toInt().compareTo(o2!!.tag_sort.toInt()) }
                 val lastTag = TagBean()
                 lastTag.tag_title = "更多"

@@ -132,6 +132,8 @@ class OrderListFragment : BaseRecyclerViewFragment<MyOrderBean>() {
         }
     }
 
+    override fun getEmptyMessage() = "暂没有商品哦~~~"
+
     override fun getItemDecoration(): RecyclerView.ItemDecoration {
         val decoration: DividerItemDecoration = super.getItemDecoration() as DividerItemDecoration
         decoration.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.recycler_view_height_divider))
