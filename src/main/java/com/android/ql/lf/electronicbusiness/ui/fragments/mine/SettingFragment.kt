@@ -1,6 +1,7 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
 import android.support.v7.app.AlertDialog
+import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.UserInfo
@@ -9,7 +10,9 @@ import com.android.ql.lf.electronicbusiness.ui.fragments.BaseFragment
 import com.android.ql.lf.electronicbusiness.utils.CacheDataManager
 import com.android.ql.lf.electronicbusiness.utils.RxBus
 import com.hyphenate.chat.ChatClient
+import com.tencent.bugly.beta.Beta
 import kotlinx.android.synthetic.main.fragment_setting_layout.*
+import q.rorbin.badgeview.QBadgeView
 
 /**
  * Created by lf on 2017/11/4 0004.
@@ -20,10 +23,20 @@ class SettingFragment : BaseFragment() {
     override fun getLayoutId(): Int = R.layout.fragment_setting_layout
 
     override fun initView(view: View?) {
-        val versionName = mContext.packageManager.getPackageInfo(mContext.packageName, 0).versionName
+        val packageInfo = mContext.packageManager.getPackageInfo(mContext.packageName, 0)
+        val versionName = packageInfo.versionName
         mVersionName.text = "V$versionName"
         val cacheSize = CacheDataManager.getTotalCacheSize(mContext)
         mCacheSize.text = "$cacheSize"
+        val upgradeInfo = Beta.getUpgradeInfo()
+        if (packageInfo.versionCode < upgradeInfo.versionCode) {
+            mTvNewVersionNotify.visibility = View.VISIBLE
+            mRlVersionUpContainer.setOnClickListener {
+                Beta.checkUpgrade(false, false)
+            }
+        } else {
+            mTvNewVersionNotify.visibility = View.GONE
+        }
         mCacheSizeContainer.setOnClickListener {
             CacheDataManager.clearAllCache(mContext)
             mCacheSize.text = "暂无缓存"

@@ -64,6 +64,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         mMainNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         mMainViewPager.adapter = MyInnerViewPagerAdapter(supportFragmentManager)
         mMainViewPager.offscreenPageLimit = 4
+        toast("来一波更新")
 //        testBadgeView()
     }
 
@@ -135,6 +136,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
             toast("再一次退出")
         } else {
             super.onBackPressed()
+            System.exit(0)
         }
     }
 
