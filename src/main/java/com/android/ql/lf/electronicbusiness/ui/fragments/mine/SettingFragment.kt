@@ -29,7 +29,7 @@ class SettingFragment : BaseFragment() {
         val cacheSize = CacheDataManager.getTotalCacheSize(mContext)
         mCacheSize.text = "$cacheSize"
         val upgradeInfo = Beta.getUpgradeInfo()
-        if (packageInfo.versionCode < upgradeInfo.versionCode) {
+        if (upgradeInfo != null && packageInfo.versionCode < upgradeInfo.versionCode) {
             mTvNewVersionNotify.visibility = View.VISIBLE
             mRlVersionUpContainer.setOnClickListener {
                 Beta.checkUpgrade(false, false)

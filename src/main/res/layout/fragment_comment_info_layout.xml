@@ -105,6 +105,15 @@
                     android:textColor="@color/black_tv_color"
                     android:textSize="@dimen/sp_14" />
 
+
+                <com.android.ql.lf.electronicbusiness.ui.views.ImageContainerLinearLayout
+                    android:id="@+id/mLlCommentInfoImageContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_10" />
+
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

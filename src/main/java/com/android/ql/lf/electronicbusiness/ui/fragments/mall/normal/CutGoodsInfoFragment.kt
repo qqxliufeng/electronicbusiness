@@ -607,11 +607,15 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
      * 分享到微博
      */
     private fun shareToWb() {
-        ShareManager.shareToWBWebPager(shareHandler,
-                cutInfoBean!!.result.detail.product_name,
-                Html.fromHtml(cutInfoBean!!.result.share.ms).toString(),
-                "${Constants.BASE_IP}${cutInfoBean!!.result.share.url}",
-                shareBitmapPic, cutInfoBean!!.result.detail.product_name)
+        try {
+            ShareManager.shareToWBWebPager(shareHandler,
+                    cutInfoBean!!.result.detail.product_name,
+                    Html.fromHtml(cutInfoBean!!.result.share.ms).toString(),
+                    "${Constants.BASE_IP}${cutInfoBean!!.result.share.url}",
+                    shareBitmapPic, cutInfoBean!!.result.detail.product_name)
+        } catch (e: Exception) {
+            toast("分享失败")
+        }
     }
 
 

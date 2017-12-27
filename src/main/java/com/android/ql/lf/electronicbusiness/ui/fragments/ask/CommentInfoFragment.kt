@@ -113,6 +113,16 @@ class CommentInfoFragment : BaseRecyclerViewFragment<ReplyAnswerBean>() {
                     mTvCommentInfoAskCount.text = "${jsonResult.optString("answer_qnum")}个回答"
                     mTvCommentInfoTime.text = "回答于 ${jsonResult.optString("answer_time")}"
                     mTvCommentInfoReplyCount.text = "${jsonResult.optString("answer_num")} 回复"
+                    val picArray = jsonResult.optJSONArray("answer_pic")
+                    if (picArray != null && picArray.length() > 0) {
+                        mLlCommentInfoImageContainer.removeAllViews()
+                        val picList = arrayListOf<String>()
+                        (0 until picArray.length()).forEach {
+                            picList.add(picArray.optString(it))
+                        }
+                        mLlCommentInfoImageContainer.setImages(picList)
+                    }
+
                     val jsonArray = json.optJSONArray("arr")
                     if (jsonArray.length() == 0) {
                         if (currentPage == 0) {

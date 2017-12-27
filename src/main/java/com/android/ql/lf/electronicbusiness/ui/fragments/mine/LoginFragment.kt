@@ -95,11 +95,7 @@ class LoginFragment : BaseNetWorkingFragment() {
 
     override fun onRequestFail(requestID: Int, e: Throwable) {
         super.onRequestFail(requestID, e)
-        super.onRequestEnd(requestID)
         toast("登录失败，请稍后重试……")
-    }
-
-    override fun onRequestEnd(requestID: Int) {
     }
 
     override fun <T : Any?> onRequestSuccess(requestID: Int, result: T) {
@@ -125,7 +121,6 @@ class LoginFragment : BaseNetWorkingFragment() {
                     val jsonObject = json.optJSONObject("result")
                     val memberId = jsonObject.optString("member_id")
                     if (TextUtils.isEmpty(memberId)) {
-                        super.onRequestEnd(requestID)
                         val wxUserInfo = Gson().fromJson(jsonObject.toString(), WXUserInfo::class.java)
                         FragmentContainerActivity.startFragmentContainerActivity(mContext, "", true, true, bundleOf(Pair(WXCompleteDataFragment.WX_USER_INFO_FLAG, wxUserInfo)), WXCompleteDataFragment::class.java)
                         finish()
