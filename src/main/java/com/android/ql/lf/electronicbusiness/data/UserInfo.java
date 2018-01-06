@@ -9,6 +9,7 @@ import com.android.ql.lf.electronicbusiness.ui.activities.SplashActivity;
 import com.android.ql.lf.electronicbusiness.ui.fragments.im.MyChatActivity;
 import com.android.ql.lf.electronicbusiness.utils.Constants;
 import com.android.ql.lf.electronicbusiness.utils.PreferenceUtils;
+import com.android.ql.lf.electronicbusiness.utils.RxBus;
 import com.hyphenate.chat.ChatClient;
 import com.hyphenate.helpdesk.callback.Callback;
 import com.hyphenate.helpdesk.easeui.util.IntentBuilder;
@@ -239,11 +240,15 @@ public class UserInfo {
     }
 
     public void loginOut() {
+        UserInfo.getInstance().loginTag = -1;
+        if (ChatClient.getInstance().isLoggedInBefore()) {
+            ChatClient.getInstance().logout(true, null);
+        }
         memberId = null;
         instance = null;
     }
 
-    public void clearUserCache(Context context) {
+    public static void clearUserCache(Context context) {
         PreferenceUtils.setPrefString(context, USER_ID_FLAG, "");
     }
 

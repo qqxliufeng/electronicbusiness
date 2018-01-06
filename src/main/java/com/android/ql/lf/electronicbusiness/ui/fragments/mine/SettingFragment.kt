@@ -32,7 +32,7 @@ class SettingFragment : BaseFragment() {
         if (upgradeInfo != null && packageInfo.versionCode < upgradeInfo.versionCode) {
             mTvNewVersionNotify.visibility = View.VISIBLE
             mRlVersionUpContainer.setOnClickListener {
-                Beta.checkUpgrade(false, false)
+                Beta.checkUpgrade(true, false)
             }
         } else {
             mTvNewVersionNotify.visibility = View.GONE
@@ -45,12 +45,9 @@ class SettingFragment : BaseFragment() {
         mBtLogout.setOnClickListener {
             val build = AlertDialog.Builder(mContext)
             build.setPositiveButton("退出") { _, _ ->
-                UserInfo.getInstance().loginOut()
-                UserInfo.getInstance().clearUserCache(mContext)
+                UserInfo.clearUserCache(mContext)
                 UserInfo.getInstance().loginTag = -1
-                if (ChatClient.getInstance().isLoggedInBefore) {
-                    ChatClient.getInstance().logout(true, null)
-                }
+                UserInfo.getInstance().loginOut()
                 RxBus.getDefault().post(UserInfo.getInstance())
                 finish()
             }

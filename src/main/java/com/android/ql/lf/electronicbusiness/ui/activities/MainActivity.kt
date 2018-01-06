@@ -23,6 +23,8 @@ import com.hyphenate.chat.ChatManager
 import com.hyphenate.chat.Message
 import com.hyphenate.helpdesk.Error
 import com.hyphenate.helpdesk.callback.Callback
+import com.tencent.bugly.Bugly
+import com.tencent.bugly.beta.Beta
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 import q.rorbin.badgeview.QBadgeView
@@ -36,8 +38,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Beta.checkUpgrade(false,false)
         val intent = intent
-        //从第三方跳转来的
+        //从第三方跳转来的，跳转到商品详情页
         startGoodsInfo(intent)
     }
 
@@ -132,10 +135,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     override fun onBackPressed() {
         if (System.currentTimeMillis() - exitTime > 2000) {
             exitTime = System.currentTimeMillis()
-            toast("再一次退出")
+            toast("再按一次退出")
         } else {
             super.onBackPressed()
-            System.exit(0)
         }
     }
 

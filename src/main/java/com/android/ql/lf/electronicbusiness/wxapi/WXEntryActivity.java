@@ -16,6 +16,8 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
+import org.jetbrains.anko.ToastsKt;
+
 
 /**
  * Created by lf on 2017/11/28 0028.
@@ -42,12 +44,10 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
     public void onResp(BaseResp baseResp) {
         switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
-                Log.e("WXTest", "onResp OK");
                 if (baseResp instanceof SendAuth.Resp) {
                     SendAuth.Resp newResp = (SendAuth.Resp) baseResp;
                     String code = newResp.code;
                     RxBus.getDefault().post(baseResp);
-                    Log.e("WXTest", "onResp code = " + code);
                 } else if (baseResp instanceof SendMessageToWX.Resp) {
                     Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
                 }

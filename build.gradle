@@ -43,6 +43,7 @@ android {
     buildTypes {
 
         debug {
+            signingConfig signingConfigs.release
             buildConfigField "boolean", "LOG_DEBUG", "true"
         }
 

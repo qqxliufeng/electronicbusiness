@@ -79,7 +79,7 @@ public class ShareManager {
         bundle.putString(QQShare.SHARE_TO_QQ_SUMMARY, description);
         bundle.putString(QQShare.SHARE_TO_QQ_TARGET_URL, actionUrl);
         bundle.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, imageUrl);
-        bundle.putString(QQShare.SHARE_TO_QQ_APP_NAME, "拇指斗价");
+        bundle.putString(QQShare.SHARE_TO_QQ_APP_NAME, context.getPackageName());
         bundle.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
         tencent.shareToQQ((Activity) context, bundle, listener);
     }
