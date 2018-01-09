@@ -35,7 +35,7 @@ android {
         release {
             keyAlias 'mzdj'
             keyPassword 'jnqlmzdj'
-            storeFile file('D:/jks/jnql_mzdj.jks')
+            storeFile file('jnql_mzdj.jks')
             storePassword 'jnqlmzdj'
         }
     }

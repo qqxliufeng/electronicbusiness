@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
@@ -32,19 +33,21 @@ public class ShareManager {
     public static int SHARE_PIC_HEIGHT = 150;
 
     public static void shareToWxWebPager(IWXAPI api, int shareSceneType, String webpageUrl, String title, String description, Bitmap sharePic) {
-        if ((sharePic != null && !sharePic.isRecycled())) {
-            WXWebpageObject webPager = new WXWebpageObject();
-            webPager.webpageUrl = webpageUrl;
-            WXMediaMessage msg = new WXMediaMessage(webPager);
-            msg.title = title;
-            msg.description = description;
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(sharePic, SHARE_PIC_WIDTH, SHARE_PIC_HEIGHT, true);
-            msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
-            SendMessageToWX.Req req = new SendMessageToWX.Req();
-            req.transaction = buildTransaction("webpage");
-            req.message = msg;
-            req.scene = shareSceneType;
-            api.sendReq(req);
+        if (api != null && api.isWXAppInstalled()) {
+            if ((sharePic != null && !sharePic.isRecycled())) {
+                WXWebpageObject webPager = new WXWebpageObject();
+                webPager.webpageUrl = webpageUrl;
+                WXMediaMessage msg = new WXMediaMessage(webPager);
+                msg.title = title;
+                msg.description = description;
+                Bitmap thumbBmp = Bitmap.createScaledBitmap(sharePic, SHARE_PIC_WIDTH, SHARE_PIC_HEIGHT, true);
+                msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+                SendMessageToWX.Req req = new SendMessageToWX.Req();
+                req.transaction = buildTransaction("webpage");
+                req.message = msg;
+                req.scene = shareSceneType;
+                api.sendReq(req);
+            }
         }
     }
 
@@ -53,7 +56,7 @@ public class ShareManager {
         return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
     }
 
-    public static void shareToWBWebPager(WbShareHandler shareHandler, String title, String description, String actionUrl, Bitmap bitmap, String defaultText)throws Exception {
+    public static void shareToWBWebPager(WbShareHandler shareHandler, String title, String description, String actionUrl, Bitmap bitmap, String defaultText) throws Exception {
         if ((bitmap != null && !bitmap.isRecycled())) {
             shareHandler.registerApp();
             shareHandler.setProgressColor(0xff33b5e5);
@@ -74,14 +77,18 @@ public class ShareManager {
     }
 
     public static void shareToQQ(Context context, Tencent tencent, String title, String description, String actionUrl, String imageUrl, IUiListener listener) {
-        Bundle bundle = new Bundle();
-        bundle.putString(QQShare.SHARE_TO_QQ_TITLE, title);
-        bundle.putString(QQShare.SHARE_TO_QQ_SUMMARY, description);
-        bundle.putString(QQShare.SHARE_TO_QQ_TARGET_URL, actionUrl);
-        bundle.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, imageUrl);
-        bundle.putString(QQShare.SHARE_TO_QQ_APP_NAME, context.getPackageName());
-        bundle.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
-        tencent.shareToQQ((Activity) context, bundle, listener);
+        if (tencent.isQQInstalled(context)) {
+            Bundle bundle = new Bundle();
+            bundle.putString(QQShare.SHARE_TO_QQ_TITLE, title);
+            bundle.putString(QQShare.SHARE_TO_QQ_SUMMARY, description);
+            bundle.putString(QQShare.SHARE_TO_QQ_TARGET_URL, actionUrl);
+            bundle.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, imageUrl);
+            bundle.putString(QQShare.SHARE_TO_QQ_APP_NAME, context.getPackageName());
+            bundle.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
+            tencent.shareToQQ((Activity) context, bundle, listener);
+        } else {
+            Toast.makeText(context, "您的手机上未安装QQ客户端", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
