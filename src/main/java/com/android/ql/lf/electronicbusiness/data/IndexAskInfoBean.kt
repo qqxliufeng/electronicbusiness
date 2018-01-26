@@ -22,7 +22,7 @@ class IndexAskInfoBean : MultiItemEntity {
     lateinit var quiz_title: String
     lateinit var quiz_token: String
     lateinit var quiz_type: ArrayList<String>
-    lateinit var quiz_click: String
+    var quiz_click: String? = null
     lateinit var quiz_content: String
     lateinit var quiz_time: String
     lateinit var quiz_num: String

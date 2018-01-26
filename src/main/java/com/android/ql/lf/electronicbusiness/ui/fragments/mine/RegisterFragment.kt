@@ -78,6 +78,10 @@ class RegisterFragment : BaseNetWorkingFragment() {
                 toast("密码不能为空")
                 return@setOnClickListener
             }
+            if (!mCbRegisterProtocol.isChecked) {
+                toast("请先同意用户注册服务协议")
+                return@setOnClickListener
+            }
             mPresent.getDataByPost(0x1, RequestParamsHelper.LOGIN_MODEL, RequestParamsHelper.ACT_REGISTER,
                     RequestParamsHelper.getRegisterParams(mEtPhone.text.toString(), mEtPassword.text.toString()))
         }
@@ -98,7 +102,7 @@ class RegisterFragment : BaseNetWorkingFragment() {
             if ("200" == codeBean.status) {
                 mCode = codeBean.code
                 toast("验证码已经发送，请注意查收")
-            }else{
+            } else {
                 getCodeFailed()
             }
         } else if (requestID == 0x1) {

@@ -14,9 +14,9 @@ import com.chad.library.adapter.base.BaseViewHolder
  */
 class AnswerListAdapter(layoutId: Int, list: ArrayList<IndexAskInfoBean>) : BaseQuickAdapter<IndexAskInfoBean, BaseViewHolder>(layoutId, list) {
     override fun convert(helper: BaseViewHolder?, item: IndexAskInfoBean?) {
-        helper!!.setText(R.id.mTvAskListItemTitle,item!!.quiz_title)
-        helper.setText(R.id.mTvAskListItemCount,"回答：${item.quiz_num}")
-        helper.setText(R.id.mTvAskListItemFocus,"关注：${item.quiz_click}")
+        helper!!.setText(R.id.mTvAskListItemTitle, item!!.quiz_title)
+        helper.setText(R.id.mTvAskListItemCount, "回答：${item.quiz_num}")
+        helper.setText(R.id.mTvAskListItemFocus, "关注：${item.quiz_click ?: 0}")
         val tv_delete = helper.getView<TextView>(R.id.mTvAskListItemDelete)
         helper.addOnClickListener(R.id.mTvAskListItemDelete)
         if (UserInfo.getInstance().isLogin) {

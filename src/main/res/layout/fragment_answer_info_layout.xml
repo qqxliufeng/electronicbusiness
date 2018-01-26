@@ -85,7 +85,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="@dimen/dp_10"
                         android:layout_toRightOf="@+id/mTvAnswerInfoAnswerCount"
-                        android:text="1850个关注"
+                        android:text="0个关注"
                         android:textColor="#AEAEAE"
                         android:textSize="@dimen/sp_12" />
 

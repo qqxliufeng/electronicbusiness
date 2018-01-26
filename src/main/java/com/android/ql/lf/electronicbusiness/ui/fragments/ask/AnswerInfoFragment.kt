@@ -132,7 +132,7 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                     if (currentPage == 0) {
                         askInfoBean = Gson().fromJson(json.optJSONObject("result").toString(), IndexAskInfoBean::class.java)
                         if (askInfoBean != null && askInfoBean!!.quiz_concerm == "0") {
-                            mTvAnswerInfoFocus.text = "点击关注"
+                            mTvAnswerInfoFocus.text = "+ 关注问题"
                             mTvAnswerInfoFocus.isEnabled = true
                             mTvAnswerInfoFocus.setOnClickListener {
                                 if (askInfoBean != null) {
@@ -181,7 +181,7 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                         }
                         mTvAnswerInfoContent.text = askInfoBean?.quiz_content
                         mTvAnswerInfoAnswerCount.text = "${askInfoBean?.quiz_num} 个回答"
-                        mTvAnswerInfoFocusCount.text = "${askInfoBean?.quiz_click} 个关注"
+                        mTvAnswerInfoFocusCount.text = "${askInfoBean?.quiz_click ?: 0} 个关注"
                     }
                     val jsonArray = json.optJSONArray("arr")
                     if (jsonArray.length() == 0) {
@@ -211,8 +211,8 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                     toast("关注成功")
                     mTvAnswerInfoFocus.text = "已关注"
                     mTvAnswerInfoFocus.isEnabled = false
-                }else{
-                    if(result != null) {
+                } else {
+                    if (result != null) {
                         if ("400" == JSONObject(result.toString()).optString("code")) {
                             onAnswerDelete()
                         }
@@ -224,7 +224,7 @@ class AnswerInfoFragment : BaseRecyclerViewFragment<AnswerBean>() {
                     toast("评论成功")
                     onPostRefresh()
                 } else {
-                    if(result != null) {
+                    if (result != null) {
                         if ("400" == JSONObject(result.toString()).optString("code")) {
                             onAnswerDelete()
                         }

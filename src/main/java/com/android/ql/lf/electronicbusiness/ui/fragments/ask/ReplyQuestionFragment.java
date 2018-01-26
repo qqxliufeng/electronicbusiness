@@ -163,10 +163,10 @@ public class ReplyQuestionFragment extends BaseNetWorkingFragment {
                 Toast.makeText(mContext, "回复成功", Toast.LENGTH_SHORT).show();
                 RefreshData.INSTANCE.setRefresh(true);
                 RefreshData.INSTANCE.setAny("回复成功");
+                RxBus.getDefault().post(RefreshData.INSTANCE);
                 if (Objects.equals(getArguments().getString("uid"), UserInfo.getInstance().getMemberId())) {
                     OrderPresent.notifyRefreshOrderNum();
                 }
-                RxBus.getDefault().post(RefreshData.INSTANCE);
                 finish();
             }
         } else {
