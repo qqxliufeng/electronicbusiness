@@ -19,7 +19,7 @@
                 android:id="@+id/mIvExpressGoodsImage"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:scaleType="center"/>
+                android:scaleType="center" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -31,6 +31,8 @@
                     android:id="@+id/mTvExpressGoodsName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textColor="#282828"
                     android:textSize="@dimen/sp_16" />
 
@@ -53,11 +55,11 @@
         </RelativeLayout>
 
         <com.baoyachi.stepview.VerticalStepView
-            android:padding="@dimen/dp_10"
             android:id="@+id/mVerticalStepView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#fff" />
+            android:background="#fff"
+            android:padding="@dimen/dp_10" />
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

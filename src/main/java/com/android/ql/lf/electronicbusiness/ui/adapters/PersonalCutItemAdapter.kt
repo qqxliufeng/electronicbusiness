@@ -30,12 +30,14 @@ class PersonalCutItemAdapter(layoutId: Int, list: ArrayList<GoodsItemBean>) : Ba
             helper.setText(R.id.mBtPersonalCutItemCut, "已砍到最底价")
             bt_status.isEnabled = false
         } else {
+            helper.setText(R.id.mBtPersonalCutItemCut, "砍价购买")
             bt_status.isEnabled = true
         }
         if ("1" == item.product_endstatus) {
             helper.setText(R.id.mBtPersonalCutItemCut, "活动已结束")
             bt_status.isEnabled = false
         } else {
+            helper.setText(R.id.mBtPersonalCutItemCut, "砍价购买")
             bt_status.isEnabled = true
         }
     }
