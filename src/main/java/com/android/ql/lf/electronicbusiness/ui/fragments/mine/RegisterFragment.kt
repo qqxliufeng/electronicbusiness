@@ -2,14 +2,17 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
 import android.text.TextUtils
 import android.view.View
+import com.a.WebViewContentFragment
 import com.android.ql.lf.electronicbusiness.R
 import com.android.ql.lf.electronicbusiness.data.CodeBean
+import com.android.ql.lf.electronicbusiness.ui.activities.FragmentContainerActivity
 import com.android.ql.lf.electronicbusiness.ui.fragments.BaseNetWorkingFragment
 import com.android.ql.lf.electronicbusiness.ui.views.MyProgressDialog
 import com.android.ql.lf.electronicbusiness.utils.CounterHelper
 import com.android.ql.lf.electronicbusiness.utils.RequestParamsHelper
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_register_layout.*
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
 import java.util.regex.Pattern
@@ -23,6 +26,9 @@ class RegisterFragment : BaseNetWorkingFragment() {
     var mCode: String = ""
 
     private lateinit var counterHelper: CounterHelper
+
+    private var ruleContent: String? = null
+
 
     companion object {
         val REGEX_MOBILE = "^1[34578]\\d{9}\$"
@@ -85,12 +91,22 @@ class RegisterFragment : BaseNetWorkingFragment() {
             mPresent.getDataByPost(0x1, RequestParamsHelper.LOGIN_MODEL, RequestParamsHelper.ACT_REGISTER,
                     RequestParamsHelper.getRegisterParams(mEtPhone.text.toString(), mEtPassword.text.toString()))
         }
+        mTvRegisterProtocol.setOnClickListener {
+            if (ruleContent != null) {
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "用户服务协议", true, false, bundleOf(Pair(WebViewContentFragment.PATH_FLAG, ruleContent!!)), WebViewContentFragment::class.java)
+            } else {
+                mPresent.getDataByPost(0x3, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_PTGG, RequestParamsHelper.getPtggParam("11"))
+            }
+        }
     }
 
     override fun onRequestStart(requestID: Int) {
         super.onRequestStart(requestID)
         if (requestID == 0x1) {
             progressDialog = MyProgressDialog(mContext, "正在注册，请稍后……")
+            progressDialog.show()
+        } else if (requestID == 0x3) {
+            progressDialog = MyProgressDialog(mContext, "正在获取协议，请稍后……")
             progressDialog.show()
         }
     }
@@ -114,6 +130,14 @@ class RegisterFragment : BaseNetWorkingFragment() {
                 finish()
             } else {
                 toast(json.optString("msg"))
+            }
+        } else if (requestID == 0x3) {
+            val json = checkResultCode(result)
+            if (json != null) {
+                ruleContent = json.optJSONObject("result").optString("ptgg_content")
+                FragmentContainerActivity.startFragmentContainerActivity(mContext, "用户服务协议", true, false, bundleOf(Pair(WebViewContentFragment.PATH_FLAG, ruleContent!!)), WebViewContentFragment::class.java)
+            } else {
+                toast("获取协议失败，请稍后重试……")
             }
         }
     }
