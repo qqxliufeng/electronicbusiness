@@ -44,14 +44,4 @@
             android:text="积分商城兑换"
             android:textColor="@color/colorPrimary" />
     </RelativeLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/mBtDHJF"
-        android:background="#F5F5F5"
-        android:padding="@dimen/dp_10"
-        android:text="本月"
-        android:textColor="#9D9D9D"
-        android:textSize="@dimen/sp_14" />
 </LinearLayout>

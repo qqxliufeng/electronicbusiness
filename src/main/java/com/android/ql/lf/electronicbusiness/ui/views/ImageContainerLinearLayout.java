@@ -43,8 +43,8 @@ public class ImageContainerLinearLayout extends LinearLayout {
         post(new Runnable() {
             @Override
             public void run() {
+                removeAllViews();
                 if (images != null && !images.isEmpty()) {
-                    removeAllViews();
                     int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10.0f, getContext().getResources().getDisplayMetrics());
                     int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, getContext().getResources().getDisplayMetrics());
                     int imageWidth = (getMeasuredWidth() - padding * 4) / 3;

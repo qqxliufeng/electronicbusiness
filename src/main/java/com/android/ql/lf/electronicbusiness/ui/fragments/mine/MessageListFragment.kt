@@ -51,7 +51,7 @@ class MessageListFragment : BaseRecyclerViewFragment<MessageBean>() {
         if ("1" == messageBean.message_token) { //1 代表问答消息  0 代表系统消息
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "问答详情", true, false, bundleOf(Pair(AnswerInfoFragment.ASK_ID_FLAG, messageBean.message_qid)), AnswerInfoFragment::class.java)
         } else {
-            FragmentContainerActivity.startFragmentContainerActivity(mContext, "问答详情", true, false, bundleOf(Pair(MessageInfoFragment.MESSAGE_BEAN_FLAG, messageBean)), MessageInfoFragment::class.java)
+            FragmentContainerActivity.startFragmentContainerActivity(mContext, "系统消息", true, false, bundleOf(Pair(MessageInfoFragment.MESSAGE_BEAN_FLAG, messageBean)), MessageInfoFragment::class.java)
         }
         messageBean.message_status = "1"
         mBaseAdapter.notifyItemChanged(position)

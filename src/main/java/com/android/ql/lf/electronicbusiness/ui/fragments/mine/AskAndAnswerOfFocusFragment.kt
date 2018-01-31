@@ -3,6 +3,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -27,7 +28,7 @@ class AskAndAnswerOfFocusFragment : BaseRecyclerViewFragment<MyFocusBean>() {
         fun newInstance() = AskAndAnswerOfFocusFragment()
     }
 
-    private lateinit var headerView:TextView
+    private lateinit var headerView: TextView
 
     override fun createAdapter(): BaseQuickAdapter<MyFocusBean, BaseViewHolder> =
             AskAndAnswerOfFocusAdapter(R.layout.adapter_ask_and_aswer_of_focus_item_layout, mArrayList)
@@ -61,7 +62,13 @@ class AskAndAnswerOfFocusFragment : BaseRecyclerViewFragment<MyFocusBean>() {
         val json = checkResultCode(result)
         processList(json, MyFocusBean::class.java)
         if (json != null) {
-            headerView.text = "我的关注（${json.optString("arr")}）"
+            val tempList = mArrayList.filter {
+                !TextUtils.isEmpty(it.quiz_id)
+            }
+            mArrayList.clear()
+            mArrayList.addAll(tempList)
+            mBaseAdapter.notifyDataSetChanged()
+            headerView.text = "我的关注（${mArrayList.size}）"
         }
     }
 

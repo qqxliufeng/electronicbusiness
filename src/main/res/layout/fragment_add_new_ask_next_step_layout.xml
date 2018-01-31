@@ -81,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -99,11 +99,12 @@
                 android:textSize="@dimen/sp_14" />
 
             <TextView
+                android:id="@+id/mTvAddNewAskProtocol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="《XXX发布免责声明》"
                 android:textColor="#FB8325" />
-        </LinearLayout>
+        </LinearLayout>-->
 
         <Button
             android:id="@+id/mBtSubmit"

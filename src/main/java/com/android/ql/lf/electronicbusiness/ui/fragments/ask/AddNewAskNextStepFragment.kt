@@ -126,10 +126,10 @@ class AddNewAskNextStepFragment : BaseNetWorkingFragment() {
                 toast("请选择标签 最多3个，最少1个")
                 return@setOnClickListener
             }
-            if (!mCkAddNewAskNextStep.isChecked) {
-                toast("请先同意免责声明")
-                return@setOnClickListener
-            }
+//            if (!mCkAddNewAskNextStep.isChecked) {
+//                toast("请先同意免责声明")
+//                return@setOnClickListener
+//            }
             if (imageListFile == null || imageListFile?.isEmpty()!!) {
                 tagsList.forEach {
                     tags.append(it.tag_title).append(",")

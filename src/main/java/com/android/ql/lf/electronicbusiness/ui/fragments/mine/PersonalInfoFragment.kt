@@ -68,14 +68,6 @@ class PersonalInfoFragment : BaseNetWorkingFragment() {
             bundle.putInt(ACTION_ID_KEY, NICK_ID)
             FragmentContainerActivity.startFragmentContainerActivity(mContext, "昵称", true, false, bundle, EditPersonalInfoFragment::class.java)
         }
-        if (TextUtils.isEmpty(UserInfo.getInstance().member_openid)) {
-            mTvPersonalInfoResetPassword.visibility = View.VISIBLE
-            mTvPersonalInfoResetPassword.setOnClickListener {
-                FragmentContainerActivity.startFragmentContainerActivity(mContext, "修改密码", true, false, ResetPasswordFragment::class.java)
-            }
-        } else {
-            mTvPersonalInfoResetPassword.visibility = View.GONE
-        }
         GlideManager.loadFaceCircleImage(mContext, "${Constants.BASE_IP}${UserInfo.getInstance().memberPic}", mTvPersonalInfoFace)
         mTvPersonalInfoNickName.text = UserInfo.getInstance().memberName
         mTvPersonalInfoPhone.text = UserInfo.getInstance().memberPhone

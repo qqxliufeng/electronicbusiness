@@ -1,6 +1,7 @@
 package com.android.ql.lf.electronicbusiness.ui.fragments.mine
 
 import android.support.v7.app.AlertDialog
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import com.android.ql.lf.electronicbusiness.R
@@ -42,6 +43,24 @@ class SettingFragment : BaseFragment() {
             mCacheSize.text = "暂无缓存"
         }
         mBtLogout.isEnabled = UserInfo.getInstance().isLogin
+
+        if (UserInfo.getInstance().isLogin) {
+            if (TextUtils.isEmpty(UserInfo.getInstance().member_openid)) {
+                mTvPersonalInfoResetPassword.visibility = View.VISIBLE
+                mTvPersonalInfoResetPassword.setOnClickListener {
+                    FragmentContainerActivity.startFragmentContainerActivity(mContext,
+                            "修改密码",
+                            true,
+                            false,
+                            ResetPasswordFragment::class.java)
+                }
+            } else {
+                mTvPersonalInfoResetPassword.visibility = View.GONE
+            }
+        } else {
+            mTvPersonalInfoResetPassword.visibility = View.GONE
+        }
+
         mBtLogout.setOnClickListener {
             val build = AlertDialog.Builder(mContext)
             build.setPositiveButton("退出") { _, _ ->

@@ -62,7 +62,7 @@ class OrderListItemAdapter(layoutId: Int, list: ArrayList<MyOrderBean>) : BaseQu
                 tv_action1.visibility = View.VISIBLE
                 tv_action2.visibility = View.VISIBLE
                 tv_action2.text = "确认收货"
-                tv_action1.text = "查看快递"
+                tv_action1.text = "查看物流"
                 "待收货"
             }
             OrderPresent.OrderStatus.STATUS_OF_DPJ -> {
