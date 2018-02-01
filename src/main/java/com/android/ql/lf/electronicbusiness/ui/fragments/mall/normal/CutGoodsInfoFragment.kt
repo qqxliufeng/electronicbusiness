@@ -437,10 +437,10 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
                         mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_one)
                     }
                     "2" -> {
-                        mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_two)
+                        mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_three)
                     }
                     "3" -> {
-                        mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_three)
+                        mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_step_two)
                     }
                     else -> {
                         mLlPersonalCutItemInfoContainer.setBackgroundResource(R.drawable.img_icon_mark_team_cut_bg)
@@ -482,6 +482,7 @@ class CutGoodsInfoFragment : BaseNetWorkingFragment(), SwipeRefreshLayout.OnRefr
             }
             if (TextUtils.equals("1", cutInfoBean!!.result.detail.product_ptype)) { //product_ptype== 1  已经到底价了
                 mTvPersonalCutItemInfoCut.isEnabled = false //已经砍过一次价了 或者已经到最低价了 都不能再砍了
+                mTvPersonalCutItemInfoCut.text = "抢购中"
                 mTvPersonalCutItemInfoEveryOneCut.text = "抢购中……"
             }
         }

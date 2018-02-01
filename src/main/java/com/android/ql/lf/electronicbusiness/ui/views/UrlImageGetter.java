@@ -50,7 +50,7 @@ public class UrlImageGetter implements Html.ImageGetter {
                 @Override
                 public Bitmap call(String s) {
                     try {
-                        return Glide.with(c).load(s).asBitmap().centerCrop().into(500, 500).get();
+                        return Glide.with(c).load(s).asBitmap().into(500, 500).get();
                     } catch (Exception e) {
                         return null;
                     }

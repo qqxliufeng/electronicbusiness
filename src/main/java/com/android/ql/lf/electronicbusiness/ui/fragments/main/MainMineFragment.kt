@@ -2,6 +2,7 @@ package com.android.ql.lf.electronicbusiness.ui.fragments.main
 
 import android.os.Bundle
 import android.support.v4.widget.NestedScrollView
+import android.support.v4.widget.SwipeRefreshLayout
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -109,6 +110,10 @@ class MainMineFragment : BaseNetWorkingFragment() {
         mMineScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, _: Int ->
             val alpha = 1 - scrollY / (heightPixels / 3)// 0~1  透明度是1~0
             mMineTopView.alpha = 1 - alpha
+        }
+        mSrlMainMineContainer.setColorSchemeColors(resources.getColor(R.color.colorPrimary))
+        mSrlMainMineContainer.setOnRefreshListener {
+            mPresent.getDataByPost(0x0, RequestParamsHelper.MEMBER_MODEL, RequestParamsHelper.ACT_PERSONAL, RequestParamsHelper.getPersonal())
         }
         mPersonalInfo.setOnClickListener {
             if (UserInfo.getInstance().isLogin) {
@@ -364,6 +369,15 @@ class MainMineFragment : BaseNetWorkingFragment() {
         super.onRequestFail(requestID, e)
         if (requestID == 0x1) {
             toast("签到失败，请稍后重试……")
+        }
+    }
+
+    override fun onRequestEnd(requestID: Int) {
+        super.onRequestEnd(requestID)
+        if (mSrlMainMineContainer.isRefreshing) {
+            mSrlMainMineContainer.post {
+                mSrlMainMineContainer.isRefreshing = false
+            }
         }
     }
 
